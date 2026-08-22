@@ -78,7 +78,9 @@ def main() -> int:
             for p in problems:
                 print(f"       {p}")
         else:
-            print(f"ok   {path.relative_to(NOTEBOOKS)}  ({len(nb['cells'])} cells, {outputs} outputs)")
+            print(
+                f"ok   {path.relative_to(NOTEBOOKS)}  ({len(nb['cells'])} cells, {outputs} outputs)"
+            )
     return 1 if failed else 0
 
 

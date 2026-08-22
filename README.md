@@ -24,7 +24,8 @@ splitting. Details in `docs/FINDINGS.md`.
 
 Adding a model means answering three questions: where does the encoder live in the tensor
 names, does a standalone class exist for the half you want, and what does the config need
-to become. The two notebooks in `glm4v/` walk through both directions end to end.
+to become. The two notebooks in `notebooks/glm-4.6v-flash/` walk through both directions
+end to end.
 
 ## Published
 
@@ -53,13 +54,6 @@ Only inspection and verification are library code. The surgery lives in the
 notebooks, because every model needs different treatment and hiding that behind one
 function would produce a registry of special cases pretending to be an abstraction.
 See `docs/ADDING-A-MODEL.md`.
-
-```
-glm4v/        the two notebooks, with outputs, plus the architecture diagram
-publishing/   HF upload script and the three model cards
-infra/        Lambda provisioning, instance setup, GGUF build
-docs/         findings and measured numbers
-```
 
 Both notebooks are committed **with their execution outputs** — those outputs are the
 evidence for the bit-exact claim below and cannot be reproduced without a GPU and a
@@ -99,12 +93,12 @@ jupyter nbconvert --to notebook --execute --inplace \
 GPU:
 
 ```bash
-./infra/01_launch_lambda.sh               # verifies the SSH key actually registered
-./infra/02_setup_instance.sh              # on the instance
+./tools/launch_lambda.sh                  # verifies the SSH key actually registered
+./tools/setup_instance.sh                 # on the instance
 jupyter nbconvert --to notebook --execute --inplace \
   notebooks/glm-4.6v-flash/remove_vision.ipynb
-./infra/03_build_gguf.sh                  # llama.cpp + quant ladder + smoke test
-HF_TOKEN=... python publishing/upload.py --repo user/Model --model-dir ... --gguf-dir ...
+./tools/build_gguf.sh                     # llama.cpp + quant ladder + smoke test
+HF_TOKEN=... python tools/upload_hf.py --repo user/Model --model-dir ... --gguf-dir ...
 ```
 
 ## Hard-won gotchas
