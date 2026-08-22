@@ -13,14 +13,21 @@
 set -euo pipefail
 
 API="https://cloud.lambda.ai/api/v1"
-KEY_NAME="${KEY_NAME:-lambda-glm}"
+# NOT lambda-glm. That name is registered to the keypair Lambda generated for
+# itself during the incident described above -- its private half was in an API
+# response nobody kept, so any instance launched with it is unreachable. The
+# account still carries it; verify_key is what stops you using it by accident.
+KEY_NAME="${KEY_NAME:-lambda-glm2}"
 KEY_PATH="${KEY_PATH:-$HOME/.ssh/lambda_glm}"
 INSTANCE_TYPE="${INSTANCE_TYPE:-gpu_1x_a100_sxm4}"   # A100-SXM4 40GB, $1.99/hr
 REGION="${REGION:-us-west-2}"
 IMAGE_FAMILY="${IMAGE_FAMILY:-lambda-stack-24-04}"   # ships torch, NOT transformers
 NAME="${NAME:-unfuse}"
 
-[ -f .env ] && { set -a; . ./.env; set +a; }
+# A .env saved from Windows carries CRLF, which leaves a trailing \r on the key
+# and makes a correct key fail as `global/invalid-api-key`. Strip it on read
+# rather than trusting the file to be clean.
+[ -f .env ] && { set -a; . <(sed 's/\r$//' .env); set +a; }
 : "${LAMBDA_API_KEY:?set LAMBDA_API_KEY in .env}"
 
 api() { curl -sS -u "$LAMBDA_API_KEY:" "$@"; }
