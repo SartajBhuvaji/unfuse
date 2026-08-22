@@ -1,0 +1,39 @@
+# secrets -- never commit
+.env
+.env.*
+!.env.example
+*.pem
+*_rsa
+*_ed25519
+id_*
+untitled.txt
+.hf_env
+
+# model weights and artifacts
+models/
+*.safetensors
+*.gguf
+*.bin
+*.pt
+*.ckpt
+
+# The committed notebooks carry their execution outputs -- that evidence is the
+# point, so do not strip it.
+*-checkpoint.ipynb
+.ipynb_checkpoints/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# tooling caches
+.ruff_cache/
+.pytest_cache/
+
+# logs and scratch
+*.log
+scratch/
+tmp/

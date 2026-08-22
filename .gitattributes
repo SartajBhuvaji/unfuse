@@ -1,0 +1,6 @@
+# Notebooks are JSON but diff better as text, and GitHub should not count them
+# as the project's language -- they are documentation that happens to execute.
+*.ipynb text linguist-documentation
+*.svg   text linguist-documentation
+*.sh    text eol=lf
+*.py    text eol=lf
