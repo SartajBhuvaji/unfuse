@@ -232,14 +232,32 @@ def _write_config(src: Path, dst: Path, quantized: list[str], per_channel: bool)
     (dst / "config.json").write_text(json.dumps(config, indent=2))
 
 
+# Loose files that describe the *source* model rather than travelling with it.
+# Copying them forward produces a checkpoint carrying documentation of a model
+# that no longer exists. Both of these were published before being caught:
+# NVIDIA's README describes their build, and .quant_summary.txt is a ModelOpt
+# quantizer dump listing the vision tower and reporting attention as unquantized
+# -- neither true here.
+STALE_METADATA = frozenset(
+    {
+        "README.md",
+        ".quant_summary.txt",
+        "quant_summary.txt",
+        "quantization_summary.txt",
+    }
+)
+
+
 def _copy_rest(src: Path, dst: Path) -> None:
-    """Copy everything else across, never overwriting a file already written.
+    """Copy everything else across, minus anything describing the source model.
 
     The `exists()` guard is load-bearing: `_write_config` has just written the
     corrected config, and copying the source's version over it would silently
     restore the stale exclusion list.
     """
     for path in src.iterdir():
+        if path.name in STALE_METADATA:
+            continue
         if path.is_file() and path.suffix != ".safetensors" and not (dst / path.name).exists():
             shutil.copy2(path, dst / path.name)
 

@@ -461,6 +461,29 @@ So at the full window the cache is roughly **half** the quantized weights, not e
 them. Worth knowing before optimising further, but it does not outrank the weight savings,
 and the stronger claim was an artifact of assuming a homogeneous model.
 
+### Two things reached the published repo before being caught
+
+Both are the same bug wearing different clothes: metadata that describes the model
+*before* the surgery.
+
+**Loose files travel with a checkpoint.** `_copy_rest` copied everything non-safetensors
+forward, which meant NVIDIA's `README.md` (their model card, describing their build) and
+`.quant_summary.txt` (a 2,155-line ModelOpt quantizer dump listing the vision tower and
+reporting attention as unquantized) both landed in the upload. Neither is true of the
+result. There is now a `STALE_METADATA` skip set, with a test asserting the tokenizer and
+chat template still travel -- the guard must not become an excuse to drop files the model
+needs.
+
+**Promoting a nested config exposes fields to new validators.** Gemma 4's `text_config`
+carries `num_experts: null`, `expert_intermediate_size: null` and `top_k_experts: null`,
+inert because `enable_moe_block` is False. Nested inside `text_config` nobody checks them.
+The extraction promotes `text_config` to top level, and the Hugging Face config parser then
+rejects `"num_experts" must be a number`.
+
+The fix was to drop the three inert keys -- but the check that made it safe was
+constructing `Gemma4TextConfig` both ways and asserting every resolved field matched.
+Dropping keys from a config on the grounds that they "look unused" is otherwise a guess.
+
 ### Environment problems that cost real time
 
 - **A `.env` edited on Windows kills every API key.** Files under `/mnt/c` get CRLF, so
