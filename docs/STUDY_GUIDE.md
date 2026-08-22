@@ -364,6 +364,15 @@ removing).
 ### 6.5 Audio and video paths
 Same structure, different front end. Gemma 4's unified variants carry both.
 
+### 6.6 Encoder-only extraction — the other direction
+Keeping the tower and discarding the language model. The result is an `mmproj`-style
+artifact that pairs back with a text-only GGUF to reconstitute the original multimodal
+model under llama.cpp.
+
+*Why here:* `notebooks/glm-4.6v-flash/keep_vision.ipynb` does exactly this, and it is the
+cheap direction — the vision half of GLM-4.6V-Flash is 1.78 GB and runs on a laptop GPU,
+while removing vision needs ~21 GB of VRAM for the bit-exact check.
+
 ---
 
 ## 7. Speculative decoding
@@ -422,6 +431,10 @@ Repos, revisions, LFS/Xet storage, gated repos and license acceptance, model car
 
 *Why here:* a model with missing weights loads happily and generates garbage.
 
+Also: **`architectures` is never populated for you.** A config class you construct in Python
+leaves it empty, and without it `AutoModelForCausalLM` has nothing to dispatch on — the
+checkpoint then loads only via the explicit class. Set it when writing a config.
+
 ### 8.5 The `quantization_config` registry
 transformers dispatches on `quant_method`. An **unsupported** method is not an error — the
 config is ignored, the checkpoint loads as dense, and it fails later and confusingly.
@@ -447,6 +460,12 @@ and the legacy `hf_quant_config.json`.
 `--quantization modelopt`, per-layer algorithms under `quantized_layers`, PagedAttention,
 continuous batching, prefix caching. Mixed FP4/FP8 checkpoints are a **standard shipping
 layout** (DeepSeek-V4, Qwen3-Omni), not an exotic hack.
+
+**Quantization support and architecture support are different questions.** vLLM 0.27.1
+cannot load Gemma 4 31B at all — quantized or not, ours or Google's — because it reads
+`config.head_dim` globally on a model whose layers are heterogeneous. Check that the engine
+supports the *architecture* before assuming a quantization format is the obstacle. That
+check is cheap: it fails on the config alone, with no weights downloaded.
 
 ### 8.9 TensorRT-LLM and SGLang
 Engine building and its constraints; alternative serving stacks with different quantization
@@ -475,6 +494,38 @@ forward pre-hooks, `torch.cuda.synchronize`, `empty_cache`, and `no_grad`.
 
 *Why here:* the benchmark counts target forward passes with a hook rather than reading
 engine internals, because a hook is portable across engines.
+
+### 8.15 Downloading only the shard you need
+`model.safetensors.index.json` maps every tensor to its shard, so before downloading 20 GB
+you can ask whether the part you want happens to live in one file.
+
+*Why here:* `shards_for_prefix` in `inspect.py`. GLM-4.6V-Flash's vision tensors sit in a
+single shard, which turned a 20 GB download into 4.66 GB and moved that whole workflow onto
+a laptop.
+
+### 8.16 The GGUF pipeline
+`convert_hf_to_gguf.py` to F16, then `llama-quantize` for each rung of the ladder. Building
+llama.cpp CPU-only is correct here — quantization never touches the GPU — and much faster to
+compile.
+
+*Why here:* `tools/build_gguf.sh`, plus a gotcha worth memorising: **`-no-cnv` was removed
+from llama.cpp**. Without `-st/--single-turn`, `llama-cli` drops into interactive mode and
+spins on empty stdin, burning CPU and emitting nothing — a failure that looks exactly like
+slow inference.
+
+### 8.17 Publishing, and the Hub's quant-picker widget
+Two repos by convention: `<repo>` for safetensors plus the card, `<repo>-GGUF` for
+quantizations **at the root**.
+
+The split is not cosmetic. The Hub's hardware-compatibility widget renders only for
+root-level GGUF files in a repo containing no safetensors. Put them in a subfolder and the
+metadata still indexes, but the widget vanishes and `llama-cli -hf` / `ollama run hf.co/...`
+will not resolve them. `upload_hf.py` asserts those three conditions out loud after
+uploading, because they are easy to break silently.
+
+Also worth knowing: **model cards are resolved at display time, not commit time.** Fixing an
+identity or a card is retroactive across existing commits; you rarely need to rewrite
+anything.
 
 ---
 
@@ -536,8 +587,9 @@ and a near-unchanged GPQA are not contradictory, and reading one as the other ne
 triggered a false alarm here.
 
 ### 9.13 Regression tests for bugs found in the field
-Every bug in §11 has a test pinning it. Tests that encode *why* a rule exists survive
-refactors better than the rule alone.
+Every bug in `docs/FINDINGS.md` has a test pinning it. Tests that encode *why* a rule exists
+survive refactors better than the rule alone — `test_fp8_attention.py` says in its docstring
+that an early run quantized 120 norms, so nobody re-widens the pattern later.
 
 ---
 
@@ -571,7 +623,8 @@ experiment.
 
 ## 11. Engineering environment
 
-Three of the four failures below pointed at the **wrong layer**. That is the common thread.
+Most of the failures below reported the **wrong layer**. That is the common thread, and it
+is why each entry names the symptom as well as the cause.
 
 ### 11.1 Python venvs and `--system-site-packages`
 Mixing apt and pip packages breaks ABI-coupled pairs. torch and torchvision must come from
@@ -599,6 +652,16 @@ execution with `nbconvert --execute`, and background job supervision.
 ### 11.5 Quoting in nested heredocs
 Escaping inside a heredoc inside an SSH command mangles f-strings. Write the file locally
 and copy it.
+
+### 11.6 Secrets on rented hardware
+**Never write a token to disk on a rented machine.** That disk is recycled to the next
+tenant, and `chmod 600` protects nothing once the volume is reassigned. Pass secrets through
+the environment for the life of the process instead.
+
+*Why here:* `upload_hf.py` states this rule in its own docstring, and it was still violated
+during this project — `HF_TOKEN` was written to `~/.hftoken` on two rented instances for
+convenience. The instances are terminated; the right response is to rotate the token, not to
+assume the disk was wiped.
 
 ---
 
@@ -634,7 +697,23 @@ matches.
 nbformat cells, `source` as a list of lines each ending in `\n` except the last, and
 `execution_count` as the marker that a cell actually ran.
 
-### 12.7 Project tooling
+### 12.7 Never publish a claim you have not run
+The model card shipped with `vllm serve --quantization modelopt` as its usage line. It was
+written from what the format's documentation implies, not from anything observed, and it did
+not work.
+
+*Why here:* documentation is an artifact with the same standard of evidence as a number in a
+table. If a command appears in a card, run it first — and if you cannot, say so in the card.
+
+### 12.8 Commit identity and attribution
+GitHub resolves commit authorship by **email**. An address not verified on any account
+renders as a faceless second person, and a squash-merge whose author email differs from the
+account's adds a `Co-authored-by:` trailer — showing one human as two.
+
+*Why here:* the repo's local git config used an unlinked address. Check
+`git log --format='%an <%ae>' -1` before pushing.
+
+### 12.9 Project tooling
 `ruff` (lint + format), `pytest`, `hatchling`, `pyproject.toml` extras, the `Makefile`
 targets, and the CI split between fast checks and notebook validation.
 
