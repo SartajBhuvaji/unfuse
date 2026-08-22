@@ -20,6 +20,8 @@ language:
 **23.00 GB, down from 32.63 GB (−29.5%).** NVIDIA's NVFP4 MLPs copied verbatim, all 230
 attention projections requantized to FP8, and the vision tower removed.
 
+![architecture](architecture.svg)
+
 | | Size | What changed |
 |---|---|---|
 | [`nvidia/Gemma-4-31B-IT-NVFP4`](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4) | 32.63 GB | starting point |
