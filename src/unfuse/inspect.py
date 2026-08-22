@@ -122,3 +122,180 @@ def find_index(path: str | Path) -> dict | None:
 def shards_for_prefix(index: dict, prefix: str) -> list[str]:
     """Which shard files hold tensors under `prefix`."""
     return sorted({shard for name, shard in index["weight_map"].items() if name.startswith(prefix)})
+
+
+# --------------------------------------------------------------------------
+# Quantization state
+#
+# A quantized checkpoint carries a second, parallel description of itself: which
+# modules were quantized, to what, and which were skipped. That list is the most
+# informative thing in the repo and it is easy to misread -- NVIDIA's NVFP4 build
+# of Gemma 4 31B names 63 excluded modules, and reading them carefully is what
+# reveals that every attention layer is still BF16 and only the MLPs were touched.
+#
+# Two formats exist. `quantization_config` inside config.json is the current one
+# and carries per-layer algorithms; hf_quant_config.json is the legacy file and
+# carries one global algorithm plus an exclusion list. Checkpoints in the wild use
+# either, so read both.
+# --------------------------------------------------------------------------
+
+QUANT_BITS = {"NVFP4": 4, "MXFP4": 4, "FP8": 8, "INT8": 8, "INT4": 4, "W4A16": 4}
+
+
+@dataclass(frozen=True)
+class QuantConfig:
+    algo: str | None
+    kv_cache_algo: str | None
+    group_size: int | None
+    exclude_modules: tuple[str, ...]
+    producer: str | None
+
+    def state_for(self, module: str) -> str:
+        """What happened to `module`: its algorithm, or "BF16" if it was skipped.
+
+        Patterns are globs and `*` crosses dots, so `...layers.0.self_attn*`
+        covers every projection inside that attention block.
+        """
+        from fnmatch import fnmatch
+
+        if any(fnmatch(module, pattern) for pattern in self.exclude_modules):
+            return "BF16"
+        return self.algo or "BF16"
+
+
+def read_quant_config(path: str | Path) -> QuantConfig | None:
+    """Read a checkpoint's quantization metadata, whichever format it uses."""
+    path = Path(path)
+
+    config = path / "config.json"
+    if config.exists():
+        block = json.loads(config.read_text()).get("quantization_config")
+        if block:
+            return _quant_config(block)
+
+    legacy = path / "hf_quant_config.json"
+    if legacy.exists():
+        raw = json.loads(legacy.read_text())
+        block = raw.get("quantization", raw)
+        producer = (raw.get("producer") or {}).get("name")
+        return _quant_config(block, producer)
+
+    return None
+
+
+def _scheme_name(scheme: dict | None) -> str | None:
+    """Turn a compressed-tensors `{num_bits, type}` block into a format name."""
+    if not scheme:
+        return None
+    bits, kind = scheme.get("num_bits"), scheme.get("type")
+    if kind == "float":
+        return {4: "NVFP4", 8: "FP8"}.get(bits)
+    if kind == "int":
+        return {4: "INT4", 8: "INT8"}.get(bits)
+    return None
+
+
+def _quant_config(block: dict, producer: str | None = None) -> QuantConfig:
+    """Parse either schema, including checkpoints that carry both at once.
+
+    Gemma-4-31B-IT-NVFP4 is the awkward case that motivated this: its
+    `quantization_config` mixes modelopt keys (`quant_algo`, `quant_method`) with
+    compressed-tensors keys (`config_groups`, `ignore`, `kv_cache_scheme`) in one
+    block. Reading only the modelopt half silently loses the group size and the KV
+    cache format, both of which live in the compressed-tensors half.
+    """
+    # config_groups is compressed-tensors' per-group description. Real checkpoints
+    # have used a single group so far, so take the first rather than modelling a
+    # generality nothing has needed yet.
+    groups = block.get("config_groups") or {}
+    first = next(iter(groups.values()), {}) if isinstance(groups, dict) else {}
+    weights = first.get("weights") or {}
+
+    producer_block = producer or block.get("producer")
+    if isinstance(producer_block, dict):
+        producer_block = producer_block.get("name")
+
+    algo = block.get("quant_algo") or _scheme_name(weights)
+    if algo is None and block.get("quant_method") != "compressed-tensors":
+        algo = block.get("quant_method")
+
+    return QuantConfig(
+        algo=algo,
+        kv_cache_algo=(
+            block.get("kv_cache_quant_algo") or _scheme_name(block.get("kv_cache_scheme"))
+        ),
+        group_size=block.get("group_size") or weights.get("group_size"),
+        exclude_modules=tuple(block.get("exclude_modules") or block.get("ignore") or ()),
+        producer=producer_block,
+    )
+
+
+# Suffixes that describe a quantized weight rather than being one. They must not
+# be mistaken for the module's own name when matching exclusion patterns.
+_SCALE_SUFFIXES = (
+    ".weight_scale",
+    ".weight_scale_2",
+    ".input_scale",
+    ".weight_scale_inv",
+    ".act_scale",
+    ".k_scale",
+    ".v_scale",
+)
+
+
+def module_of(tensor_name: str) -> str:
+    """The module a tensor belongs to: `...q_proj.weight` -> `...q_proj`."""
+    for suffix in _SCALE_SUFFIXES:
+        if tensor_name.endswith(suffix):
+            return tensor_name[: -len(suffix)]
+    return tensor_name.rsplit(".", 1)[0] if "." in tensor_name else tensor_name
+
+
+# Storage dtypes that cannot be holding quantized weights, whatever the config says.
+_UNQUANTIZED_DTYPES = {"BF16", "F16", "F32", "F64"}
+
+_STORED_AS = {"F8_E4M3": "FP8", "F8_E5M2": "FP8"}
+
+
+def observed_state(tensor: TensorInfo, qc: QuantConfig) -> str:
+    """What a tensor's dtype says happened to it, which beats what the config claims.
+
+    The two disagree more often than they should. A tied `lm_head` is the common
+    case: the exclusion list names `lm_head`, but the tensor is stored under
+    `embed_tokens`, so matching on the name alone reports it as quantized while
+    the header plainly says BF16. Trusting the config there would overstate how
+    much of the checkpoint was actually touched.
+
+    Scale tensors are metadata about a quantized weight rather than weights, so
+    they take their module's state instead of voting on their own.
+    """
+    if tensor.dtype in _STORED_AS:
+        return _STORED_AS[tensor.dtype]
+
+    module = module_of(tensor.name)
+    claimed = qc.state_for(module)
+    is_scale = tensor.name != module and not tensor.name.endswith(".weight")
+    if tensor.dtype in _UNQUANTIZED_DTYPES and not is_scale:
+        return "BF16"
+    return claimed
+
+
+def quant_report(inv: Inventory, qc: QuantConfig, depth: int = 2) -> dict[str, dict]:
+    """Group tensors and report each group's parameters, bytes and quant state.
+
+    Bytes and states both come from the safetensors headers, so this measures what
+    is on disk rather than what the config claims -- see `observed_state`.
+    """
+    groups: dict[str, dict] = {}
+    for tensor in inv.tensors:
+        parts = ["*" if p.isdigit() else p for p in tensor.name.split(".")[:depth]]
+        key = ".".join(parts)
+        entry = groups.setdefault(key, {"tensors": 0, "params": 0, "nbytes": 0, "states": set()})
+        entry["tensors"] += 1
+        entry["params"] += tensor.params
+        entry["nbytes"] += tensor.nbytes
+        entry["states"].add(observed_state(tensor, qc))
+
+    for entry in groups.values():
+        entry["state"] = "+".join(sorted(entry.pop("states")))
+    return dict(sorted(groups.items()))
