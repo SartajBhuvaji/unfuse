@@ -620,11 +620,21 @@ regenerated without a large GPU. `tools/check_notebooks.py` fails CI if they are
 ### 12.4 Observed state beats declared state
 Where a config and a tensor header disagree, the header wins. The config is a claim.
 
-### 12.5 Notebook file structure
+### 12.5 Metadata describes a model, not a directory
+Loose files (`README.md`, quantizer dumps) and inherited config fields describe the model
+they were written for. Copy them forward and the checkpoint documents something that no
+longer exists. Promoting a nested config block to top level also exposes its fields to
+validators that never saw them before.
+
+*Why here:* both reached a published repo. A skip set handles the files; for config fields,
+the safe test is constructing the config class both ways and asserting every resolved field
+matches.
+
+### 12.6 Notebook file structure
 nbformat cells, `source` as a list of lines each ending in `\n` except the last, and
 `execution_count` as the marker that a cell actually ran.
 
-### 12.6 Project tooling
+### 12.7 Project tooling
 `ruff` (lint + format), `pytest`, `hatchling`, `pyproject.toml` extras, the `Makefile`
 targets, and the CI split between fast checks and notebook validation.
 

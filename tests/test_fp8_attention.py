@@ -141,3 +141,40 @@ class TestConfigRewrite:
         (dst / "config.json").write_text(json.dumps({"corrected": True}))
         _copy_rest(src, dst)
         assert json.loads((dst / "config.json").read_text()) == {"corrected": True}
+
+
+class TestStaleMetadata:
+    """Loose files that describe the model before surgery must not travel with it.
+
+    Both of these reached a published repo before being caught: NVIDIA's README
+    describes their build, and `.quant_summary.txt` is a ModelOpt quantizer dump
+    that lists the vision tower and reports attention as unquantized. Neither is
+    true of the result.
+    """
+
+    def test_source_readme_is_not_copied(self, tmp_path):
+        src, dst = tmp_path / "src", tmp_path / "dst"
+        src.mkdir()
+        dst.mkdir()
+        (src / "README.md").write_text("# NVIDIA's model card")
+        _copy_rest(src, dst)
+        assert not (dst / "README.md").exists()
+
+    def test_quantizer_dump_is_not_copied(self, tmp_path):
+        src, dst = tmp_path / "src", tmp_path / "dst"
+        src.mkdir()
+        dst.mkdir()
+        (src / ".quant_summary.txt").write_text("model.vision_tower... disabled")
+        _copy_rest(src, dst)
+        assert not (dst / ".quant_summary.txt").exists()
+
+    def test_tokenizer_and_chat_template_still_travel(self, tmp_path):
+        # The guard must not become an excuse to drop files the model needs.
+        src, dst = tmp_path / "src", tmp_path / "dst"
+        src.mkdir()
+        dst.mkdir()
+        for name in ("tokenizer.json", "chat_template.jinja", "generation_config.json"):
+            (src / name).write_text("{}")
+        _copy_rest(src, dst)
+        for name in ("tokenizer.json", "chat_template.jinja", "generation_config.json"):
+            assert (dst / name).exists()
