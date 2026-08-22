@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 430" width="1080" height="430" role="img" aria-label="GLM-4.6V-Flash forward path. An upper vision branch runs image, patch embed, position embedding, 24 ViT blocks, downsample and merger, all enclosed in a dashed delete boundary labelled model.visual.*, 892,498,432 parameters. Its only output is a single arrow of image soft tokens descending into a masked scatter fusion point on the lower text spine. The text spine runs text tokens, embed tokens, fusion, 40 decoder layers, norm and lm head, to logits, and is entirely retained.">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#838C99"/>
+    </marker>
+    <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#B45A22"/>
+    </marker>
+    <style>
+      .t { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #14181E; }
+      .s { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #59616D; }
+      .n { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #838C99; }
+      .lab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #59616D; }
+      .cutlab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; fill: #B45A22; letter-spacing: .06em; }
+      .box { fill: #FFFFFF; stroke: #B9C1CB; stroke-width: 1.5; }
+      .keep { fill: #DCEAF0; stroke: #12586F; stroke-width: 1.5; }
+      .cut { fill: #F6E4D6; stroke: #B45A22; stroke-width: 1.5; }
+      .io { fill: none; stroke: #B9C1CB; stroke-width: 1.5; stroke-dasharray: 3 3; }
+      .op { fill: none; stroke: #838C99; stroke-width: 1.5; stroke-dasharray: 5 3; }
+      .encl { fill: none; stroke: #B45A22; stroke-width: 1.75; stroke-dasharray: 7 4; }
+      .line { stroke: #838C99; stroke-width: 1.5; fill: none; }
+      .cutline { stroke: #B45A22; stroke-width: 1.75; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1080" height="430" fill="#FFFFFF"/>
+
+  <rect class="encl" x="92" y="52" width="578" height="126" rx="4"/>
+  <text class="cutlab" x="92" y="42">model.visual.*  —  181 tensors  ·  892,498,432 params  ·  1.785 GB bf16  —  DELETE</text>
+
+  <rect class="io" x="16" y="88" width="62" height="54" rx="3"/>
+  <text class="t" x="47" y="110" text-anchor="middle">image</text>
+  <text class="n" x="47" y="126" text-anchor="middle">336²</text>
+  <line class="line" x1="78" y1="115" x2="102" y2="115" marker-end="url(#ah)"/>
+
+  <rect class="cut" x="104" y="88" width="106" height="54" rx="3"/>
+  <text class="t" x="157" y="108" text-anchor="middle">patch_embed</text>
+  <text class="s" x="157" y="123" text-anchor="middle">Conv3d 14²×2</text>
+  <text class="n" x="157" y="136" text-anchor="middle">1,807,872</text>
+  <line class="line" x1="210" y1="115" x2="228" y2="115" marker-end="url(#ah)"/>
+
+  <rect class="cut" x="230" y="88" width="88" height="54" rx="3"/>
+  <text class="t" x="274" y="108" text-anchor="middle">+ pos emb</text>
+  <text class="s" x="274" y="123" text-anchor="middle">576 × 1536</text>
+  <text class="n" x="274" y="136" text-anchor="middle">884,736</text>
+  <line class="line" x1="318" y1="115" x2="336" y2="115" marker-end="url(#ah)"/>
+
+  <rect class="cut" x="338" y="88" width="122" height="54" rx="3"/>
+  <text class="t" x="399" y="108" text-anchor="middle">24 × ViT block</text>
+  <text class="s" x="399" y="123" text-anchor="middle">1536d · 12 heads</text>
+  <text class="n" x="399" y="136" text-anchor="middle">679,550,976</text>
+  <line class="line" x1="460" y1="115" x2="478" y2="115" marker-end="url(#ah)"/>
+
+  <rect class="cut" x="480" y="88" width="94" height="54" rx="3"/>
+  <text class="t" x="527" y="108" text-anchor="middle">downsample</text>
+  <text class="s" x="527" y="123" text-anchor="middle">2×2 merge</text>
+  <text class="n" x="527" y="136" text-anchor="middle">25,169,920</text>
+  <line class="line" x1="574" y1="115" x2="592" y2="115" marker-end="url(#ah)"/>
+
+  <rect class="cut" x="594" y="88" width="72" height="54" rx="3"/>
+  <text class="t" x="630" y="108" text-anchor="middle">merger</text>
+  <text class="s" x="630" y="123" text-anchor="middle">→ 4096d</text>
+  <text class="n" x="630" y="136" text-anchor="middle">185,081,856</text>
+
+  <path class="cutline" d="M 630 178 L 630 246" marker-end="url(#ahc)"/>
+  <text class="cutlab" x="642" y="204">image soft tokens</text>
+  <text class="cutlab" x="642" y="219">4096d</text>
+
+  <rect class="io" x="16" y="252" width="62" height="54" rx="3"/>
+  <text class="t" x="47" y="274" text-anchor="middle">text</text>
+  <text class="n" x="47" y="290" text-anchor="middle">token ids</text>
+  <line class="line" x1="78" y1="279" x2="102" y2="279" marker-end="url(#ah)"/>
+
+  <rect class="keep" x="104" y="252" width="118" height="54" rx="3"/>
+  <text class="t" x="163" y="272" text-anchor="middle">embed_tokens</text>
+  <text class="s" x="163" y="287" text-anchor="middle">151552 × 4096</text>
+  <text class="n" x="163" y="300" text-anchor="middle">620,756,992</text>
+
+  <line class="line" x1="222" y1="279" x2="562" y2="279" marker-end="url(#ah)"/>
+  <text class="lab" x="392" y="271" text-anchor="middle">text embeddings bypass the vision branch entirely</text>
+
+  <rect class="op" x="564" y="252" width="132" height="54" rx="3"/>
+  <text class="t" x="630" y="274" text-anchor="middle">masked_scatter</text>
+  <text class="s" x="630" y="290" text-anchor="middle">at token 151363</text>
+  <line class="line" x1="696" y1="279" x2="724" y2="279" marker-end="url(#ah)"/>
+
+  <rect class="keep" x="726" y="252" width="122" height="54" rx="3"/>
+  <text class="t" x="787" y="272" text-anchor="middle">40 × decoder</text>
+  <text class="s" x="787" y="287" text-anchor="middle">4096d · GQA 32:2</text>
+  <text class="n" x="787" y="300" text-anchor="middle">8,158,760,960</text>
+  <line class="line" x1="848" y1="279" x2="866" y2="279" marker-end="url(#ah)"/>
+
+  <rect class="keep" x="868" y="252" width="110" height="54" rx="3"/>
+  <text class="t" x="923" y="272" text-anchor="middle">norm + lm_head</text>
+  <text class="s" x="923" y="287" text-anchor="middle">untied</text>
+  <text class="n" x="923" y="300" text-anchor="middle">620,761,088</text>
+  <line class="line" x1="978" y1="279" x2="1000" y2="279" marker-end="url(#ah)"/>
+
+  <rect class="io" x="1002" y="252" width="62" height="54" rx="3"/>
+  <text class="t" x="1033" y="282" text-anchor="middle">logits</text>
+
+  <line x1="104" y1="344" x2="978" y2="344" stroke="#12586F" stroke-width="1.75"/>
+  <line x1="104" y1="338" x2="104" y2="350" stroke="#12586F" stroke-width="1.75"/>
+  <line x1="978" y1="338" x2="978" y2="350" stroke="#12586F" stroke-width="1.75"/>
+  <text class="lab" x="541" y="366" text-anchor="middle" fill="#12586F">RETAINED — 9,400,279,040 params · 18.80 GB bf16 · 91.329%</text>
+</svg>
