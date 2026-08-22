@@ -484,6 +484,34 @@ The fix was to drop the three inert keys -- but the check that made it safe was
 constructing `Gemma4TextConfig` both ways and asserting every resolved field matched.
 Dropping keys from a config on the grounds that they "look unused" is otherwise a guess.
 
+### vLLM cannot serve Gemma 4 31B at all — and the card said it could
+
+The published model card told people to run `vllm serve --quantization modelopt`. That was
+never tested when it was written, and it does not work.
+
+vLLM 0.27.1 fails before it reaches any quantization code, reading `config.head_dim`
+globally on a model whose layers are heterogeneous:
+
+```
+AmbiguousGlobalPerLayerAttributeError: 'head_dim' is a per-layer attribute
+```
+
+The same per-layer trap as the KV cache arithmetic, in a different library.
+
+The question that mattered was whether this was ours. It is not, and proving it cost
+nothing: the failure happens on the config alone, so it reproduces without downloading a
+single weight. `AutoConfig.from_pretrained(...).head_dim` raises identically on
+`google/gemma-4-31B-it` and `nvidia/Gemma-4-31B-IT-NVFP4`. It is an upstream
+architecture-support gap, independent of quantization.
+
+The card now says so, and documents the path that does work: expand to BF16 and run that.
+Two lessons, and the second is the uncomfortable one:
+
+- When a claim can be tested against the config alone, test it against the config alone.
+- **Do not put usage instructions in a model card without running them.** That line was
+  written from what the format's documentation implies, not from anything observed, and it
+  shipped publicly before being checked.
+
 ### Environment problems that cost real time
 
 - **A `.env` edited on Windows kills every API key.** Files under `/mnt/c` get CRLF, so
