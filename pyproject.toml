@@ -1,0 +1,72 @@
+[project]
+name = "unfuse"
+version = "0.1.0"
+description = "Split multimodal models into their parts, losslessly and verifiably"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+keywords = ["llm", "multimodal", "pruning", "gguf", "glm", "gemma", "quantization"]
+
+dependencies = [
+    # 5.15.1 (2026-08-19) is the first release carrying gemma4_unified. Before it,
+    # Gemma 4 needed transformers from git; it does not any more.
+    "transformers>=5.15.1",
+    "torch>=2.4",
+    "torchvision>=0.19",       # AutoImageProcessor will not import without it
+    "accelerate>=0.34",
+    "safetensors>=0.4.5",
+    "huggingface-hub>=0.26",
+    "pillow>=10.0",
+]
+
+[project.scripts]
+unfuse = "unfuse.cli:main"
+
+# No dependency here may be a direct reference (a git URL). Build backends reject
+# them, in extras exactly as in base dependencies, because PyPI does. If a model
+# ever needs unreleased transformers, install it alongside rather than pinning it:
+#   pip install -U git+https://github.com/huggingface/transformers.git@main
+[project.optional-dependencies]
+notebook = ["jupyter>=1.0", "nbconvert>=7.0", "ipykernel>=6.0"]
+gguf = ["gguf>=0.10", "sentencepiece>=0.2", "protobuf>=4.0"]
+dev = ["ruff>=0.6", "pytest>=8.0"]
+
+[project.urls]
+"Text-only model" = "https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text"
+"Text-only GGUF" = "https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF"
+"Vision mmproj GGUF" = "https://huggingface.co/sartajbhuvaji/GLM-4.6V-Flash-mmproj-GGUF"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/unfuse"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "SIM",  # simplify
+    "RUF",
+]
+ignore = [
+    "E501",    # line length is handled by the formatter
+    "B905",    # zip(strict=) -- noisy for a 3.10 target
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
