@@ -38,7 +38,7 @@ The last two recombine into the original multimodal model under llama.cpp.
 
 ```
 src/unfuse/   the model-agnostic core: inspect a checkpoint, verify two match
-notebooks/    the two extractions, committed with their outputs
+notebooks/    one directory per model, each with its notebooks and diagram
 tools/        Lambda provisioning, GGUF build, HF upload, notebook guard
 tests/        unit tests for the core (no GPU, no network)
 docs/         findings, the guide for adding a model, published model cards
@@ -91,7 +91,8 @@ cp .env.example .env                      # LAMBDA_API_KEY, HUGGINGFACE_TOKEN
 tensors sit in one shard), 1.78 GB result:
 
 ```bash
-jupyter nbconvert --to notebook --execute --inplace glm4v/keep_vision.ipynb
+jupyter nbconvert --to notebook --execute --inplace \
+  notebooks/glm-4.6v-flash/keep_vision.ipynb
 ```
 
 **Removing vision** needs ~21 GB of VRAM for the bit-exact check, so it wants a rented
@@ -100,7 +101,8 @@ GPU:
 ```bash
 ./infra/01_launch_lambda.sh               # verifies the SSH key actually registered
 ./infra/02_setup_instance.sh              # on the instance
-jupyter nbconvert --to notebook --execute --inplace glm4v/remove_vision.ipynb
+jupyter nbconvert --to notebook --execute --inplace \
+  notebooks/glm-4.6v-flash/remove_vision.ipynb
 ./infra/03_build_gguf.sh                  # llama.cpp + quant ladder + smoke test
 HF_TOKEN=... python publishing/upload.py --repo user/Model --model-dir ... --gguf-dir ...
 ```
