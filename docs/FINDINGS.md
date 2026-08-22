@@ -196,3 +196,291 @@ blocks, FP8 E4M3 per-block scale plus FP32 per-tensor scale. **It is not a GGUF 
 Producing it needs a B200 and
 [LLM Compressor](https://docs.vllm.ai/projects/llm-compressor/en/latest/examples/quantization_w4a4_fp4/).
 Below SM100 vLLM silently degrades to weight-only and skips activation quantization.
+
+## Gemma 4 31B NVFP4 — the whole story
+
+Built and measured on a Lambda H100 PCIe on 2026-08-22. This section is deliberately
+written as a narrative rather than a result sheet, because most of the value was in the
+wrong turns.
+
+**Outcome: 32.63 GB → 23.00 GB (−29.5%)**, made of NVIDIA's NVFP4 MLPs copied verbatim,
+230 attention projections requantized to FP8, and no vision tower, retargeted onto
+`Gemma4ForCausalLM`. Generation quality is preserved.
+
+### What we set out to do, and why
+
+`nvidia/Gemma-4-31B-IT-NVFP4` advertises a 4-bit weight *and* activation format. Reading
+`hf_quant_config.json` tells a different story: 63 excluded modules, of which **60 are the
+attention blocks**, listed one layer at a time.
+
+| Component | Params | State | Size |
+|---|---|---|---|
+| MLPs (60 layers) | 20.8B | NVFP4, group 16 | 41.6 → ~11.7 GB |
+| Attention (60 layers) | 7.93B | **untouched, BF16** | 15.85 GB |
+| Embeddings (tied = `lm_head`) | 1.41B | untouched | 2.82 GB |
+| Vision tower (SigLIP, 27 layers) | ~576M | untouched | ~1.15 GB |
+
+~31.5 GB against a real 32.63 GB, so the accounting holds. Only the MLPs were quantized,
+which leaves **unquantized attention as the largest single block in the file**.
+
+Leaving it BF16 is defensible — NVFP4 quantizes activations too, and attention activations
+are the outlier-heavy ones that SmoothQuant and AWQ exist to handle. It is also a deviation
+from NVIDIA's own practice: their DeepSeek-V4 and Qwen3-Omni builds ship FP4 experts
+alongside **FP8** attention. `mtq.NVFP4_MLP_WEIGHT_ONLY_CFG` is a named recipe in ModelOpt,
+so MLP-only is a deliberate configuration rather than an oversight.
+
+Three changes followed, in this order: strip the vision tower (pure deletion, verifiable
+exactly), FP8 the attention weights (the real size win), pair the unpaired MTP drafter
+(free throughput, and an open question).
+
+### Decision: weights-only FP8, not W8A8
+
+FP8 has two independent halves with very different risk. The weight half is a pure function
+of the weights — no calibration set, no forward passes, nothing to get wrong beyond the
+scale arithmetic. The activation half needs calibration data and is exactly where
+attention's outliers cause trouble.
+
+Weights-only still takes attention from 15.85 GB to 7.93 GB and still speeds up batch-1
+decode, which is memory-bandwidth-bound rather than compute-bound. What it gives up is a
+prefill win, because BF16 activations cannot feed FP8 tensor cores.
+
+Chosen because it is the version that definitely ships, and because the headline
+measurement (drafter acceptance) wanted only one variable moving at a time. W8A8 remains a
+sensible follow-up.
+
+### Decision: modify NVIDIA's checkpoint rather than requantize from BF16
+
+The alternative was starting from `google/gemma-4-31B-it` and doing one mixed-precision
+ModelOpt run. Rejected: it needs a 62 GB download and a calibration pass, and the result is
+no longer comparable to NVIDIA's published benchmark numbers, because any accuracy delta
+could come from our calibration set rather than from the FP8 attention. Working in place
+keeps their calibrated NVFP4 MLPs bit-identical, so exactly one thing changes.
+
+### What did not work: loading the checkpoint
+
+**transformers cannot load this checkpoint at all.** `quant_method: modelopt` is not among
+the methods it supports (`fp8`, `mxfp4`, `compressed-tensors`, `quark`, and others are).
+It does not error on the unknown method. It ignores the quantization config entirely, loads
+the packed `uint8` tensors as dense weights, and dies on a shape mismatch:
+
+```
+ckpt: torch.Size([21504, 2688])  vs  model: torch.Size([21504, 5376])
+```
+
+Exactly 2× on the input dimension — which is itself the tell that NVFP4 packs two 4-bit
+values per byte, and the clue that made the unpacker straightforward to write.
+
+### The fix that unblocked everything: verify by expansion
+
+**Weight-only quantization is exactly simulatable.** An FP4 or FP8 kernel does not multiply
+in 4 or 8 bits; it dequantizes the stored weight to a wide type and multiplies against the
+activations. So a checkpoint whose weights have been round-tripped through the format
+computes bit-identical results to the real one, and accuracy can be measured on an expanded
+BF16 copy.
+
+Two consequences:
+
+- **NVFP4 accuracy work does not need Blackwell.** Only throughput does. This overturned
+  the earlier plan, which had assumed scoring required sm_100 hardware.
+- It sidesteps the missing loader entirely.
+
+What expansion does *not* simulate is NVFP4's **activation** quantization, so an expanded
+NVFP4 checkpoint is very slightly optimistic. Both sides of any comparison are expanded the
+same way, so the comparison stays fair for the weight change under test — but it is not a
+claim about end-to-end deployed accuracy.
+
+NVFP4's layout, confirmed against the real tensors:
+
+```
+weight          [out, in/2]   uint8       two e2m1 values per byte, low nibble first
+weight_scale    [out, in/16]  float8_e4m3 one per group of 16
+weight_scale_2  scalar        float32     one per tensor
+w = e2m1(nibble) * weight_scale * weight_scale_2
+```
+
+### Verifying the verifier
+
+Before trusting a single downstream number, two checks:
+
+```
+model.layers.{0,30,59}.self_attn.q_proj.weight    max|d| = 0.0000   bit-identical
+model.layers.*.mlp.gate_proj.weight               rel     = 4-10%   correct for e2m1
+weight_scale.max() * weight_scale_2 * 6 = 0.2617 == the original tensor's absmax
+```
+
+Attention was never quantized by NVIDIA, so after stripping and renaming it **must** be
+bit-identical — and is. The second identity is the cheapest possible check that a
+dequantizer is right: the largest e2m1 magnitude (6.0) times the largest block scale must
+reproduce the original range exactly. Run it before trusting anything else.
+
+### Five bugs the real checkpoint found that local tests did not
+
+1. **`*self_attn*` matches `q_norm` and `k_norm`.** An early run quantized all 120 of them.
+   They are 1-D RMSNorm scales: no size to win, and among the most precision-sensitive
+   weights in the model. Caught only because the converted count came to 350 where
+   projections should be 230. Fixed by targeting `*_proj` *and* refusing any 1-D tensor
+   structurally, since the pattern had already proven easy to get wrong.
+2. **The quantization schema is a hybrid.** `quantization_config` carries modelopt keys
+   (`quant_algo`, `quant_method`) *and* compressed-tensors keys (`config_groups`, `ignore`,
+   `kv_cache_scheme`) in one block. Reading only the modelopt half silently loses the group
+   size (nested inside `config_groups`) and the KV cache format (differently named).
+3. **Tied embeddings defeat name matching.** The exclusion list names `lm_head`, but the
+   tensor ships as `embed_tokens`, so matching on names alone reports BF16 weights as
+   quantized. The dtype in the header is the authority; the config is a claim.
+4. **Renaming a prefix invalidates the exclusion patterns.** Moving
+   `model.language_model.*` to `model.*` leaves every `ignore` entry pointing at a path that
+   no longer exists, so they match nothing and the next reader concludes attention was
+   quantized when it was not.
+5. **Patterns matched full tensor names, not modules.** Any user-supplied pattern without a
+   `.weight` suffix would silently convert nothing at all.
+
+`230`, incidentally, is not a typo for 240. Gemma 4 sets `attention_k_eq_v`, so **10 layers
+have no `v_proj`** — K and V are shared. Check the architecture before assuming a count is
+wrong.
+
+### What did not work: scoring on raw prompts
+
+The first scoring run produced clean-looking numbers that said our checkpoint **beat**
+NVIDIA's, and passed the "no worse than baseline" gate. It was entirely noise.
+
+The tell was in the generations: the BF16 **reference itself** was emitting
+`France is France is France is`. Scoring against a broken yardstick makes every number
+meaningless.
+
+The control experiment cleared the pipeline: the **untouched original** produces the
+identical degenerate output on that prompt, and through the chat template both it and our
+copy answer `Paris`. So it was never the extraction — `gemma-4-31B-it` is
+instruction-tuned, and it was being fed raw completion prompts.
+
+Scoring in the degenerate regime inflates divergence by roughly an order of magnitude and
+lets small perturbations move results in arbitrary directions, which is precisely how a
+*more* quantized checkpoint came out closer to the reference.
+
+**Decision:** `agreement` grew a `--chat` mode and a `CHAT_PROMPTS` set. `verify` kept its
+raw prompts unchanged, because an extraction must be bit-exact on *any* input, degenerate
+or not. The two bars stay separate.
+
+The general lesson is worth more than the fix: *a plausible result that favours your own
+work is the one to distrust most.*
+
+### Decision: two verification bars that share no code
+
+`verify.compare_logits` demands identical bits. Right for extraction, impossible for
+quantization — rounding every weight *is* the operation.
+
+An absolute tolerance is not a fix. Nobody can justify the threshold, and the moment one
+exists it will be tuned until the checkpoint passes. So `agreement` uses the shipped
+quantized build as the baseline.
+
+But a strict "no worse than baseline" gate is the right test only when a change is not
+supposed to cost anything. **Ours adds quantization on top of NVIDIA's**, so it cannot pass
+by construction, and reporting it as pass/fail would be rigged. `Agreement.marginal_cost`
+reports the increment instead.
+
+Measured through the chat template against the BF16 reference:
+
+| | worst top1 | worst KL |
+|---|---|---|
+| B  NVIDIA NVFP4 | 0.7826 | 1.448e-01 |
+| C  ours, +FP8 attention | 0.9130 | 1.716e-01 |
+
+C adds 1.19× the baseline's KL divergence. Its top-1 came out *higher* than B's on all six
+prompts, which should not happen for a strictly more quantized model — six prompts and ~150
+token positions is a small sample, and that pattern is the sample saying so. **Treat both
+rows as indicative and re-run on a larger prompt set before quoting them.**
+
+### Do not read KL as benchmark accuracy
+
+A KL of 0.145 looks alarming next to NVIDIA's published GPQA of 85.35% vs 85.80%, which
+*is* near-lossless. There is no contradiction: KL over a 262k vocabulary is far more
+sensitive than multiple-choice accuracy, and 9.5% relative weight error at 4 bits can leave
+benchmark scores essentially unchanged. This nearly triggered a false alarm about the
+dequantizer. Judge a quantization against another quantization, never against an absolute
+divergence.
+
+### The headline: quantizing the target costs speculative acceptance
+
+The open question. The drafter (`google/gemma-4-31B-it-assistant`, 0.47B) was trained
+against the BF16 target; quantizing the target moves its distribution away from what the
+drafter learned to predict. Speculative decoding stays **exact by construction** — the
+target verifies every drafted token and discards what it would not have produced — so this
+cannot change output quality. It changes throughput, and throughput is entirely acceptance.
+
+Measured as tokens per target forward pass, the arithmetic ceiling on speedup and a
+property of the two distributions rather than of any kernel:
+
+| target | tok/fwd | vs BF16 |
+|---|---|---|
+| R  base BF16 | 2.220 | — |
+| B  NVIDIA NVFP4 | 1.655 | −25.4% |
+| C  ours, +FP8 attention | 1.247 | −43.8% |
+
+**Monotonic in the amount of quantization**, which is what makes it credible where the
+top-1 numbers were not. A published "up to 3×" for the BF16 pairing does not transfer to a
+quantized target: NVIDIA's own build surrenders a quarter of the benefit before anyone adds
+anything.
+
+Caveats that matter:
+
+- **Ignore the wall-clock column.** The BF16 reference measured a 0.97× "speedup" —
+  speculative decoding running *slower* than plain generation — because transformers'
+  assisted-generation overhead dominates at this scale. A harness property, not a model
+  property, and exactly why tok/fwd is what gets reported.
+- Uses `assistant_model` draft-model speculation, not necessarily the native MTP path the
+  drafter ships for.
+- Four prompts, 96 new tokens each. Directionally clear, not a precise coefficient.
+
+Practical reading: if throughput is why you want speculative decoding, quantizing the
+target is not free, and the trade against 30% smaller weights is a real one to weigh.
+
+### The KV cache — and a 2× error in the first estimate
+
+The initial analysis assumed uniform layers and claimed 80.0 KB/token, 21.47 GB at full
+context, "as large as the weights". That was wrong.
+
+Gemma 4's layers are **heterogeneous**. transformers raises
+`AmbiguousGlobalPerLayerAttributeError` on a global read of `num_key_value_heads`, which is
+what surfaced the mistake — a library refusing to answer an ill-posed question:
+
+```
+ 10 x full_attention     kv_heads=4   head_dim=512   -> 40.0 KB/token
+ 50 x sliding_attention  kv_heads=16  head_dim=256   -> capped at ~0.4 GB by the window
+```
+
+The counter-intuitive part: the **sliding** layers carry four times the KV heads of the
+global ones, but their 1024-token window caps them at a fixed ~0.4 GB however long the
+context runs. Only the 10 global layers grow:
+
+```
+   32,768 tokens ->   1.75 GB
+  131,072 tokens ->   5.79 GB
+  262,144 tokens ->  11.16 GB
+```
+
+So at the full window the cache is roughly **half** the quantized weights, not equal to
+them. Worth knowing before optimising further, but it does not outrank the weight savings,
+and the stronger claim was an artifact of assuming a homogeneous model.
+
+### Environment problems that cost real time
+
+- **A `.env` edited on Windows kills every API key.** Files under `/mnt/c` get CRLF, so
+  sourcing leaves a trailing `\r` and the service reports `invalid-api-key` for a key that
+  is correct. `file .env` diagnoses it; `sed -i 's/\r$//' .env` fixes it. The launch script
+  now strips CRLF on read rather than trusting the file.
+- **`--system-site-packages` mixes apt and pip packages badly.** The venv inherited apt's
+  torchvision 0.22 while pip installed torch 2.13, so `torchvision::nms` failed to
+  register — surfacing as a completely misleading
+  `ModuleNotFoundError: Could not import module 'Gemma4Config'`. pip then *skipped*
+  installing torchvision because the apt copy "satisfied" the requirement. Then apt's scipy
+  collided with the venv's numpy. The fix was a clean venv with no system packages and
+  torch+torchvision from the same cu130 index.
+- **A shell script without a shebang runs under `/bin/sh`.** The setup script used
+  `exec > >(tee ...)`, a bash-only process substitution, so it died instantly *and left no
+  log*, because the redirect that would have recorded the error was itself the error.
+- **The registered SSH key was the wrong one.** `launch_lambda.sh` defaulted to
+  `KEY_NAME=lambda-glm`, which is the keypair Lambda silently generated for itself during
+  an earlier incident — its private half was in an API response nobody kept. The
+  `verify_key` guard caught it. Default is now `lambda-glm2`.
+
+Every one of these fails *silently or misleadingly*, which is the common thread: the error
+message pointed at the wrong layer in three of the four cases.
