@@ -176,12 +176,17 @@ python tools/dequantize.py ./ckpt ./ckpt-bf16
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 tok = AutoTokenizer.from_pretrained("./ckpt")
 model = AutoModelForCausalLM.from_pretrained("./ckpt-bf16", dtype="bfloat16", device_map="cuda")
 msgs = [{"role": "user", "content": "What is the capital of France? Answer in one word."}]
 text = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
-print(tok.decode(model.generate(**tok(text, return_tensors="pt").to("cuda"),
-                                max_new_tokens=8)[0], skip_special_tokens=True))
+print(
+    tok.decode(
+        model.generate(**tok(text, return_tensors="pt").to("cuda"), max_new_tokens=8)[0],
+        skip_special_tokens=True,
+    )
+)
 ```
 
 This round trip is verified: downloaded fresh from this repo on a clean machine, expanded,
