@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Only the dev extras. The runtime dependency is transformers from git,
+      # which is a 400 MB install and is not needed by anything CI runs -- the
+      # tested core reads safetensors headers and compares numbers, nothing more.
+      - name: Install
+        run: |
+          pip install ruff pytest safetensors
+          pip install -e . --no-deps
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Format
+        run: ruff format --check .
+
+      - name: Tests
+        run: pytest -q
+
+      - name: CLI is wired up
+        run: unfuse inspect --help
+
+  notebooks:
+    name: Notebooks keep their evidence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The notebooks are the record of the bit-exact results. Reproducing them
+      # needs a 40 GB GPU and a 20 GB download, so CI cannot re-run them. What it
+      # can do is refuse a commit that strips the outputs or breaks the JSON,
+      # which is the realistic way that record gets lost.
+      - name: Validate structure and outputs
+        run: python tools/check_notebooks.py
