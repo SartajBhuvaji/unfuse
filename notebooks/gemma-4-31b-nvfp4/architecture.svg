@@ -1,103 +1,116 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 620" width="940" height="620" font-family="ui-sans-serif,-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
-  <style>
-    .t   { fill: #6b7280; font-size: 12px; }
-    .lbl { fill: #374151; font-size: 13px; font-weight: 600; }
-    .hd  { fill: #111827; font-size: 15px; font-weight: 700; }
-    .sm  { fill: #6b7280; font-size: 11px; }
-    .mono{ font-family: ui-monospace,SFMono-Regular,Menlo,monospace; font-size: 11px; fill: #6b7280; }
-    @media (prefers-color-scheme: dark) {
-      .t,.sm,.mono { fill: #9ca3af; } .lbl { fill: #d1d5db; } .hd { fill: #f3f4f6; }
-    }
-    .box  { fill: none; stroke: #9ca3af; stroke-width: 1.5; rx: 6; }
-    .fp4  { fill: #3b82f6; fill-opacity: .16; stroke: #3b82f6; stroke-width: 1.5; }
-    .fp8  { fill: #10b981; fill-opacity: .16; stroke: #10b981; stroke-width: 1.5; }
-    .bf16 { fill: #f59e0b; fill-opacity: .14; stroke: #f59e0b; stroke-width: 1.5; }
-    .gone { fill: #ef4444; fill-opacity: .10; stroke: #ef4444; stroke-width: 1.5; stroke-dasharray: 5 3; }
-    .arr  { stroke: #9ca3af; stroke-width: 1.4; fill: none; marker-end: url(#a); }
-  </style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 470" width="1080" height="470" role="img" aria-label="Gemma 4 31B NVFP4 forward path. An upper vision branch runs image, patch embedder, 27 SigLIP blocks and a vision projection, all enclosed in a dashed delete boundary labelled model.vision_tower and model.embed_vision, 575,743,536 parameters, 1.15 gigabytes. Its only output is a single arrow of image soft tokens descending into a scatter fusion point on the lower text spine. The text spine runs text tokens, tied embed tokens, fusion, 60 decoder layers, norm and a tied lm head, to logits. Inside each decoder layer the self attention projections are requantized from bfloat16 to FP8 while the MLPs stay in NVIDIA's NVFP4. The result is 23.00 gigabytes, down from 32.63.">
   <defs>
-    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0 0 L10 5 L0 10 z" fill="#9ca3af"/>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#838C99"/>
     </marker>
+    <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#B45A22"/>
+    </marker>
+    <style>
+      .t { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #14181E; }
+      .s { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #59616D; }
+      .n { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #838C99; }
+      .lab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #59616D; }
+      .cutlab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; fill: #B45A22; letter-spacing: .06em; }
+      .keeplab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; fill: #12586F; letter-spacing: .06em; }
+      .box { fill: #FFFFFF; stroke: #B9C1CB; stroke-width: 1.5; }
+      .keep { fill: #DCEAF0; stroke: #12586F; stroke-width: 1.5; }
+      .cut { fill: #F6E4D6; stroke: #B45A22; stroke-width: 1.5; }
+      .fp8 { fill: #DFEEE4; stroke: #2E7D5B; stroke-width: 1.5; }
+      .nvfp4 { fill: #E7E4F2; stroke: #5B4B9E; stroke-width: 1.5; }
+      .io { fill: none; stroke: #B9C1CB; stroke-width: 1.5; stroke-dasharray: 3 3; }
+      .op { fill: none; stroke: #838C99; stroke-width: 1.5; stroke-dasharray: 5 3; }
+      .encl { fill: none; stroke: #B45A22; stroke-width: 1.75; stroke-dasharray: 7 4; }
+      .line { stroke: #838C99; stroke-width: 1.5; fill: none; }
+      .cutline { stroke: #B45A22; stroke-width: 1.75; fill: none; }
+    </style>
   </defs>
 
-  <text class="hd" fill="#111827" font-size="15" font-weight="700" x="24" y="30">Gemma 4 31B — what NVIDIA quantized, and what we changed</text>
-  <text class="sm" fill="#6b7280" font-size="11" x="24" y="50">30.7B parameters · 60 layers · 5 sliding : 1 global · 262K context · tied embeddings</text>
+  <rect x="0" y="0" width="1080" height="470" fill="#FFFFFF"/>
 
-  <!-- legend -->
-  <g transform="translate(24,68)">
-    <rect class="fp4" fill="#3b82f6" fill-opacity="0.16" stroke="#3b82f6" stroke-width="1.5"  x="0"   y="0" width="13" height="13" rx="3"/><text class="sm" fill="#6b7280" font-size="11" x="19"  y="11">NVFP4 (W4A4)</text>
-    <rect class="bf16" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-width="1.5" x="120" y="0" width="13" height="13" rx="3"/><text class="sm" fill="#6b7280" font-size="11" x="139" y="11">BF16 — untouched by NVIDIA</text>
-    <rect class="fp8" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="1.5"  x="310" y="0" width="13" height="13" rx="3"/><text class="sm" fill="#6b7280" font-size="11" x="329" y="11">FP8 — our change</text>
-    <rect class="gone" fill="#ef4444" fill-opacity="0.10" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" x="450" y="0" width="13" height="13" rx="3"/><text class="sm" fill="#6b7280" font-size="11" x="469" y="11">removed</text>
-  </g>
+  <!-- vision branch, deleted -->
+  <rect class="encl" x="92" y="52" width="560" height="126" rx="4"/>
+  <text class="cutlab" x="92" y="42">model.vision_tower.*  +  model.embed_vision.*  —  356 tensors  ·  575,743,536 params  ·  1.15 GB bf16  —  DELETE</text>
 
-  <!-- vision path -->
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="24" y="128">Vision path</text>
-  <rect class="gone" fill="#ef4444" fill-opacity="0.10" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" x="24" y="140" width="200" height="60" rx="6"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="36" y="163">SigLIP tower</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="36" y="181">27 layers · ~576M · 1.15 GB</text>
+  <rect class="io" x="16" y="88" width="62" height="54" rx="3"/>
+  <text class="t" x="47" y="110" text-anchor="middle">image</text>
+  <text class="n" x="47" y="126" text-anchor="middle">896²</text>
+  <line class="line" x1="78" y1="115" x2="102" y2="115" marker-end="url(#ah)"/>
 
-  <rect class="gone" fill="#ef4444" fill-opacity="0.10" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" x="24" y="212" width="200" height="52" rx="6"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="36" y="233">embed_vision</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="36" y="250">280 soft tokens / image</text>
-  <text class="sm" fill="#6b7280" font-size="11" x="24" y="288">Excluded from NVFP4, so still</text>
-  <text class="sm" fill="#6b7280" font-size="11" x="24" y="304">BF16 — and deletable as-is.</text>
+  <rect class="cut" x="104" y="88" width="118" height="54" rx="3"/>
+  <text class="t" x="163" y="108" text-anchor="middle">patch_embedder</text>
+  <text class="s" x="163" y="123" text-anchor="middle">patch 16</text>
+  <text class="n" x="163" y="136" text-anchor="middle">24,477,696</text>
+  <line class="line" x1="222" y1="115" x2="240" y2="115" marker-end="url(#ah)"/>
 
-  <path class="arr" fill="none" stroke="#9ca3af" stroke-width="1.4" d="M232 190 L286 190"/>
+  <rect class="cut" x="242" y="88" width="146" height="54" rx="3"/>
+  <text class="t" x="315" y="108" text-anchor="middle">27 × SigLIP block</text>
+  <text class="s" x="315" y="123" text-anchor="middle">1152d · 16 heads</text>
+  <text class="n" x="315" y="136" text-anchor="middle">545,070,384</text>
+  <line class="line" x1="388" y1="115" x2="406" y2="115" marker-end="url(#ah)"/>
 
-  <!-- language model stack -->
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="300" y="128">Language model — 60 layers</text>
-  <rect class="box" fill="none" stroke="#9ca3af" stroke-width="1.5" x="300" y="140" width="340" height="230"/>
+  <rect class="cut" x="408" y="88" width="130" height="54" rx="3"/>
+  <text class="t" x="473" y="108" text-anchor="middle">embed_vision</text>
+  <text class="s" x="473" y="123" text-anchor="middle">→ 5376d</text>
+  <text class="n" x="473" y="136" text-anchor="middle">6,193,152</text>
+  <line class="line" x1="538" y1="115" x2="556" y2="115" marker-end="url(#ah)"/>
 
-  <rect class="bf16" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-width="1.5" x="316" y="160" width="150" height="54" rx="6"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="328" y="181">self_attn</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="328" y="199">7.93B · 15.85 GB</text>
+  <rect class="cut" x="558" y="88" width="86" height="54" rx="3"/>
+  <text class="t" x="601" y="108" text-anchor="middle">std norm</text>
+  <text class="s" x="601" y="123" text-anchor="middle">scale + bias</text>
+  <text class="n" x="601" y="136" text-anchor="middle">2,304</text>
 
-  <text class="t" fill="#6b7280" font-size="12" x="478" y="184">→</text>
-  <rect class="fp8" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-width="1.5" x="496" y="160" width="128" height="54" rx="6"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="508" y="181">FP8 weights</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="508" y="199">230 projections</text>
+  <!-- the single edge into the text spine -->
+  <path class="cutline" d="M 601 178 L 601 300" marker-end="url(#ahc)"/>
+  <text class="cutlab" x="612" y="230">image soft tokens</text>
+  <text class="n" x="612" y="245" fill="#B45A22">280 per image · 5376d</text>
 
-  <rect class="fp4" fill="#3b82f6" fill-opacity="0.16" stroke="#3b82f6" stroke-width="1.5" x="316" y="232" width="308" height="54" rx="6"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="328" y="253">mlp</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="328" y="271">20.8B · 41.6 GB → 11.7 GB   (all NVIDIA quantized)</text>
+  <!-- text spine -->
+  <rect class="io" x="16" y="306" width="62" height="54" rx="3"/>
+  <text class="t" x="47" y="328" text-anchor="middle">text</text>
+  <text class="n" x="47" y="344" text-anchor="middle">token ids</text>
+  <line class="line" x1="78" y1="333" x2="102" y2="333" marker-end="url(#ah)"/>
 
-  <rect class="box" fill="none" stroke="#9ca3af" stroke-width="1.5" x="316" y="304" width="308" height="46"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="328" y="323">KV cache — FP8</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="328" y="340">10 global · kv=4 · hd=512 · 40.0 KB/tok</text>
+  <rect class="keep" x="104" y="306" width="140" height="54" rx="3"/>
+  <text class="t" x="174" y="326" text-anchor="middle">embed_tokens</text>
+  <text class="s" x="174" y="341" text-anchor="middle">262144 × 5376 · tied</text>
+  <text class="n" x="174" y="354" text-anchor="middle">1,409,286,144</text>
+  <line class="line" x1="244" y1="333" x2="540" y2="333" marker-end="url(#ah)"/>
+  <text class="lab" x="392" y="327" text-anchor="middle">text embeddings bypass the vision branch entirely</text>
 
-  <text class="sm" fill="#6b7280" font-size="11" x="300" y="392">60 attention blocks appear one-by-one in the exclusion</text>
-  <text class="sm" fill="#6b7280" font-size="11" x="300" y="408">list — 60 of its 63 entries. None were quantized.</text>
+  <rect class="op" x="542" y="306" width="118" height="54" rx="3"/>
+  <text class="t" x="601" y="330" text-anchor="middle">scatter</text>
+  <text class="n" x="601" y="346" text-anchor="middle">at image tokens</text>
+  <line class="line" x1="660" y1="333" x2="686" y2="333" marker-end="url(#ah)"/>
 
-  <!-- embeddings -->
-  <rect class="bf16" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-width="1.5" x="680" y="160" width="230" height="66" rx="6"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="692" y="182">embed_tokens = lm_head</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="692" y="200">262,144 × 5,376 · 1.41B</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="692" y="216">2.82 GB · tied, excluded</text>
+  <!-- decoder, split by what happened to each half -->
+  <rect class="box" x="688" y="288" width="180" height="90" rx="3"/>
+  <text class="t" x="778" y="306" text-anchor="middle">60 × decoder</text>
+  <text class="n" x="778" y="319" text-anchor="middle">5376d · 5 sliding : 1 global</text>
 
-  <!-- drafter -->
-  <rect class="box" fill="none" stroke="#9ca3af" stroke-width="1.5" x="680" y="248" width="230" height="66"/>
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="692" y="270">MTP drafter</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="692" y="288">gemma-4-31B-it-assistant</text>
-  <text class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" x="692" y="304">~0.5B BF16 · exact, unpaired</text>
-  <path class="arr" fill="none" stroke="#9ca3af" stroke-width="1.4" d="M794 246 L794 232"/>
+  <rect class="fp8" x="698" y="326" width="80" height="42" rx="3"/>
+  <text class="s" x="738" y="341" text-anchor="middle" fill="#2E7D5B">self_attn</text>
+  <text class="n" x="738" y="353" text-anchor="middle" fill="#2E7D5B">230 proj</text>
+  <text class="n" x="738" y="364" text-anchor="middle" fill="#2E7D5B">→ FP8</text>
 
-  <!-- totals -->
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="24" y="462">Checkpoint size</text>
-  <g class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" transform="translate(24,482)">
-    <text x="0"   y="0">nvidia NVFP4</text><text x="180" y="0">32.63 GB</text>
-    <text x="0"   y="20">− vision tower</text><text x="180" y="20">31.48 GB</text>
-    <text x="0"   y="40">− FP8 attention</text><text x="180" y="40">23.00 GB  −29.5%</text>
-  </g>
+  <rect class="nvfp4" x="782" y="326" width="76" height="42" rx="3"/>
+  <text class="s" x="820" y="341" text-anchor="middle" fill="#5B4B9E">mlp</text>
+  <text class="n" x="820" y="353" text-anchor="middle" fill="#5B4B9E">180 tensors</text>
+  <text class="n" x="820" y="364" text-anchor="middle" fill="#5B4B9E">NVFP4</text>
 
-  <text class="lbl" fill="#374151" font-size="13" font-weight="600" x="300" y="462">KV cache, measured</text>
-  <g class="mono" fill="#6b7280" font-size="11" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" transform="translate(300,482)">
-    <text x="0" y="0">Layers are heterogeneous — not uniform:</text>
-    <text x="0" y="20">  32,768 tok  →   1.75 GB</text>
-    <text x="0" y="40">131,072 tok  →   5.79 GB</text>
-    <text x="0" y="60">262,144 tok  →  11.16 GB  ≈ half the weights</text>
-  </g>
-  <text class="sm" fill="#6b7280" font-size="11" x="300" y="566">50 sliding layers carry 4x the KV heads but are</text>
-  <text class="sm" fill="#6b7280" font-size="11" x="300" y="582">capped at ~0.4 GB by the 1024-token window.</text>
+  <line class="line" x1="868" y1="333" x2="886" y2="333" marker-end="url(#ah)"/>
+
+  <rect class="keep" x="888" y="306" width="118" height="54" rx="3"/>
+  <text class="t" x="947" y="326" text-anchor="middle">norm + lm_head</text>
+  <text class="s" x="947" y="341" text-anchor="middle">tied to embeddings</text>
+  <text class="n" x="947" y="354" text-anchor="middle">shared</text>
+  <line class="line" x1="1006" y1="333" x2="1024" y2="333" marker-end="url(#ah)"/>
+
+  <rect class="io" x="1026" y="306" width="46" height="54" rx="3"/>
+  <text class="t" x="1049" y="336" text-anchor="middle">logits</text>
+
+  <!-- result bracket -->
+  <path class="line" d="M 104 396 L 104 404 L 1006 404 L 1006 396" stroke="#12586F"/>
+  <text class="keeplab" x="555" y="424" text-anchor="middle">RESULT — 23.00 GB on disk · was 32.63 GB · 29.5% smaller</text>
+  <text class="lab" x="555" y="442" text-anchor="middle">MLP weights byte-identical to NVIDIA's · attention verified bit-identical before requantizing</text>
 </svg>

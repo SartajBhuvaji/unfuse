@@ -22,6 +22,8 @@ attention projections requantized to FP8, and the vision tower removed.
 
 ![architecture](architecture.svg)
 
+![composition](composition.svg)
+
 | | Size | What changed |
 |---|---|---|
 | [`nvidia/Gemma-4-31B-IT-NVFP4`](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4) | 32.63 GB | starting point |
@@ -136,11 +138,58 @@ prompts. Directionally clear, not a precise coefficient.
   the comparison are equally optimistic.
 - The KV cache at the full 262k window is ~11 GB, roughly half these weights.
 
-## Usage
+## Usage — read this before trying to serve it
+
+**vLLM 0.27.1 cannot load Gemma 4 31B at all.** Not this checkpoint specifically — *any*
+Gemma 4 31B. It reads `config.head_dim` globally, and Gemma 4's layers are heterogeneous,
+so transformers raises:
+
+```
+AmbiguousGlobalPerLayerAttributeError: 'head_dim' is a per-layer attribute
+```
+
+Reproduced identically against `google/gemma-4-31B-it` and
+`nvidia/Gemma-4-31B-IT-NVFP4`, so it is an upstream architecture-support gap, independent
+of quantization. When vLLM adds Gemma 4 support, `--quantization modelopt` is the expected
+path:
 
 ```bash
+# not yet functional as of vLLM 0.27.1
 vllm serve sartajbhuvaji/Gemma-4-31B-IT-NVFP4-FP8attn-text --quantization modelopt
 ```
+
+**transformers cannot load it either**, for a different reason — `quant_method: modelopt`
+is unsupported, so it ignores the quantization config, loads the packed `uint8` tensors as
+dense weights, and fails on a 2× shape mismatch.
+
+### What does work today
+
+Expand the weights back to BF16 and run that. For weight-only quantization this is exact,
+not an approximation — an FP4 or FP8 kernel dequantizes before multiplying against BF16
+activations anyway:
+
+```bash
+git clone https://github.com/SartajBhuvaji/unfuse && cd unfuse
+hf download sartajbhuvaji/Gemma-4-31B-IT-NVFP4-FP8attn-text --local-dir ./ckpt
+python tools/dequantize.py ./ckpt ./ckpt-bf16
+```
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+tok = AutoTokenizer.from_pretrained("./ckpt")
+model = AutoModelForCausalLM.from_pretrained("./ckpt-bf16", dtype="bfloat16", device_map="cuda")
+msgs = [{"role": "user", "content": "What is the capital of France? Answer in one word."}]
+text = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+print(tok.decode(model.generate(**tok(text, return_tensors="pt").to("cuda"),
+                                max_new_tokens=8)[0], skip_special_tokens=True))
+```
+
+This round trip is verified: downloaded fresh from this repo on a clean machine, expanded,
+and asked five questions — `Paris`, `408` with correct working, a correct German
+translation, a correct Python one-liner, and Rayleigh scattering.
+
+Note that expanding gives up the size saving; it is how you *run* the model today, not how
+you store it.
 
 ## Credit
 
