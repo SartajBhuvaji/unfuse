@@ -61,7 +61,8 @@ def check(path: Path) -> list[str]:
 
 
 def main() -> int:
-    notebooks = sorted(NOTEBOOKS.glob("*.ipynb"))
+    # rglob, not glob: notebooks live one directory per model.
+    notebooks = sorted(NOTEBOOKS.rglob("*.ipynb"))
     if not notebooks:
         print(f"no notebooks found under {NOTEBOOKS}")
         return 1
@@ -73,11 +74,13 @@ def main() -> int:
         outputs = sum(len(c.get("outputs", [])) for c in nb["cells"])
         if problems:
             failed = True
-            print(f"FAIL {path.name}")
+            print(f"FAIL {path.relative_to(NOTEBOOKS)}")
             for p in problems:
                 print(f"       {p}")
         else:
-            print(f"ok   {path.name}  ({len(nb['cells'])} cells, {outputs} outputs)")
+            print(
+                f"ok   {path.relative_to(NOTEBOOKS)}  ({len(nb['cells'])} cells, {outputs} outputs)"
+            )
     return 1 if failed else 0
 
 
