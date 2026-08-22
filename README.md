@@ -16,11 +16,31 @@ extraction here is verified against the original before it ships.
 |---|---|---|---|---|---|
 | [GLM-4.6V-Flash](https://huggingface.co/zai-org/GLM-4.6V-Flash) | 24-layer ViT + merger | 892,498,432 (8.671%) | done | done | bit-exact, published |
 | [Gemma 4 12B](https://huggingface.co/google/gemma-4-12B) | none — 52.4M input embedder | 52,379,904 (0.438%) | scripted | n/a | encoder-free; not worth splitting for size |
+| [Gemma 4 31B NVFP4](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4) | 27-layer SigLIP | ~576M (1.9%) | scripted | — | quantized; the split is the small half of the work |
 
 Gemma 4 is in the table as a warning, not a target. It has no vision *tower* at all — Google
 replaced the encoder with a single matmul, so there is almost nothing to remove and
 quantization is a far bigger lever. Worth checking before you assume a model is worth
 splitting. Details in `docs/FINDINGS.md`.
+
+## Splitting is not always the lever
+
+`nvidia/Gemma-4-31B-IT-NVFP4` is in the table because it makes the point. Its vision tower
+is real and removable, but at ~1.15 GB it is the *smallest* of three obvious wins. Reading
+the checkpoint's own quantization metadata shows why:
+
+```bash
+unfuse inspect ~/models/gemma-4-31b-nvfp4 --quant
+```
+
+NVFP4 is a 4-bit weight and activation format, but 63 modules are excluded — and 60 of
+them are the attention blocks, listed one layer at a time. Only the MLPs were quantized,
+which leaves **unquantized attention as the largest single block in a 32.67 GB file**.
+Removing the encoder saves 1.15 GB; taking attention to FP8 saves 7.9 GB.
+
+So that model gets treated as a quantization problem with a split attached, rather than
+the reverse. `notebooks/gemma-4-31b-nvfp4/` does all three — vision removal, FP8
+attention, and pairing the unpaired MTP drafter — and measures each separately.
 
 Adding a model means answering three questions: where does the encoder live in the tensor
 names, does a standalone class exist for the half you want, and what does the config need
@@ -38,11 +58,13 @@ The last two recombine into the original multimodal model under llama.cpp.
 ## Layout
 
 ```
-src/unfuse/   the model-agnostic core: inspect a checkpoint, verify two match
+src/unfuse/   the model-agnostic core: inspect a checkpoint, verify two match, score a
+              quantized one against the build already shipping
 notebooks/    one directory per model, each with its notebooks and diagram
-tools/        Lambda provisioning, GGUF build, HF upload, notebook guard
+tools/        Lambda provisioning, GGUF build, HF upload, notebook guard, FP8
+              requantization, speculative-decoding benchmark
 tests/        unit tests for the core (no GPU, no network)
-docs/         findings, the guide for adding a model, published model cards
+docs/         findings, a study guide, the guide for adding a model, model cards
 ```
 
 ```bash
@@ -55,9 +77,36 @@ notebooks, because every model needs different treatment and hiding that behind 
 function would produce a registry of special cases pretending to be an abstraction.
 See `docs/ADDING-A-MODEL.md`.
 
+New to any of this? `docs/STUDY_GUIDE.md` lists every topic the repo assumes — number
+formats, NVFP4's two-level scaling, compressed-tensors, KV cache arithmetic, speculative
+decoding, and the verification methodology — with what each is, why it matters here, and
+where it shows up. `docs/FINDINGS.md` is the narrative of what was tried, what failed, and
+what the failures taught.
+
 Both notebooks are committed **with their execution outputs** — those outputs are the
 evidence for the bit-exact claim below and cannot be reproduced without a GPU and a
 20 GB download. Don't strip them.
+
+## Two bars, deliberately not shared
+
+Extraction does no arithmetic on the weights, so it either reproduces the original bits or
+it is broken. `unfuse verify` holds that line and a test pins it there.
+
+Quantization is the opposite case: it rounds every weight it touches, so a non-zero
+difference is not a bug, it is the operation. `unfuse agreement` scores that — but not
+against a threshold, because no one can justify the number and any threshold that exists
+will eventually be tuned until the checkpoint passes.
+
+The bar is comparative instead. Whoever shipped the quantized build published benchmark
+scores with it, so they have already decided how much damage is acceptable. Measure their
+checkpoint against the original, measure yours the same way, require yours to be no worse:
+
+```bash
+unfuse agreement google/gemma-4-31B-it ~/models/mine --baseline nvidia/Gemma-4-31B-IT-NVFP4
+```
+
+The two modules share no code, and merging them would break both: the exact bar would
+reject every correct quantization, and the tolerant bar would let a broken extraction ship.
 
 ## The headline result
 
@@ -122,6 +171,9 @@ Each of these cost real time. They are documented at their point of use.
   A `gguf/` subfolder still indexes metadata but renders no widget.
 - **`total_size` in `model.safetensors.index.json` is not always bytes.** For
   GLM-4.6V-Flash it reports the parameter count. Verify against real file sizes.
+- **A `.env` edited on Windows silently breaks every API key.** WSL reads the CRLF, so
+  the key carries a trailing `\r` and the service reports `invalid-api-key` for a key
+  that is correct. `file .env` says `CRLF line terminators`; `sed -i 's/\r$//' .env` fixes it.
 - **Only Gemma 4 *12B* is encoder-free.** E2B/E4B/26B-A4B/31B are `model_type: gemma4`
   with conventional SigLIP towers. Check `model_type` before applying any recipe.
 
@@ -132,3 +184,6 @@ Each of these cost real time. They are documented at their point of use.
 - Run the Gemma 4 ablation — the unpublished experiment described in
   `docs/FINDINGS.md`. Those scripts are written but never executed, and live outside
   this repo until they have results worth showing.
+- Execute `notebooks/gemma-4-31b-nvfp4/`. The tools are written and tested; the notebook
+  is written but unrun, so the notebook guard fails on it by design until it has outputs.
+  Scoring needs a GPU and the throughput numbers need Blackwell specifically.
