@@ -62,7 +62,8 @@ src/unfuse/   the model-agnostic core: inspect a checkpoint, verify two match, s
               quantized one against the build already shipping
 notebooks/    one directory per model, each with its notebooks and diagram
 tools/        Lambda provisioning, GGUF build, HF upload, notebook guard, FP8
-              requantization, speculative-decoding benchmark
+              requantization, speculative-decoding benchmark, cross-engine
+              serving smoke test + benchmark
 tests/        unit tests for the core (no GPU, no network)
 docs/         findings, a study guide, the guide for adding a model, model cards
 ```
@@ -150,6 +151,17 @@ jupyter nbconvert --to notebook --execute --inplace \
 HF_TOKEN=... python tools/upload_hf.py --repo user/Model --model-dir ... --gguf-dir ...
 ```
 
+**Before publishing**, prove the checkpoint actually serves. `smoke_inference.sh` runs
+vLLM, SGLang, transformers and llama.cpp against it, checks each one returns
+known-correct answers rather than merely exiting 0, and benchmarks the two servers with
+a single shared client so their numbers are comparable:
+
+```bash
+GGUF=~/gguf/Model-Q4_K_M.gguf ./tools/smoke_inference.sh user/Model   # on the instance
+```
+
+It prints a pass/fail table and a metrics table ready to paste into a model card.
+
 ## Hard-won gotchas
 
 Each of these cost real time. They are documented at their point of use.
@@ -197,6 +209,31 @@ Each of these cost real time. They are documented at their point of use.
   `quantized_layers` keys are matched by exact dict membership with **no glob
   expansion** — `model.layers.0.self_attn*` matches nothing, you need one key per
   projection.
+- **Each engine's own benchmark tool disagrees with every other one.** `vllm bench serve`
+  and `sglang.bench_serving` sample prompts differently, warm up differently, and define
+  "duration" differently. Run against those, SGLang appeared to beat vLLM on TTFT by 3×;
+  run against one shared client over plain HTTP, vLLM won by 1.7×. Cross-engine numbers
+  are only meaningful from a single harness — `tools/bench_openai.py` is that harness.
+  Pin output length with `ignore_eos`, or a reasoning model's chattiness becomes your
+  throughput measurement.
+- **Installing a tool into a venv does not put it on `PATH`.** vLLM shells out to `ninja`
+  and dies with a bare `FileNotFoundError` surfaced three frames deep as
+  `Engine core initialization failed`. Running `$VENV/bin/vllm` does *not* add
+  `$VENV/bin` to `PATH` — only activation does — so a correctly installed `ninja` stays
+  invisible. `export PATH="$VENV/bin:$PATH"`.
+- **vllm and sglang pin different torch builds.** Installed into one venv, the second
+  silently downgrades the first. Always give them separate environments.
+- **A daemon thread holding CUDA aborts the process at exit, after everything passed.**
+  `TextIteratorStreamer` work handed to `Thread(..., daemon=True)` can still be inside
+  `generate()` when the interpreter tears down CUDA: `terminate called without an active
+  exception`, non-zero exit, every check already green and the metrics already written.
+  Non-daemon plus `join()`.
+- **The reasoning field has two names.** vLLM 0.27.1 returns thinking as
+  `message.reasoning`; SGLang returns `message.reasoning_content`. Client code that reads
+  one silently drops it on the other. Read both.
+- **llama.cpp publishes no Linux CUDA binary.** The release assets carry
+  `llama-*-bin-win-cuda-*.zip` and nothing equivalent for Linux, so a GPU build there
+  means compiling from source with `-DGGML_CUDA=ON`.
 
 ## Next
 
