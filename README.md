@@ -176,6 +176,27 @@ Each of these cost real time. They are documented at their point of use.
   that is correct. `file .env` says `CRLF line terminators`; `sed -i 's/\r$//' .env` fixes it.
 - **Only Gemma 4 *12B* is encoder-free.** E2B/E4B/26B-A4B/31B are `model_type: gemma4`
   with conventional SigLIP towers. Check `model_type` before applying any recipe.
+- **transformers 5.15.0 breaks every Gemma 4 31B on vLLM.** It made `head_dim` a
+  per-layer attribute and raises `AmbiguousGlobalPerLayerAttributeError` on a global
+  read; vLLM reads it globally. Measured: 5.5.3 through 5.14.1 return `head_dim = 256`,
+  5.15.0 and 5.15.1 raise. Pin `transformers==5.14.1` to serve. The guard is correct,
+  not a regression — Gemma 4 31B really has two head_dims, 256 on the 50 sliding layers
+  and 512 on the 10 full-attention ones, which is also why it has 230 attention
+  projections rather than 240 (the full layers share K and V, so no `v_proj`).
+- **NVFP4 does not require Blackwell.** vLLM selects `MarlinNvFp4LinearKernel` and runs
+  it from SM75 up. Blackwell provides native FP4 tensor cores; without them Marlin
+  repacks to W4A16, so the *stored* saving is not a *runtime* saving — a 23 GB NVFP4
+  checkpoint OOM'd a 40 GB A100. Separately, the FP8 KV cache needs SM89+, so on older
+  cards pass `--kv-cache-dtype bfloat16`.
+- **vLLM's ModelOpt FP8 path is W8A8-only, and it fails silently.**
+  `ModelOptFp8LinearMethod` registers `input_scale` as required and calls
+  `layer.input_scale.max()`. A weight-only FP8 (W8A16) checkpoint has no `input_scale`,
+  but FP8 and BF16 weights have identical shapes, so the model loads, generates, and
+  emits nonsense rather than erroring. Two related traps in the same config: vLLM routes
+  to its mixed path only when `quant_algo` is exactly `MIXED_PRECISION`, and
+  `quantized_layers` keys are matched by exact dict membership with **no glob
+  expansion** — `model.layers.0.self_attn*` matches nothing, you need one key per
+  projection.
 
 ## Next
 
@@ -184,6 +205,10 @@ Each of these cost real time. They are documented at their point of use.
 - Run the Gemma 4 ablation — the unpublished experiment described in
   `docs/FINDINGS.md`. Those scripts are written but never executed, and live outside
   this repo until they have results worth showing.
-- Execute `notebooks/gemma-4-31b-nvfp4/`. The tools are written and tested; the notebook
-  is written but unrun, so the notebook guard fails on it by design until it has outputs.
-  Scoring needs a GPU and the throughput numbers need Blackwell specifically.
+- Re-run `notebooks/gemma-4-31b-nvfp4/` if its numbers are revisited. It has been executed
+  and carries its outputs; an 80 GB card is enough, since the BF16 expansion is 61 GB and
+  NVFP4 itself runs on Ampere through Marlin.
+- Decide what to do about FP8 attention and vLLM. The W8A16 choice is the right one on
+  accuracy grounds and has no vLLM serving path, because the ModelOpt FP8 path is W8A8.
+  Either calibrate a W8A8 variant, or wait for FP8 weight-only support upstream. Until
+  then the published checkpoint runs only via `tools/dequantize.py`.

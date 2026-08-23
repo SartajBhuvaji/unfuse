@@ -14,10 +14,20 @@ about NVIDIA's build. Both sides of any comparison are expanded the same way, so
 the comparison stays fair for the weight change under test; it just is not a claim
 about end-to-end deployed accuracy. Say so when reporting it.
 
-This exists because NVFP4 executes only on Blackwell, and because transformers has
-no loader for `quant_method: modelopt` at all -- it ignores the quantization config,
-loads the packed uint8 tensors as dense weights, and fails on a shape mismatch of
-exactly 2x the input dimension. That 2x is the tell: two 4-bit values per byte.
+This exists because transformers has no loader for `quant_method: modelopt` at all --
+it ignores the quantization config, loads the packed uint8 tensors as dense weights,
+and fails on a shape mismatch of exactly 2x the input dimension. That 2x is the tell:
+two 4-bit values per byte.
+
+It is also, for now, the only way to serve a mixed NVFP4+FP8 checkpoint. vLLM's
+ModelOpt FP8 path is W8A8: it registers `input_scale` as a required parameter, so a
+weight-only FP8 tensor has nothing to load into it, and the layer computes against an
+uninitialised scale rather than failing. Expanding to BF16 sidesteps that entirely.
+
+Note that NVFP4 does *not* require Blackwell to execute -- vLLM runs it on Ampere and
+Turing through Marlin. What Blackwell provides is native FP4 tensor cores; without
+them Marlin repacks to W4A16 and the stored size saving does not translate into a
+runtime memory saving.
 
 Formats
 -------
