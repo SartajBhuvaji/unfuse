@@ -339,6 +339,15 @@ pattern referencing the old path.
 
 ---
 
+### 5.7 Heterogeneous layers, and why a global `head_dim` is a bug
+Gemma 4 31B has two head_dims: 256 on the 50 sliding layers, 512 on the 10 full-attention
+layers. Any code reading `config.head_dim` globally is wrong for most of the model.
+transformers 5.15.0 added `AmbiguousGlobalPerLayerAttributeError` to stop exactly that,
+with `allow_global_per_layer_attribute_access` as the opt-out.
+
+*Why here:* this is what makes vLLM 0.27.1 compute head size 512 for every layer, and it is
+the same per-layer trap as the KV-cache arithmetic in §5.6 wearing different clothes.
+
 ## 6. Multimodal models
 
 ### 6.1 Vision encoders
@@ -529,6 +538,26 @@ anything.
 
 ---
 
+### 8.18 Mixed-precision checkpoints, and how engines dispatch on them
+One checkpoint, different formats per module — NVFP4 experts beside FP8 attention is
+NVIDIA's house style for DeepSeek-V4 and Qwen3-Omni. Two ways to express it: the legacy
+`exclude_modules` list (one algorithm plus exceptions) and the newer `quantized_layers`
+mapping (an algorithm per module). Know which your target engine parses: vLLM 0.27.1
+understands only the former, and its `modelopt_mixed` path is gated on `quant_algo` being
+the literal string `"MIXED_PRECISION"`.
+
+*Why here:* a `quantized_layers` block that looks perfectly correct is simply not read by a
+release that predates the feature, and the model then loads under the wrong scheme.
+
+### 8.19 Reading dispatch code to find the gate
+When a config key appears ignored, the answer is in the library's dispatch, not its docs.
+Two patterns worth recognising: `override_quantization_method` comparing against a literal
+string, and prefix lookups done by exact dict membership rather than glob matching — so
+`model.layers.0.self_attn*` matches nothing where
+`model.layers.0.self_attn.q_proj` matches.
+
+*Why here:* both cost real time on this repo, and neither is documented anywhere but source.
+
 ## 9. Verification methodology
 
 ### 9.1 Logits, not text
@@ -593,6 +622,26 @@ that an early run quantized 120 norms, so nobody re-widens the pattern later.
 
 ---
 
+### 9.14 Failure modes that do not announce themselves — **read this one**
+A crash is a good outcome; it reports itself. The dangerous class is the change that passes
+every structural check and corrupts only the arithmetic. FP8 and BF16 weights have
+*identical shapes*, so a checkpoint whose scales never load will allocate, load, run, and
+emit fluent nonsense with no error anywhere. Related: transformers'
+`output_loading_info=True` for silently randomly-initialised weights (§8.4).
+
+*Why here:* prefer the loud failure when choosing between two broken states, and always
+read the generated text — never conclude "it served" from the absence of an exception.
+
+### 9.15 Ordering an investigation by cost
+Cheapest falsifying observation first. A file listing of a release tag, a config-only load,
+and a version bisection each cost seconds and no GPU; they can eliminate whole explanations
+before anything is rented. Then the control against the unmodified upstream artifact — the
+single observation that separates "their bug" from "ours" — then instrumentation at the
+point of failure, then source.
+
+*Why here:* the vLLM investigation in FINDINGS produced two confident wrong answers before
+the right one, and each could have been cheaper or avoided by this ordering.
+
 ## 10. Hardware and systems
 
 ### 10.1 CUDA compute capability
@@ -620,6 +669,15 @@ PCIe vs SXM/NVLink, disk throughput, page cache, and why a 95 GB download domina
 experiment.
 
 ---
+
+### 10.7 Emulated kernels, and stored size vs runtime size
+A format can execute on hardware without native support for it, by repacking to something
+the hardware does have — vLLM runs NVFP4 from SM75 up through Marlin's W4A16 path. The
+consequence is that a 4-bit checkpoint is not necessarily a 4-bit memory footprint at
+runtime: a 23 GB NVFP4 checkpoint exhausted a 40 GB A100. Check the quantization config's
+`get_min_capability()` rather than assuming a format implies a GPU generation.
+
+*Why here:* "NVFP4 requires Blackwell" was published twice in this repo and is false.
 
 ## 11. Engineering environment
 
@@ -746,7 +804,8 @@ Why quantized bases complicate adapter merging.
 4. §9 verification methodology — the most transferable part of this repo
 5. §7 speculative decoding
 6. §1 the maths, when a number looks wrong
-7. §10–11 when something breaks
+7. §9.14–9.15 and §8.18–8.19 — how the vLLM investigation actually went
+8. §10–11 when something breaks
 
 **Papers worth the time:** SmoothQuant and AWQ (activation outliers), GPTQ (error
 compensation), the OCP microscaling spec and NVIDIA's NVFP4 material (formats), Leviathan et

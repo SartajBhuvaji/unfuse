@@ -484,33 +484,185 @@ The fix was to drop the three inert keys -- but the check that made it safe was
 constructing `Gemma4TextConfig` both ways and asserting every resolved field matched.
 Dropping keys from a config on the grounds that they "look unused" is otherwise a guess.
 
-### vLLM cannot serve Gemma 4 31B at all — and the card said it could
+### vLLM and this checkpoint — three wrong answers before the right one
 
-The published model card told people to run `vllm serve --quantization modelopt`. That was
-never tested when it was written, and it does not work.
+The published card told people to run `vllm serve --quantization modelopt`. That was
+written from what the format's documentation implies, never run, and it does not work.
+Correcting it took two rented boxes and about $7, mostly because the first two
+explanations were both wrong and both *felt* conclusive.
 
-vLLM 0.27.1 fails before it reaches any quantization code, reading `config.head_dim`
-globally on a model whose layers are heterogeneous:
+The final answer: **the checkpoint cannot be served by vLLM at all today**, for a reason
+that has nothing to do with Gemma 4 or with vLLM's Gemma support, and everything to do with
+the weights-only FP8 decision recorded above.
+
+#### The first wrong answer: "vLLM doesn't support Gemma 4"
+
+The observed error was:
 
 ```
 AmbiguousGlobalPerLayerAttributeError: 'head_dim' is a per-layer attribute
 ```
 
-The same per-layer trap as the KV cache arithmetic, in a different library.
+and the conclusion drawn was an upstream architecture-support gap. It cost nothing to
+check and was false. A file listing of the *release tag* — no GPU, no download, one
+`curl` — shows `gemma4.py`, `gemma4_mm.py` and `gemma4_mtp.py` all present in v0.27.1, and
+`git log` dates the first of them to 2026-04-02, four months before that release.
 
-The question that mattered was whether this was ours. It is not, and proving it cost
-nothing: the failure happens on the config alone, so it reproduces without downloading a
-single weight. `AutoConfig.from_pretrained(...).head_dim` raises identically on
-`google/gemma-4-31B-it` and `nvidia/Gemma-4-31B-IT-NVFP4`. It is an upstream
-architecture-support gap, independent of quantization.
+*Lesson: before renting a GPU to explain a failure, check whether the cheapest possible
+observation already falsifies the explanation.*
 
-The card now says so, and documents the path that does work: expand to BF16 and run that.
-Two lessons, and the second is the uncomfortable one:
+#### The second wrong answer: "it's a transformers version skew"
 
-- When a claim can be tested against the config alone, test it against the config alone.
-- **Do not put usage instructions in a model card without running them.** That line was
-  written from what the format's documentation implies, not from anything observed, and it
-  shipped publicly before being checked.
+Falsifying a cause is not finding one. The next hypothesis came from two pieces of
+evidence in the error itself:
+
+- `AmbiguousGlobalPerLayerAttributeError` is raised by **transformers**, not by vLLM. The
+  exception's home library is evidence about which side changed.
+- vLLM 0.27.1 pins `transformers >= 5.5.3` with **no upper bound**, and was released
+  2026-08-11. `unfuse` requires `transformers>=5.15.1`, released 2026-08-19 — so vLLM was
+  necessarily running against a transformers newer than it was ever tested with.
+
+That is testable on the config alone, so it reproduces with no weights and no GPU. A
+version sweep bisected it exactly:
+
+```
+5.5.3, 5.8.0, 5.11.0, 5.13.1, 5.14.0, 5.14.1   head_dim = 256    global read OK
+5.15.0, 5.15.1                                  AmbiguousGlobalPerLayerAttributeError
+```
+
+Pinning `transformers==5.14.1` does clear the config error. It is a real and necessary
+finding — it affects *any* Gemma 4 31B on vLLM, Google's included — but it was not the
+blocker. It only exposed the next failure, an `AssertionError` deep in the QKV loader.
+
+*Lesson: fixing the first error tells you the second error, not that you were right.*
+
+The transformers guard is also **correct**, not a regression. Gemma 4 31B genuinely has two
+head_dims — 256 on the 50 sliding layers, 512 on the 10 full-attention layers — so a global
+`head_dim` read is meaningless. vLLM 0.27.1 reads it globally and gets 512, which is wrong
+for 50 of 60 layers.
+
+#### The control experiment that inverted the conclusion
+
+The question worth answering was not "why does this fail" but "**is this ours?**". The
+control is to run the *unmodified upstream artifact* through the identical path:
+
+```
+nvidia/Gemma-4-31B-IT-NVFP4                       ->  SERVED OK
+sartajbhuvaji/Gemma-4-31B-IT-NVFP4-FP8attn-text   ->  AssertionError in load_qkv_weight
+```
+
+Upstream serves — on an **A100**, not even Blackwell. So vLLM can serve Gemma 4 31B, the
+transformers pin is sufficient for that, and the blocker is something this build
+introduced. Everything believed up to that point was pointing the wrong way.
+
+*Lesson: a control on the unmodified upstream artifact is what separates "their bug" from
+"ours", and it is worth its cost early rather than late.*
+
+#### Instrumenting instead of guessing
+
+The assertion carried no shapes, so the loader was monkeypatched to print them at the point
+of failure rather than reasoning about what they might be:
+
+```
+shard=k   param=(16384, 2688)   loaded=(4096, 5376)
+```
+
+`2688 = 5376/2` is the tell — the same 2× that identifies FP4 packing elsewhere in this
+document. vLLM had allocated the attention parameter **NVFP4-packed** while the stored
+tensor is full-width FP8. So vLLM was applying NVFP4 to attention, which meant it had never
+read the `quantized_layers` mapping that says otherwise.
+
+Reading the dispatch source rather than the documentation found why — two exact-match gates:
+
+```python
+# ModelOptMixedPrecisionConfig.override_quantization_method
+if algo is not None and algo == "MIXED_PRECISION":
+    return "modelopt_mixed"
+```
+
+```python
+# _quantized_layer_prefix_candidates: exact dict membership, no glob expansion
+for candidate in self._quantized_layer_prefix_candidates(prefix):
+    if candidate in self.quantized_layers:
+```
+
+Two real defects in this checkpoint's config, both invisible from the outside:
+
+1. `quant_algo` is `"NVFP4"`. The mixed path is reachable only on the literal string
+   `"MIXED_PRECISION"`, so it was never entered.
+2. `quantized_layers` keys are globs — `model.layers.0.self_attn*`. The lookup is dict
+   membership, so they match nothing. Correct keys name each projection:
+   `model.layers.0.self_attn.q_proj`, 230 FP8 entries beside 180 NVFP4 MLP entries.
+
+*Lesson: when a config key appears to be ignored, read the dispatch code. The gate is
+often a literal string comparison, and no amount of plausible-looking JSON will pass it.*
+
+#### The real blocker, and why it is the worst kind
+
+With both defects patched the model **loaded, ran, and generated fluent nonsense**:
+
+```
+>>> What is the capital of France? Answer in one word.
+same dePK singleale dePK singleale dePK singleale ...
+```
+
+`ModelOptFp8LinearMethod.create_weights` registers `input_scale` as a required per-tensor
+parameter and `process_weights_after_loading` calls `layer.input_scale.max()`. vLLM's
+ModelOpt FP8 path is **W8A8**. This checkpoint is deliberately **W8A16** — FP8 weights,
+BF16 activations, chosen for exactly the accuracy reasons recorded above — so there is no
+`input_scale` to load, and the scales stay at their initialised sentinels.
+
+Nothing errors because **FP8 and BF16 weights have identical shapes**. Every shape check
+passes; only the arithmetic is wrong. This is strictly worse than the crash it replaced: a
+crash is self-reporting, and a checkpoint that serves confident garbage is not.
+
+So the decision that is right on accuracy grounds is the one with no serving path, and
+fixing defects 1 and 2 in isolation would convert a loud failure into a silent one. They
+are worth fixing for metadata correctness, but `quant_algo` should stay `NVFP4` until
+either a calibrated W8A8 variant exists or vLLM supports FP8 weight-only in the ModelOpt
+path.
+
+*Lesson: prefer the failure mode that announces itself. A dtype swap that preserves shape
+will pass every structural check a loader makes.*
+
+#### What actually runs, tested
+
+Stock released vLLM — not a nightly, because "install the nightly" is a materially
+different instruction to publish:
+
+```bash
+pip install vllm==0.27.1 'transformers==5.14.1'
+python tools/dequantize.py ./ckpt ./ckpt-bf16
+vllm serve ./ckpt-bf16
+```
+
+H100 PCIe 80 GB: engine up in 103 s, 36.5 tok/s on a batch of 5, eager. `Paris`; `408`
+with correct working; `Das Wetter ist heute kalt.`; Rayleigh scattering; `my_string[::-1]`.
+A vLLM nightly serves the same expansion at 42 s and 48.8 tok/s. Expansion costs the size
+saving — 23 GB becomes 61 GB — so it wants an 80 GB card.
+
+#### Corrections to claims this repo had already published
+
+- **"NVFP4 executes only on Blackwell (sm_100+)" is false under vLLM.** It selects
+  `MarlinNvFp4LinearKernel`, and `ModelOptMixedPrecisionConfig.get_min_capability()` is 75,
+  its comment recording validation on a T4 (SM75) and an A100 (SM80). Blackwell provides
+  native FP4 tensor cores; without them Marlin repacks to W4A16, so the *stored* saving is
+  not a *runtime* saving — a 40 GB A100 ran out of memory loading this 23 GB checkpoint.
+- **The FP8 KV cache needs SM89+**, not Blackwell. Below that vLLM refuses with
+  `FP8 KV cache is not supported by the Triton attention backend` and names the fix:
+  `--kv-cache-dtype bfloat16`.
+- **vLLM 0.27.1 has no `quantized_layers` support at all** — it parses only
+  `exclude_modules` (legacy `hf_quant_config.json`) or `ignore`. NVIDIA's build serves on it
+  because its 60 attention blocks sit in `exclude_modules`, which 0.27.1 does read. Mixed
+  precision cannot be expressed to that release in any form.
+
+#### The meta-lesson
+
+Two of the three explanations along the way were wrong, and each was confidently written
+down before the next observation demolished it. The published card asserted the first one.
+The pattern that eventually worked was: cheapest falsifying observation first, then a
+control against the unmodified upstream, then instrumentation at the point of failure, then
+the library's own source — and only then a claim, tested on the exact versions named in it.
 
 ### Environment problems that cost real time
 
