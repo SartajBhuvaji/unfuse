@@ -18,79 +18,69 @@ tags:
 
 # Qwen3.8-27B-text
 
-`Qwen/Qwen3.8-27B` with the vision stack surgically removed. **No fine-tuning, no distillation, no retraining** — the 333 vision tensors were deleted and the remaining 866 were re-keyed onto the `Qwen3_5ForCausalLM` architecture.
+`Qwen/Qwen3.8-27B` with the vision stack removed. No fine-tuning, no distillation, no retraining. The 333 vision tensors were deleted and the remaining 866 re-keyed onto `Qwen3_5ForCausalLM`.
 
-The text path is **bit-identical** to the original. Verified, not assumed — see [Verification](#verification).
+The text path is bit-identical to the original. See [Verification](#verification).
 
 |  | Original | This model |
 |---|---|---|
 | Architecture | `Qwen3_5ForConditionalGeneration` | `Qwen3_5ForCausalLM` |
-| Parameters | 27,781,427,952 | **27,320,697,856** |
-| Tensors | 1,199 | **866** |
-| Size (bf16) | 55.56 GB | **54.64 GB** |
+| Parameters | 27,781,427,952 | 27,320,697,856 |
+| Tensors | 1,199 | 866 |
+| Size (bf16) | 55.56 GB | 54.64 GB |
 | Accepts images | yes | no |
 
 ![architecture](architecture.svg)
 
-## Why this exists
+## What you get
 
-Being blunt about the tradeoff, because the headline number is small: **the vision tower is only 1.658% of this checkpoint.** Removing it saves 0.92 GB out of 55.56. If you came for a smaller model, this is not it.
+The vision tower is 1.658% of this checkpoint. Removing it saves 0.92 GB out of 55.56. If you want a smaller model, this isn't one.
 
-What you get instead, measured on one H100 80GB:
+The useful part is what that GB turns into. Measured on one H100 80GB under vLLM 0.27.1:
 
-| vLLM 0.27.1 | Original | This model | Δ |
+| | Original | This model | Δ |
 |---|---|---|---|
-| Model weights in VRAM | 51.10 GiB | **50.13 GiB** | −0.97 GiB (−1.9%) |
-| KV cache available | 18.27 GiB | **19.84 GiB** | **+1.57 GiB (+8.6%)** |
-| KV cache tokens | 277,435 | **301,465** | **+8.7%** |
-| Max concurrency @ 32k ctx | 8.47× | **9.20×** | **+8.6%** |
+| Model weights in VRAM | 51.10 GiB | 50.13 GiB | −0.97 GiB (−1.9%) |
+| KV cache available | 18.27 GiB | 19.84 GiB | +1.57 GiB (+8.6%) |
+| KV cache tokens | 277,435 | 301,465 | +8.7% |
+| Max concurrency @ 32k ctx | 8.47× | 9.20× | +8.6% |
 
-The weight saving is small and converts almost entirely into cache headroom. **+8.7% more concurrent requests on the same card** is the number worth caring about — that, plus a plain causal-LM config with no vision dependencies, no image preprocessing, and no multimodal code path to configure around.
+So: about 8.7% more concurrent requests on the same card, plus a plain causal-LM config with no vision dependencies, no image preprocessing, and no multimodal code path to work around.
 
 ## Architecture
 
-Qwen3.8-27B is a **hybrid**, not a plain transformer. Its 64 decoder layers are 48 `linear_attention` and 16 `full_attention`, one full-attention layer every fourth (`full_attention_interval: 4`), with `linear_conv_kernel_dim: 4` and `mamba_ssm_dtype: float32`.
+Qwen3.8-27B is a hybrid, not a plain transformer. Its 64 decoder layers are 48 `linear_attention` and 16 `full_attention`, one full-attention layer every fourth (`full_attention_interval: 4`), with `linear_conv_kernel_dim: 4` and `mamba_ssm_dtype: float32`. This affects serving, see [Required flags](#required-flags).
 
-This matters for serving — see [the `--max-num-seqs` trap](#the-one-flag-you-must-pass).
+Deleted: `model.visual.*`, 333 tensors, 460,730,096 params. That covers the 27-layer ViT (1152d, 16 heads, patch 16), the patch embedding, and the merger that projects 1152 → 5120.
 
-| Vision component | Tensors | Params |
-|---|---|---|
-| `model.visual.blocks.0–26` (ViT, 1152d, 16 heads, patch 16) | — | — |
-| `model.visual.patch_embed`, `merger` (1152 → 5120) | — | — |
-| **Total deleted — `model.visual.*`** | **333** | **460,730,096** |
+`deepstack_visual_indexes` in the original `vision_config` names several tower layers whose features get injected into the language model, which looks like the vision branch touches the text spine at several depths. It doesn't. No tensor carries a deepstack name, and all 1,199 tensors fall into `model.visual.`, `model.language_model.`, `lm_head` and `mtp.` with nothing left over. The indices resolve inside the visual tree and the cut is a single edge.
 
-`deepstack_visual_indexes` in the original `vision_config` names several tower layers whose features are injected into the language model, which reads like the vision branch touches the text spine at multiple depths. **It does not.** Zero tensors carry a deepstack name; all 1,199 tensors fall cleanly into `model.visual.`, `model.language_model.`, `lm_head` and `mtp.`, with nothing unaccounted for. The indices resolve inside the visual tree, and the cut is a single edge.
+### MTP head
 
-### The MTP head is retained but currently unusable
-
-The original ships a fused multi-token-prediction speculative head — `mtp.*`, 15 tensors, **424,699,392 params, 0.85 GB**. It is **kept** in this repo.
-
-It does nothing today, and you should know that going in:
+The original carries a fused multi-token-prediction speculative head: `mtp.*`, 15 tensors, 424,699,392 params, 0.85 GB. It's kept here, but nothing can currently use it.
 
 | Loader | Behaviour |
 |---|---|
-| transformers 5.15 | loads fine, silently ignores it — reports 26,895,998,464 params |
+| transformers 5.15 | loads, ignores it, reports 26,895,998,464 params |
 | vLLM 0.27.1, `model_type: qwen3_5_text` | `NotImplementedError: Unsupported speculative method: 'mtp'` |
 | vLLM 0.27.1, `model_type` forced to `qwen3_5` | resolves `Qwen3_5MTP`, then fails on a shape mismatch (5120 vs 4096) |
 
-vLLM's MTP auto-detect fires only for `model_type in ("qwen3_5", "qwen3_5_moe")`, and that path then reads the *multimodal* config layout expecting a nested `text_config`. A flattened text-only config cannot reach it either way.
+vLLM's MTP auto-detect only fires for `model_type in ("qwen3_5", "qwen3_5_moe")`, and that path reads the multimodal config layout, which expects a nested `text_config`. A flattened text-only config can't reach it either way.
 
-Kept anyway: it costs 0.85 GB, breaks nothing, and cannot be recovered later without re-downloading 55 GB. If an engine gains support, it is already here.
+Kept because it costs 0.85 GB, breaks nothing, and can't be added back later without re-downloading 55 GB.
 
 ## Verification
 
-The split drops tensors and renames the survivors. It changes no arithmetic. So this repo is verified by **byte equality on every kept tensor**, not by comparing logits on sample prompts.
-
-That is the stronger claim. Byte equality means *every* input produces identical output; matching logits means they matched on the prompts you tried.
+The split drops tensors and renames the survivors. No arithmetic changes. So it's verified by byte equality on every kept tensor rather than by comparing logits on sample prompts: identical bytes means identical output for any input, where matching logits only covers the prompts you tried.
 
 ```
 checked 866 tensors, 54.64 GB
-PASS — every kept tensor is byte-identical to its source.
+PASS - every kept tensor is byte-identical to its source.
 ```
 
-Run three times — once locally, twice on a rented H100, each from a fresh download of the original. All three produced 27,320,697,856 params / 54.64 GB and passed.
+Run three times, once locally and twice on a rented H100, each from a fresh download of the original. All three gave 27,320,697,856 params / 54.64 GB and passed.
 
-Runtime, on H100 80GB:
+Runtime check on H100 80GB:
 
 ```
 LOADED 8.9s as Qwen3_5ForCausalLM
@@ -106,88 +96,74 @@ CORRECTNESS 4/4
 
 ## Benchmarks
 
-512 input / 256 output tokens, greedy, `ignore_eos`, driven through **one shared OpenAI-compatible streaming client** so both engines are measured identically. Every row is **warmed** — one benchmark pass discarded before measuring. Full JSON and the environment block are in the [unfuse repo](https://github.com/SartajBhuvaji/unfuse).
+512 input / 256 output tokens, greedy, `ignore_eos`, both engines driven through the same OpenAI-compatible streaming client. Every row is warmed: one pass discarded before measuring. Raw JSON and the environment capture are in the [unfuse repo](https://github.com/SartajBhuvaji/unfuse).
 
-**1× NVIDIA H100 80GB HBM3** · sm_90 · driver 580.105.08 · CUDA 13.0 (nvcc 12.8) · 700 W · torch 2.7.0 · Ubuntu 24.04.4
+1× NVIDIA H100 80GB HBM3, sm_90, driver 580.105.08, CUDA 13.0 (nvcc 12.8), 700 W, torch 2.7.0, Ubuntu 24.04.4.
 
 | Engine | Model | c | Output tok/s | Per stream | TTFT p50 | TTFT p99 | TPOT |
 |---|---|---|---|---|---|---|---|
 | vLLM 0.27.1 | original | 1 | 47.4 | 47.4 | 69.0 ms | 69.3 ms | 20.42 ms |
-| vLLM 0.27.1 | **this model** | 1 | 46.6 | 46.6 | 69.0 ms | 69.2 ms | 21.28 ms |
-| vLLM 0.27.1 | original | 16 | **635.8** | 39.7 | 657.2 ms | 669.5 ms | 22.70 ms |
-| vLLM 0.27.1 | **this model** | 16 | 554.7 | 34.7 | 654.1 ms | 673.7 ms | 26.04 ms |
+| vLLM 0.27.1 | this model | 1 | 46.6 | 46.6 | 69.0 ms | 69.2 ms | 21.28 ms |
+| vLLM 0.27.1 | original | 16 | 635.8 | 39.7 | 657.2 ms | 669.5 ms | 22.70 ms |
+| vLLM 0.27.1 | this model | 16 | 554.7 | 34.7 | 654.1 ms | 673.7 ms | 26.04 ms |
 | SGLang 0.5.18 | original | 1 | 48.8 | 48.8 | 63.1 ms | 63.2 ms | 20.25 ms |
-| SGLang 0.5.18 | **this model** | 1 | 47.2 | 47.2 | 69.5 ms | 69.6 ms | 20.91 ms |
+| SGLang 0.5.18 | this model | 1 | 47.2 | 47.2 | 69.5 ms | 69.6 ms | 20.91 ms |
 | SGLang 0.5.18 | original | 16 | 225.3 | 14.1 | 10,585 ms | 15,858 ms | 21.62 ms |
-| SGLang 0.5.18 | **this model** | 16 | **628.5** | 39.3 | 714.8 ms | 719.3 ms | 22.94 ms |
+| SGLang 0.5.18 | this model | 16 | 628.5 | 39.3 | 714.8 ms | 719.3 ms | 22.94 ms |
 
-### How to read this
+### Notes on the numbers
 
-**This model is not faster, and anyone telling you otherwise is quoting one engine.** On vLLM the original is 1.15× faster at concurrency 16. On SGLang this model is 2.79× faster — but only because SGLang's memory planner allocated the original `max_running_requests=5` against this model's `16`, then starved it. That is an engine artifact, not a property of either checkpoint.
+This model is not faster than the original, and any claim that it is has been measured on one engine only. On vLLM the original wins by 1.15× at concurrency 16. On SGLang this model wins by 2.79×, but only because SGLang's memory planner gave the original `max_running_requests=5` against this model's `16` and then starved it. That's an engine artifact, not a property of either checkpoint.
 
-What survives both engines is **variance**:
+What holds across both engines is the spread:
 
 | | vLLM | SGLang | spread |
 |---|---|---|---|
-| Original @ c=16 | 635.8 tok/s | 225.3 tok/s | **2.82×** |
-| **This model @ c=16** | 554.7 tok/s | 628.5 tok/s | **1.13×** |
+| Original @ c=16 | 635.8 tok/s | 225.3 tok/s | 2.82× |
+| This model @ c=16 | 554.7 tok/s | 628.5 tok/s | 1.13× |
 
-The original's throughput swings 2.8× depending on which engine you pick. This model's swings 1.13×. **Predictability is what removing the vision tower actually buys you**, alongside the cache headroom above.
+The original's throughput moves by 2.8× depending on which engine you run. This model's moves by 1.13×. That predictability, plus the cache headroom above, is the practical case for the split.
 
-At concurrency 1 all four runs land between 46.6 and 48.8 tok/s. The same 64 text layers do the work in every case — which is the sanity check confirming the surgery did not touch the compute path.
+At concurrency 1 all four runs land between 46.6 and 48.8 tok/s, which is expected: the same 64 text layers do the work in every case.
 
-⚠️ **Warmup moves these numbers by 21%.** An unwarmed first run of this model on vLLM gave 457.9 tok/s where the warmed run gave 554.7. If you benchmark this yourself, discard a pass first, and never compare a warmed row against an unwarmed one.
+One warning if you benchmark this yourself. Warmup moves the result by 21%: an unwarmed first run of this model on vLLM gave 457.9 tok/s where the warmed run gave 554.7. Discard a pass first, and don't compare a warmed row against an unwarmed one.
 
-### Against the hardware ceiling
+### Bandwidth limit
 
-At concurrency 1 a dense model is **memory-bandwidth bound**: every weight is read from HBM
-once per token, so the bus sets a hard ceiling no engine can beat.
+At concurrency 1 a dense model is memory-bandwidth bound. Every weight is read from HBM once per token, so the bus sets a ceiling no engine can beat.
 
 | | Weights | Bytes/token ÷ 3.35 TB/s | Ceiling | Best measured | Of ceiling |
 |---|---|---|---|---|---|
-| Original | 55.56 GB | 16.59 ms | 60.3 tok/s | 48.8 tok/s | **~81%** |
-| **This model** | 54.64 GB | 16.31 ms | 61.3 tok/s | 47.2 tok/s | **~77%** |
+| Original | 55.56 GB | 16.59 ms | 60.3 tok/s | 48.8 tok/s | ~81% |
+| This model | 54.64 GB | 16.31 ms | 61.3 tok/s | 47.2 tok/s | ~77% |
 
-An H100 SXM5 has 3.35 TB/s of HBM3 bandwidth. Reading 54.64 GB of weights therefore costs
-at least 16.31 ms per decoded token — a floor of 61.3 tok/s — and the measured TPOT of
-20.91 ms sits at 78% of it.
+An H100 SXM5 has 3.35 TB/s of HBM3. Reading 54.64 GB of weights costs at least 16.31 ms per decoded token, a floor of 61.3 tok/s, and the measured TPOT of 20.91 ms sits at 78% of that.
 
-Two things follow, and they are the practical reading of this whole page:
+Which means single-stream decode here is already close to the hardware limit. There's roughly 20-25% of headroom and no server flag will find more than that; faster single-stream generation needs more bandwidth or fewer bytes, i.e. a quantized build. It also explains the flat c=1 column above: every configuration is moving a near-identical number of bytes over the same bus, and the engines only diverge once concurrency amortises those reads.
 
-- **Single-stream decode here is close to the hardware limit.** There is roughly 20–25%
-  of headroom on the table, and no amount of engine tuning or flag-fiddling will find more
-  than that. If you need faster single-stream generation, you need more memory bandwidth or
-  fewer bytes to read — a quantized build, not a different server.
-- **It explains why all four benchmark rows agree at c=1.** 46.6 to 48.8 tok/s across two
-  engines and two checkpoints is not a coincidence; every configuration is reading a
-  near-identical number of bytes over the same bus. The engines only start to differ once
-  concurrency lets them amortise those reads across requests.
+Treat this as ±10% rather than a precise efficiency figure. It counts weight traffic only, ignores KV-cache reads, and the 48 linear-attention layers don't access memory the way the 16 full-attention ones do.
 
-Treat these as ±10%, not precise efficiency figures: the calculation counts weight traffic
-only, ignoring KV-cache reads, and the 48 linear-attention layers have a different access
-pattern from the 16 full-attention ones.
+## Required flags
 
-## The one flag you must pass
-
-**vLLM will not start this model at default settings:**
+vLLM will not start this model at default settings:
 
 ```
 ValueError: max_num_seqs (1024) exceeds available Mamba cache blocks (362).
 Each decode sequence requires one Mamba cache block, so CUDA graph capture cannot proceed.
 ```
 
-This is the hybrid stack asserting itself — the 48 linear-attention layers need one Mamba cache block **per concurrent sequence**, a limit entirely separate from KV cache. Pass `--max-num-seqs 256`. Every command below already does.
+The 48 linear-attention layers need one Mamba cache block per concurrent sequence, which is a separate limit from KV cache. Pass `--max-num-seqs 256`. The commands below already do.
 
 ## Usage
 
 | Stack | Status | Notes |
 |---|---|---|
-| vLLM 0.27.1 | ✅ tested | needs `--max-num-seqs` |
-| SGLang 0.5.18 | ✅ tested | best throughput at concurrency here |
-| transformers 5.15.1 | ✅ tested | single-GPU scripting, research |
-| llama.cpp | ❌ not yet | no `Qwen3_5` in `convert_hf_to_gguf.py`; the hybrid stack is not convertible today |
+| vLLM 0.27.1 | tested | needs `--max-num-seqs` |
+| SGLang 0.5.18 | tested | best throughput at concurrency here |
+| transformers 5.15.1 | tested | single-GPU scripting, research |
+| llama.cpp | not supported | no `Qwen3_5` in `convert_hf_to_gguf.py` yet |
 
-Needs ~55 GB of VRAM in bf16 — one 80 GB card (H100/H200/A100-80GB), or shard it with `--tensor-parallel-size`.
+Needs ~55 GB of VRAM in bf16, so one 80 GB card (H100/H200/A100-80GB), or shard it with `--tensor-parallel-size`.
 
 ### vLLM
 
@@ -199,7 +175,7 @@ vllm serve sartajbhuvaji/Qwen3.8-27B-text \
   --max-num-seqs 256
 ```
 
-Cold start on an H100 is ~75 s. On two smaller cards add `--tensor-parallel-size 2`.
+Cold start on an H100 is about 75 s. On two smaller cards add `--tensor-parallel-size 2`.
 
 ### SGLang
 
@@ -215,7 +191,7 @@ python -m sglang.launch_server \
 
 ### Calling either server
 
-Both expose an OpenAI-compatible API, so the same client works — only the port changes (vLLM 8000, SGLang 8001).
+Both expose an OpenAI-compatible API, so the same client works against either. Only the port changes (vLLM 8000, SGLang 8001).
 
 ```bash
 curl http://localhost:8000/v1/chat/completions \
@@ -263,11 +239,11 @@ out = model.generate(**enc, max_new_tokens=96, do_sample=False)
 print(tok.decode(out[0][enc["input_ids"].shape[-1] :], skip_special_tokens=True))
 ```
 
-Loading reports **26,895,998,464** parameters rather than the 27,320,697,856 on disk. That gap is exactly the MTP head, which transformers has no class for. It is expected and harmless.
+Loading reports 26,895,998,464 parameters rather than the 27,320,697,856 on disk. That gap is the MTP head, which transformers has no class for. Expected, and harmless.
 
-## Reading the output
+## Output format
 
-This model emits reasoning traces before its answer, closed by `</think>`:
+The model emits reasoning before its answer, closed by `</think>`:
 
 ```
 We need answer just number. Compute 84*3/2 = 252/2=126. Final only 126.
@@ -282,13 +258,13 @@ Split on `</think>` and take the last part if you only want the answer.
 
 - Original: [`Qwen/Qwen3.8-27B`](https://huggingface.co/Qwen/Qwen3.8-27B) (Apache 2.0)
 - Surgery, verification and benchmark harness: [github.com/SartajBhuvaji/unfuse](https://github.com/SartajBhuvaji/unfuse)
-- Method: drop `model.visual.*` (333 tensors), rename `model.language_model.` → `model.`, retain untied `lm_head`, rebuild the config from `text_config` via `Qwen3_5TextConfig` with `architectures = ["Qwen3_5ForCausalLM"]`
+- Method: drop `model.visual.*` (333 tensors), rename `model.language_model.` to `model.`, keep the untied `lm_head`, rebuild the config from `text_config` via `Qwen3_5TextConfig` with `architectures = ["Qwen3_5ForCausalLM"]`
 
 ## Limitations
 
-- **Not smaller in any way you will notice.** 54.64 GB against 55.56 GB. The gain is cache headroom and cross-engine predictability, not footprint.
-- **Cannot see.** Send it an image and it will fail — use the original.
-- **The MTP head is inert** on every loader tested. 0.85 GB of the download does nothing today.
-- **No GGUF / llama.cpp path** until `convert_hf_to_gguf.py` learns `Qwen3_5`.
-- **Benchmarks are one GPU, one shape.** 512-in/256-out on a single H100 80GB at concurrency 1 and 16. Different context lengths, batch shapes or hardware will rank the engines differently — that is the entire point of the variance section above.
-- `rope_parameters` still carries `mrope_section` and `mrope_interleaved` inherited from the multimodal parent. vLLM logs `Unrecognized keys in rope_parameters`; harmless, and slated for removal.
+- Barely smaller: 54.64 GB against 55.56 GB. The gain is cache headroom and cross-engine predictability, not footprint.
+- No vision. Send it an image and it will fail. Use the original.
+- The MTP head is inert on every loader tested, so 0.85 GB of the download does nothing today.
+- No GGUF or llama.cpp path until `convert_hf_to_gguf.py` supports `Qwen3_5`.
+- Benchmarks cover one GPU and one shape: 512-in/256-out on a single H100 80GB at concurrency 1 and 16. Other context lengths, batch shapes or hardware will rank the engines differently.
+- `rope_parameters` still carries `mrope_section` and `mrope_interleaved` from the multimodal parent. vLLM logs `Unrecognized keys in rope_parameters`. Harmless, will be removed.
