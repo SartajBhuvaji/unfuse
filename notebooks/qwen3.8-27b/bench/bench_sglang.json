@@ -1,0 +1,30 @@
+{
+  "label": "SGLang 0.5.18",
+  "model": "qwen38-text",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 40.11,
+      "output_tok_s": 48.5,
+      "per_stream_tok_s": 48.5,
+      "ttft_ms_mean": 82.2,
+      "ttft_ms_p50": 69.7,
+      "ttft_ms_p99": 69.8,
+      "tpot_ms_mean": 20.38
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 26.34,
+      "output_tok_s": 585.5,
+      "per_stream_tok_s": 36.6,
+      "ttft_ms_mean": 900.6,
+      "ttft_ms_p50": 712.0,
+      "ttft_ms_p99": 1820.1,
+      "tpot_ms_mean": 23.68
+    }
+  ]
+}

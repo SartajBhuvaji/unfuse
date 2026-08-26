@@ -302,6 +302,21 @@ DeepSeek-V4 precedent (FP4 experts, FP8 attention) is the basis for our layout.
 
 ---
 
+### 4.14 Hybrid attention stacks
+Models that interleave linear/state-space layers with full-attention layers. Qwen3.8-27B is
+64 layers: 48 `linear_attention` and 16 `full_attention`, one full layer every 4
+(`full_attention_interval: 4`), with `linear_conv_kernel_dim`, `linear_num_key_heads`,
+`linear_num_value_heads` and `mamba_ssm_dtype` describing the linear half.
+
+*Why here:* almost every "how big is the KV cache" intuition is wrong for these. See §10.8.
+
+### 4.15 Untied embeddings
+`tie_word_embeddings: false` means `lm_head` is a separate matrix, not a transpose of
+`embed_tokens`. Both GLM-4.6V-Flash and Qwen3.8-27B are untied.
+
+*Why here:* forgetting it silently halves your parameter count estimate, and dropping
+`lm_head` during a split produces a model that loads and emits garbage.
+
 ## 5. Gemma 4 specifically
 
 ### 5.1 The family is not uniform
@@ -384,6 +399,24 @@ while removing vision needs ~21 GB of VRAM for the bit-exact check.
 
 ---
 
+### 6.7 Where the vision branch touches the text spine
+The number of edges between the two halves decides how hard a split is. GLM-4.6V-Flash has
+exactly one: the merger's output is scattered into the text embedding sequence at a single
+fusion point. Everything upstream is removable in one cut.
+
+*Why here:* the split is easy precisely because the interface is one arrow. Count the
+arrows before estimating the work.
+
+### 6.8 `deepstack_visual_indexes` and other scary config keys
+Qwen3.8-27B's `vision_config` names several tower layers whose features are injected into
+the language model, which reads like vision reaches into the LLM at multiple depths — a
+much messier cut. It does not: **zero tensors carry a deepstack name**, and all 1199
+tensors fall cleanly into `model.visual.`, `model.language_model.`, `lm_head` and `mtp.`.
+The indices are resolved inside the visual tree.
+
+*Why here:* config keys describe intent, tensor names describe structure. When they seem to
+disagree, the tensors are right. One probe settled this.
+
 ## 7. Speculative decoding
 
 ### 7.1 Draft and verify
@@ -416,6 +449,25 @@ The drafter is trained against a specific target. Change the target and acceptan
 *Why here:* the headline result — −25.4% for NVIDIA's build, −43.8% for ours.
 
 ---
+
+### 7.7 MTP heads fused into the base checkpoint
+Some checkpoints ship their multi-token-prediction drafter inside the main weights under an
+`mtp.` prefix rather than as a separate repo — Qwen3.8-27B carries 15 such tensors,
+424,699,392 params, `mtp_num_hidden_layers: 1`.
+
+*Why here:* it is free speculative decoding if an engine can load it, dead weight if not.
+Extracting these into standalone drafter repos is its own small ecosystem.
+
+### 7.8 Why a retained MTP head can still be unusable
+transformers 5.15 has no `Qwen3_5` MTP class, so it loads the model and ignores those
+tensors — visible as a parameter count 424,699,392 short of what is on disk. vLLM 0.27.1
+*does* register `Qwen3_5MTP`, but its auto-detect (`vllm/config/speculative.py:516`) fires
+only for `model_type in ("qwen3_5", "qwen3_5_moe")` and then reads the *multimodal* config
+layout, expecting a nested `text_config`.
+
+*Why here:* a flattened text-only config therefore cannot reach the MTP path either way —
+`qwen3_5_text` is not detected, and forcing `qwen3_5` gets `hidden_size` 4096 against a real
+5120. The capability exists on both sides and the config shape is what blocks it.
 
 ## 8. Formats, libraries, and ecosystem
 
@@ -642,6 +694,37 @@ point of failure, then source.
 *Why here:* the vLLM investigation in FINDINGS produced two confident wrong answers before
 the right one, and each could have been cheaper or avoided by this ordering.
 
+### 9.16 Byte equality vs distributional equality
+Two different claims with two different costs. `compare_logits` samples prompts and shows
+the outputs match *on those prompts*. Hashing every kept tensor shows the weights are
+identical, therefore **every** input matches.
+
+*Why here:* for a surgery that only drops and renames tensors, byte equality is both
+strictly stronger and far cheaper — no model instantiation, no GPU, peak memory of one
+tensor. Reach for logits only when the arithmetic could have changed (requantization, dtype
+change, a rebuilt kernel path). Note numpy has no bfloat16: hash
+`t.contiguous().view(torch.uint8)`, not `t.numpy()`.
+
+### 9.17 Warmup, and benchmarks that move 21%
+The first measured run against a freshly started vLLM server gave 457.9 output tok/s at
+concurrency 16. The same server, same flags, after one discarded warmup pass: 554.7. Nothing
+changed but the order.
+
+*Why here:* an unwarmed row silently beats or loses to a warmed one by more than most
+effects being reported. Always discard a warmup pass, and never mix warmed and unwarmed rows
+in one table — it inverts conclusions.
+
+### 9.18 Engine artifacts masquerading as model properties
+Benchmarking the multimodal parent against its text-only split on one H100: SGLang said the
+split was 2.79× faster at c=16; vLLM said the *parent* was 1.15× faster. The SGLang gap was
+entirely its memory planner allocating the parent `max_running_requests=5` versus the split's
+16, then starving it.
+
+*Why here:* "the split is faster" was not a fact about the models. The defensible statement
+is about variance — across both engines the parent's throughput spans 2.82×, the split's
+1.13×. Measure on more than one engine before attributing anything to the model, which is
+the same lesson as the TTFT inversion in §9.14.
+
 ## 10. Hardware and systems
 
 ### 10.1 CUDA compute capability
@@ -678,6 +761,29 @@ runtime: a 23 GB NVFP4 checkpoint exhausted a 40 GB A100. Check the quantization
 `get_min_capability()` rather than assuming a format implies a GPU generation.
 
 *Why here:* "NVFP4 requires Blackwell" was published twice in this repo and is false.
+
+### 10.8 Per-sequence state in hybrid models, and the concurrency ceiling
+A linear-attention/Mamba layer keeps recurrent state per *sequence*, not a growing per-token
+cache. Engines allocate that as a fixed pool of blocks, and it caps concurrency
+independently of KV cache. vLLM refuses to start rather than degrade:
+
+```
+ValueError: max_num_seqs (1024) exceeds available Mamba cache blocks (362).
+Each decode sequence requires one Mamba cache block, so CUDA graph capture cannot proceed.
+```
+
+*Why here:* Qwen3.8-27B will not serve on vLLM 0.27.1 at default settings — you must pass
+`--max-num-seqs 256`. Any published copy-paste command that omits it is broken. It also
+explains why the two engines disagreed so violently at concurrency 16 (§9.18): SGLang sizes
+this pool itself and gave the multimodal parent only 5 slots.
+
+### 10.9 Where a removed vision tower actually shows up
+Dropping Qwen3.8-27B's tower removes 1.658% of parameters — 0.97 GiB of weights. On an
+H100 80GB that converts almost entirely into cache headroom: KV cache 18.27 → 19.84 GiB
+(+8.6%), 277,435 → 301,465 tokens (+8.7%), max concurrency 8.47× → 9.20×.
+
+*Why here:* quote the cache and concurrency numbers, not the weight saving. The weight
+saving sounds trivial; the thing users feel is how many concurrent requests fit.
 
 ## 11. Engineering environment
 
@@ -722,6 +828,27 @@ convenience. The instances are terminated; the right response is to rotate the t
 assume the disk was wiped.
 
 ---
+
+### 11.7 Memory-bounded checkpoint rewriting
+The obvious way to rewrite a sharded checkpoint mirrors the input: read shard N, write shard
+N. That holds an entire shard in RAM — ~3 GB for Qwen3.8-27B — and on a small machine it
+dies partway, leaving a checkpoint that still looks plausible on disk.
+
+*Why here:* buffer by bytes and flush on a budget instead. Output sharding then no longer
+matches input sharding, which is fine because `model.safetensors.index.json` is the map. A
+single tensor larger than the budget (here `lm_head`, 2.54 GB) still gets its own shard —
+you cannot split one tensor.
+
+### 11.8 Backgrounded work on a rented box
+Three failure modes, each producing a silent wrong state rather than an error:
+`pip install` puts scripts in `~/.local/bin` which is not on PATH, so a backgrounded
+`nohup hf download` fails inside its log while the launching shell echoes success;
+`pkill -f <pattern>` matches the ssh session's own `argv` and kills the connection, taking
+in-flight work with it; and plain `nohup ... &` does not survive that, where
+`setsid nohup ... < /dev/null & disown` does.
+
+*Why here:* every one of these cost rented-GPU minutes. Verify bytes on disk rather than
+trusting an echo, kill by PID, and scp scripts instead of embedding them in ssh commands.
 
 ## 12. Repository conventions
 
@@ -806,6 +933,7 @@ Why quantized bases complicate adapter merging.
 6. §1 the maths, when a number looks wrong
 7. §9.14–9.15 and §8.18–8.19 — how the vLLM investigation actually went
 8. §10–11 when something breaks
+9. §9.16–9.18 before publishing any benchmark table
 
 **Papers worth the time:** SmoothQuant and AWQ (activation outliers), GPTQ (error
 compensation), the OCP microscaling spec and NVIDIA's NVFP4 material (formats), Leviathan et

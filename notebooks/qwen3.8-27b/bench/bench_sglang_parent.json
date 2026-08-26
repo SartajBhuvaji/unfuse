@@ -1,0 +1,30 @@
+{
+  "label": "SGLang 0.5.18 PARENT",
+  "model": "qwen38-parent",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 39.95,
+      "output_tok_s": 48.0,
+      "per_stream_tok_s": 48.0,
+      "ttft_ms_mean": 66.3,
+      "ttft_ms_p50": 65.0,
+      "ttft_ms_p99": 68.0,
+      "tpot_ms_mean": 20.66
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 68.39,
+      "output_tok_s": 227.4,
+      "per_stream_tok_s": 14.2,
+      "ttft_ms_mean": 10188.8,
+      "ttft_ms_p50": 10591.0,
+      "ttft_ms_p99": 15865.1,
+      "tpot_ms_mean": 21.45
+    }
+  ]
+}

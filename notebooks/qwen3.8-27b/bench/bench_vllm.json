@@ -1,0 +1,30 @@
+{
+  "label": "vLLM 0.27.1",
+  "model": "qwen38-text",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 41.05,
+      "output_tok_s": 46.6,
+      "per_stream_tok_s": 46.6,
+      "ttft_ms_mean": 67.6,
+      "ttft_ms_p50": 67.5,
+      "ttft_ms_p99": 67.7,
+      "tpot_ms_mean": 21.28
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 30.53,
+      "output_tok_s": 457.9,
+      "per_stream_tok_s": 28.6,
+      "ttft_ms_mean": 1977.9,
+      "ttft_ms_p50": 651.7,
+      "ttft_ms_p99": 6020.8,
+      "tpot_ms_mean": 26.01
+    }
+  ]
+}

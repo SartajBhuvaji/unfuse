@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" width="1080" height="500" role="img" aria-label="Qwen3.8-27B forward path. An upper vision branch runs image, patch embed, 27 ViT blocks and merger, all enclosed in a dashed delete boundary labelled model.visual.*, 460,730,096 parameters, 333 tensors. Its only output is a single arrow of image soft tokens descending into a scatter fusion point on the lower text spine. The text spine runs text tokens, embed tokens, fusion, 64 hybrid decoder layers of which 48 are linear attention and 16 are full attention, then norm and lm head, to logits, and is entirely retained. A separate MTP speculative head is retained in the checkpoint but has no loader in transformers.">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#838C99"/>
+    </marker>
+    <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#B45A22"/>
+    </marker>
+    <style>
+      .t { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #14181E; }
+      .s { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #59616D; }
+      .n { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #838C99; }
+      .lab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 10px; fill: #59616D; }
+      .cutlab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; fill: #B45A22; letter-spacing: .06em; }
+      .orphlab { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px; fill: #6B5DA6; letter-spacing: .06em; }
+      .box { fill: #FFFFFF; stroke: #B9C1CB; stroke-width: 1.5; }
+      .keep { fill: #DCEAF0; stroke: #12586F; stroke-width: 1.5; }
+      .cut { fill: #F6E4D6; stroke: #B45A22; stroke-width: 1.5; }
+      .orph { fill: #ECE8F7; stroke: #6B5DA6; stroke-width: 1.5; }
+      .io { fill: none; stroke: #B9C1CB; stroke-width: 1.5; stroke-dasharray: 3 3; }
+      .ln { stroke: #838C99; stroke-width: 1.5; fill: none; }
+      .lnc { stroke: #B45A22; stroke-width: 1.5; fill: none; }
+      .bound { fill: none; stroke: #B45A22; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .boundo { fill: none; stroke: #6B5DA6; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    </style>
+  </defs>
+
+  <!-- ===== vision branch: DELETED ===== -->
+  <rect class="bound" x="20" y="26" width="700" height="128" rx="8"/>
+  <text class="cutlab" x="34" y="20">model.visual.*  —  333 tensors  ·  460,730,096 params  ·  0.92 GB bf16  ·  1.658%  —  DELETE</text>
+
+  <rect class="io" x="34" y="78" width="72" height="48" rx="6"/>
+  <text class="t" x="70" y="100" text-anchor="middle">image</text>
+  <text class="n" x="70" y="116" text-anchor="middle">patch 16</text>
+
+  <rect class="cut" x="140" y="72" width="120" height="60" rx="6"/>
+  <text class="t" x="200" y="96" text-anchor="middle">patch_embed</text>
+  <text class="s" x="200" y="111" text-anchor="middle">in_channels 3</text>
+
+  <rect class="cut" x="296" y="72" width="150" height="60" rx="6"/>
+  <text class="t" x="371" y="96" text-anchor="middle">27 × ViT block</text>
+  <text class="s" x="371" y="111" text-anchor="middle">1152d · 16 heads</text>
+
+  <rect class="cut" x="482" y="72" width="140" height="60" rx="6"/>
+  <text class="t" x="552" y="96" text-anchor="middle">merger</text>
+  <text class="s" x="552" y="111" text-anchor="middle">1152 → 5120</text>
+
+  <path class="ln" d="M106 102 H136" marker-end="url(#ah)"/>
+  <path class="ln" d="M260 102 H292" marker-end="url(#ah)"/>
+  <path class="ln" d="M446 102 H478" marker-end="url(#ah)"/>
+
+  <!-- the single crossing into the text spine -->
+  <path class="lnc" d="M552 132 V300" marker-end="url(#ahc)"/>
+  <text class="cutlab" x="564" y="212">image soft tokens</text>
+  <text class="cutlab" x="564" y="227">5120d</text>
+  <text class="lab" x="564" y="248">the only edge between the</text>
+  <text class="lab" x="564" y="262">two halves — cut it and the</text>
+  <text class="lab" x="564" y="276">text spine is unchanged</text>
+
+  <!-- ===== text spine: KEPT ===== -->
+  <rect class="io" x="34" y="298" width="72" height="48" rx="6"/>
+  <text class="t" x="70" y="320" text-anchor="middle">text</text>
+  <text class="n" x="70" y="336" text-anchor="middle">token ids</text>
+
+  <rect class="keep" x="140" y="292" width="150" height="60" rx="6"/>
+  <text class="t" x="215" y="313" text-anchor="middle">embed_tokens</text>
+  <text class="s" x="215" y="328" text-anchor="middle">248320 × 5120</text>
+  <text class="n" x="215" y="341" text-anchor="middle">1,271,398,400</text>
+
+  <circle class="keep" cx="552" cy="322" r="24"/>
+  <text class="t" x="552" y="326" text-anchor="middle">⊕</text>
+  <text class="lab" x="552" y="368" text-anchor="middle">scatter</text>
+
+  <text class="lab" x="410" y="316" text-anchor="middle">text embeddings bypass</text>
+  <text class="lab" x="410" y="330" text-anchor="middle">the vision branch entirely</text>
+
+  <rect class="keep" x="620" y="284" width="190" height="76" rx="6"/>
+  <text class="t" x="715" y="306" text-anchor="middle">64 × decoder layer</text>
+  <text class="s" x="715" y="321" text-anchor="middle">48 linear_attention</text>
+  <text class="s" x="715" y="334" text-anchor="middle">16 full_attention (every 4th)</text>
+  <text class="n" x="715" y="349" text-anchor="middle">24,353,201,664</text>
+
+  <rect class="keep" x="840" y="292" width="96" height="60" rx="6"/>
+  <text class="t" x="888" y="316" text-anchor="middle">norm</text>
+  <text class="s" x="888" y="331" text-anchor="middle">5120</text>
+
+  <rect class="keep" x="960" y="292" width="96" height="60" rx="6"/>
+  <text class="t" x="1008" y="313" text-anchor="middle">lm_head</text>
+  <text class="s" x="1008" y="328" text-anchor="middle">untied</text>
+  <text class="n" x="1008" y="341" text-anchor="middle">1,271,398,400</text>
+
+  <path class="ln" d="M106 322 H136" marker-end="url(#ah)"/>
+  <path class="ln" d="M290 322 H524" marker-end="url(#ah)"/>
+  <path class="ln" d="M576 322 H616" marker-end="url(#ah)"/>
+  <path class="ln" d="M810 322 H836" marker-end="url(#ah)"/>
+  <path class="ln" d="M936 322 H956" marker-end="url(#ah)"/>
+  <path class="ln" d="M1056 322 H1070"/>
+  <text class="n" x="1063" y="342" text-anchor="middle">logits</text>
+
+  <!-- ===== MTP head: kept, but orphaned ===== -->
+  <rect class="boundo" x="620" y="400" width="316" height="76" rx="8"/>
+  <text class="orphlab" x="634" y="394">mtp.*  —  15 tensors  ·  424,699,392 params  ·  0.85 GB  —  KEPT, NO LOADER</text>
+  <rect class="orph" x="636" y="416" width="140" height="44" rx="6"/>
+  <text class="t" x="706" y="434" text-anchor="middle">MTP head</text>
+  <text class="s" x="706" y="449" text-anchor="middle">1 layer, speculative</text>
+  <text class="lab" x="792" y="432">transformers 5.15 has no</text>
+  <text class="lab" x="792" y="446">Qwen3_5 MTP class — these</text>
+  <text class="lab" x="792" y="460">tensors load as unused</text>
+  <path class="ln" d="M715 360 V412" stroke-dasharray="4 4" marker-end="url(#ah)"/>
+</svg>

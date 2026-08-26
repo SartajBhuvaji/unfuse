@@ -1,0 +1,30 @@
+{
+  "label": "sgl-split",
+  "model": "sgl-split",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 40.03,
+      "output_tok_s": 47.2,
+      "per_stream_tok_s": 47.2,
+      "ttft_ms_mean": 69.5,
+      "ttft_ms_p50": 69.5,
+      "ttft_ms_p99": 69.6,
+      "tpot_ms_mean": 20.91
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 25.25,
+      "output_tok_s": 628.5,
+      "per_stream_tok_s": 39.3,
+      "ttft_ms_mean": 596.2,
+      "ttft_ms_p50": 714.8,
+      "ttft_ms_p99": 719.3,
+      "tpot_ms_mean": 22.94
+    }
+  ]
+}
