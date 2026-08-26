@@ -43,8 +43,14 @@ def rename(name: str) -> str:
 
 
 def digest(t) -> str:
-    a = t.numpy() if hasattr(t, "numpy") else t
-    return hashlib.blake2b(a.tobytes(), digest_size=16).hexdigest()
+    # numpy has no bfloat16, so t.numpy() raises "unsupported ScalarType BFloat16"
+    # on exactly the dtype this checkpoint is stored in. Reinterpret the buffer as
+    # uint8 instead -- we want byte equality, not numeric equality, so the element
+    # type is irrelevant and this works for every dtype including fp8.
+    import torch
+
+    b = t.contiguous().view(torch.uint8).numpy().tobytes()
+    return hashlib.blake2b(b, digest_size=16).hexdigest()
 
 
 def load_index(d: Path) -> dict:
