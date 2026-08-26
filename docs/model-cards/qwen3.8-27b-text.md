@@ -138,6 +138,35 @@ At concurrency 1 all four runs land between 46.6 and 48.8 tok/s. The same 64 tex
 
 ⚠️ **Warmup moves these numbers by 21%.** An unwarmed first run of this model on vLLM gave 457.9 tok/s where the warmed run gave 554.7. If you benchmark this yourself, discard a pass first, and never compare a warmed row against an unwarmed one.
 
+### Against the hardware ceiling
+
+At concurrency 1 a dense model is **memory-bandwidth bound**: every weight is read from HBM
+once per token, so the bus sets a hard ceiling no engine can beat.
+
+| | Weights | Bytes/token ÷ 3.35 TB/s | Ceiling | Best measured | Of ceiling |
+|---|---|---|---|---|---|
+| Original | 55.56 GB | 16.59 ms | 60.3 tok/s | 48.8 tok/s | **~81%** |
+| **This model** | 54.64 GB | 16.31 ms | 61.3 tok/s | 47.2 tok/s | **~77%** |
+
+An H100 SXM5 has 3.35 TB/s of HBM3 bandwidth. Reading 54.64 GB of weights therefore costs
+at least 16.31 ms per decoded token — a floor of 61.3 tok/s — and the measured TPOT of
+20.91 ms sits at 78% of it.
+
+Two things follow, and they are the practical reading of this whole page:
+
+- **Single-stream decode here is close to the hardware limit.** There is roughly 20–25%
+  of headroom on the table, and no amount of engine tuning or flag-fiddling will find more
+  than that. If you need faster single-stream generation, you need more memory bandwidth or
+  fewer bytes to read — a quantized build, not a different server.
+- **It explains why all four benchmark rows agree at c=1.** 46.6 to 48.8 tok/s across two
+  engines and two checkpoints is not a coincidence; every configuration is reading a
+  near-identical number of bytes over the same bus. The engines only start to differ once
+  concurrency lets them amortise those reads across requests.
+
+Treat these as ±10%, not precise efficiency figures: the calculation counts weight traffic
+only, ignoring KV-cache reads, and the 48 linear-attention layers have a different access
+pattern from the 16 full-attention ones.
+
 ## The one flag you must pass
 
 **vLLM will not start this model at default settings:**

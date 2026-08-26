@@ -290,6 +290,29 @@ So the head costs 0.85 GB and does nothing today. Kept anyway: it breaks nothing
 the alternative is deleting a capability that cannot be recovered without re-downloading
 55 GB. `--drop-mtp` exists for anyone who wants the clean load.
 
+### Decode is bandwidth-bound, and the numbers say so
+
+Worth computing before attributing a single-stream result to anything else. An H100 SXM5
+has 3.35 TB/s of HBM3. A dense model at batch 1 reads every weight once per token, so:
+
+| | Weights | Floor per token | Ceiling | Best measured | Of ceiling |
+|---|---|---|---|---|---|
+| Qwen3.8-27B | 55.56 GB | 16.59 ms | 60.3 tok/s | 48.8 tok/s | ~81% |
+| text-only split | 54.64 GB | 16.31 ms | 61.3 tok/s | 47.2 tok/s | ~77% |
+
+This is the actual explanation for the flattest result in the benchmark table: all four
+c=1 rows land between 46.6 and 48.8 tok/s regardless of engine or checkpoint, because
+every one of them is moving the same ~55 GB over the same bus. Engine choice cannot matter
+until concurrency amortises those reads.
+
+It also bounds the value of further tuning — there is ~20–25% of headroom at c=1, and the
+only levers that reach past it are more bandwidth or fewer bytes (quantization), not a
+different server or a better flag.
+
+Approximate by construction: weight traffic only, no KV-cache reads, and the hybrid stack's
+48 linear-attention layers do not access memory like the 16 full-attention ones. Quote it
+as a band, not a figure.
+
 ### Serving traps
 
 **vLLM's default `max_num_seqs` will not start this model.**
