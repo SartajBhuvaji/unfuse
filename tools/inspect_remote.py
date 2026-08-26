@@ -30,15 +30,34 @@ import urllib.error
 import urllib.request
 
 DTYPE_BYTES = {
-    "F64": 8, "F32": 4, "F16": 2, "BF16": 2,
-    "F8_E4M3": 1, "F8_E5M2": 1, "F4": 1,
-    "I64": 8, "I32": 4, "I16": 2, "I8": 1, "U8": 1, "BOOL": 1,
+    "F64": 8,
+    "F32": 4,
+    "F16": 2,
+    "BF16": 2,
+    "F8_E4M3": 1,
+    "F8_E5M2": 1,
+    "F4": 1,
+    "I64": 8,
+    "I32": 4,
+    "I16": 2,
+    "I8": 1,
+    "U8": 1,
+    "BOOL": 1,
 }
 
 # Prefixes that usually mean "not the language model". Order matters: the first match wins.
 KNOWN_GROUPS = [
-    ("vision", ("model.visual.", "visual.", "vision_tower.", "model.vision_tower.",
-                "vision_model.", "model.vision_model.")),
+    (
+        "vision",
+        (
+            "model.visual.",
+            "visual.",
+            "vision_tower.",
+            "model.vision_tower.",
+            "vision_model.",
+            "model.vision_model.",
+        ),
+    ),
     ("audio", ("audio_tower.", "model.audio_tower.")),
     ("projector", ("multi_modal_projector.", "model.multi_modal_projector.", "mm_projector.")),
     ("mtp/draft", ("mtp.", "model.mtp.", "draft.")),
@@ -67,8 +86,9 @@ def classify(name: str) -> str:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("repo", help="Hub id, e.g. Qwen/Qwen3.8-27B")
     ap.add_argument("--revision", default="main")
     ap.add_argument("--prefix", help="also report this exact prefix as its own group")
@@ -101,8 +121,9 @@ def main(argv=None) -> int:
         hdr.pop("__metadata__", None)
         tensors.update(hdr)
         if not args.json:
-            print(f"  read {shard} header ({n/1024:.0f} KiB, {len(hdr)} tensors)",
-                  file=sys.stderr)
+            print(
+                f"  read {shard} header ({n / 1024:.0f} KiB, {len(hdr)} tensors)", file=sys.stderr
+            )
 
     if not tensors:
         print("no tensor headers could be read", file=sys.stderr)
@@ -129,31 +150,44 @@ def main(argv=None) -> int:
     draft = sum(v for k, v in params.items() if k == "mtp/draft")
 
     if args.json:
-        print(json.dumps({
-            "repo": args.repo,
-            "model_type": cfg.get("model_type"),
-            "architectures": cfg.get("architectures"),
-            "total_params": total,
-            "total_bytes": total_b,
-            "removable_params": removable,
-            "removable_share": round(100 * removable / total, 4) if total else 0,
-            "groups": {k: {"tensors": counts[k], "params": params[k], "bytes": nbytes[k],
-                           "share_pct": round(100 * params[k] / total, 4)}
-                       for k in params},
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "repo": args.repo,
+                    "model_type": cfg.get("model_type"),
+                    "architectures": cfg.get("architectures"),
+                    "total_params": total,
+                    "total_bytes": total_b,
+                    "removable_params": removable,
+                    "removable_share": round(100 * removable / total, 4) if total else 0,
+                    "groups": {
+                        k: {
+                            "tensors": counts[k],
+                            "params": params[k],
+                            "bytes": nbytes[k],
+                            "share_pct": round(100 * params[k] / total, 4),
+                        }
+                        for k in params
+                    },
+                },
+                indent=2,
+            )
+        )
         return 0
 
     print(f"\n{args.repo}  ({cfg.get('model_type')}, {cfg.get('architectures')})")
     print(f"{len(tensors)} tensors across {len(shards)} shard(s)\n")
     print(f"{'group':<20}{'tensors':>9}{'params':>18}{'share':>9}{'GB':>9}")
     for g, n in params.most_common():
-        print(f"{g:<20}{counts[g]:>9}{n:>18,}{100*n/total:>8.3f}%{nbytes[g]/1e9:>9.2f}")
-    print(f"{'TOTAL':<20}{len(tensors):>9}{total:>18,}{100.0:>8.3f}%{total_b/1e9:>9.2f}")
+        print(f"{g:<20}{counts[g]:>9}{n:>18,}{100 * n / total:>8.3f}%{nbytes[g] / 1e9:>9.2f}")
+    print(f"{'TOTAL':<20}{len(tensors):>9}{total:>18,}{100.0:>8.3f}%{total_b / 1e9:>9.2f}")
 
     if removable:
         pct = 100 * removable / total
-        print(f"\nencoder stack (removable for a text-only split): "
-              f"{removable:,} params = {pct:.3f}%, {removable_b/1e9:.2f} GB")
+        print(
+            f"\nencoder stack (removable for a text-only split): "
+            f"{removable:,} params = {pct:.3f}%, {removable_b / 1e9:.2f} GB"
+        )
         if pct < 3:
             print("VERDICT: small. Expect packaging and cache headroom, not a size win.")
         elif pct < 8:
@@ -163,8 +197,10 @@ def main(argv=None) -> int:
     else:
         print("\nno encoder tensors found — nothing to split")
     if draft:
-        print(f"note: a fused draft/MTP head of {draft:,} params "
-              f"({100*draft/total:.3f}%) is present; keeping it is the default.")
+        print(
+            f"note: a fused draft/MTP head of {draft:,} params "
+            f"({100 * draft / total:.3f}%) is present; keeping it is the default."
+        )
     return 0
 
 

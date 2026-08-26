@@ -221,19 +221,17 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model_id = "sartajbhuvaji/Qwen3.8-27B-text"
 tok = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id, dtype=torch.bfloat16, device_map="cuda"
-)
+model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.bfloat16, device_map="cuda")
 
 enc = tok.apply_chat_template(
     [{"role": "user", "content": "What is 84 * 3 / 2? Reply with just the number."}],
     add_generation_prompt=True,
     return_tensors="pt",
-    return_dict=True,          # transformers 5.x returns a BatchEncoding, not a tensor
+    return_dict=True,  # transformers 5.x returns a BatchEncoding, not a tensor
 ).to("cuda")
 
 out = model.generate(**enc, max_new_tokens=96, do_sample=False)
-print(tok.decode(out[0][enc["input_ids"].shape[-1]:], skip_special_tokens=True))
+print(tok.decode(out[0][enc["input_ids"].shape[-1] :], skip_special_tokens=True))
 ```
 
 Loading reports **26,895,998,464** parameters rather than the 27,320,697,856 on disk. That gap is exactly the MTP head, which transformers has no class for. It is expected and harmless.

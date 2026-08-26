@@ -84,8 +84,13 @@ def build_config(src: Path, drop_mtp: bool) -> dict:
     text.setdefault("model_type", "qwen3_5_text")
 
     # Carried over from the multimodal parent, meaningless without a tower.
-    for k in ("image_token_id", "video_token_id", "vision_start_token_id",
-              "vision_end_token_id", "language_model_only"):
+    for k in (
+        "image_token_id",
+        "video_token_id",
+        "vision_start_token_id",
+        "vision_end_token_id",
+        "language_model_only",
+    ):
         text.pop(k, None)
 
     if drop_mtp:
@@ -97,17 +102,26 @@ def build_config(src: Path, drop_mtp: bool) -> dict:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("src", type=Path, help="local Qwen3.8-27B checkpoint")
     p.add_argument("dst", type=Path, help="output directory")
-    p.add_argument("--drop-mtp", action="store_true",
-                   help="also remove the fused MTP speculative head")
-    p.add_argument("--dry-run", action="store_true",
-                   help="report the plan from the index only; touch no weights")
-    p.add_argument("--shard-bytes", type=int, default=2_000_000_000,
-                   help="output shard size budget; also the peak RAM ceiling "
-                        "(default 2e9, lower it on a memory-starved box)")
+    p.add_argument(
+        "--drop-mtp", action="store_true", help="also remove the fused MTP speculative head"
+    )
+    p.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="report the plan from the index only; touch no weights",
+    )
+    p.add_argument(
+        "--shard-bytes",
+        type=int,
+        default=2_000_000_000,
+        help="output shard size budget; also the peak RAM ceiling "
+        "(default 2e9, lower it on a memory-starved box)",
+    )
     args = p.parse_args()
 
     index_path = args.src / "model.safetensors.index.json"
@@ -139,7 +153,6 @@ def main() -> int:
         print("dry run: no weights written")
         return 0
 
-    import torch
     from safetensors import safe_open
     from safetensors.torch import save_file
 
@@ -176,7 +189,10 @@ def main() -> int:
 
     for shard in shards:
         with safe_open(args.src / shard, framework="pt") as f:
-            for name in f.keys():
+            # NOT `for name in f`: safetensors' safe_open has no __iter__, only
+            # keys(). Ruff's SIM118 assumes a dict here and its fix raises
+            # "'builtins.safe_open' object is not iterable" at runtime.
+            for name in f.keys():  # noqa: SIM118
                 if name in drop or name not in weight_map:
                     continue
                 t_ = f.get_tensor(name)
@@ -208,8 +224,10 @@ def main() -> int:
     (args.dst / "config.json").write_text(json.dumps(cfg, indent=2) + "\n")
 
     for f in args.src.iterdir():
-        if f.name.startswith(("tokenizer", "vocab", "merges", "chat_template")) or \
-           f.name in ("generation_config.json", "special_tokens_map.json"):
+        if f.name.startswith(("tokenizer", "vocab", "merges", "chat_template")) or f.name in (
+            "generation_config.json",
+            "special_tokens_map.json",
+        ):
             shutil.copy2(f, args.dst / f.name)
 
     expected_keep = EXPECTED["total_params"] - EXPECTED["vision_params"]
