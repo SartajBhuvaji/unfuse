@@ -167,6 +167,83 @@ slice, and watches both NLLs. Vision NLL rising while text NLL holds would mean
 vision-serving capacity emerged in the shared FFN despite the architecture — making the
 0.438% ceiling wrong. Roughly one GPU-day.
 
+## Qwen3.8-27B — split scripted, tower is small
+
+`Qwen/Qwen3.8-27B`, `model_type: qwen3_5`, `Qwen3_5ForConditionalGeneration`.
+2.95M downloads/month and 12,691 likes at the time of writing — roughly 15x the demand
+of GLM-4.6V-Flash. That is the reason to do it. It is not because the split saves space.
+
+**The whole checkpoint, measured by reading all 18 shard headers over HTTP range
+requests — about 200 KB fetched, no weights downloaded.**
+
+| Group | Params | Share | GB |
+|---|---|---|---|
+| `model.language_model.*` (64 layers) | 25,624,600,064 | 92.236% | 51.25 |
+| `lm_head` (**untied**) | 1,271,398,400 | 4.576% | 2.54 |
+| `mtp.*` (fused MTP head, 15 tensors) | ~424,694,784 | ~1.529% | 0.85 |
+| **DELETE — `model.visual.*`, 333 tensors** | **460,730,096** | **1.658%** | **0.92** |
+| **Total** | **27,781,427,952** | 100% | **55.56** |
+
+**The tower is 1.658%.** GLM-4.6V-Flash was 8.671%. Removing it saves 0.92 GB out of
+55.56. This is the Gemma 4 lesson again, and the reason to run `inspect` before assuming
+a model is worth splitting: the win here is packaging — loads as a plain causal LM, no
+vision dependencies, no image preprocessing — not size.
+
+### `deepstack_visual_indexes` is a false alarm
+
+`vision_config.deepstack_visual_indexes` reads like it should complicate the split: it
+names the tower layers whose features are injected into the language model, which sounds
+like vision reaching into the LLM at several depths. It does not.
+
+**Zero tensors carry a deepstack name.** The only trees in the checkpoint are
+`model.visual.*`, `model.language_model.*`, `lm_head`, and `mtp.*` — 1199 tensors, all
+four accounted for, nothing unclassified. The indices are resolved inside the visual
+tree. The split is clean.
+
+Worth recording because the config *looks* like a problem and the answer cost one probe.
+
+### It is a hybrid, not a transformer
+
+`layer_types` is 48 `linear_attention` + 16 `full_attention`, `full_attention_interval:
+4` — every fourth layer is full attention, the rest are linear. With
+`linear_conv_kernel_dim: 4`, `linear_num_key_heads: 16`, `linear_num_value_heads: 48`,
+and `mamba_ssm_dtype: float32`.
+
+Do not carry over vanilla-transformer assumptions: KV cache sizing, GGUF conversion, and
+engine support all behave differently for the hybrid stack.
+
+### The MTP head has no home in transformers
+
+`mtp.*` is a fused multi-token-prediction speculative head — 15 tensors, ~424.7M params,
+`mtp_num_hidden_layers: 1`. There is **no `Qwen3_5` MTP class in transformers 5.16**
+(`Qwen3_5ForCausalLM`, `Qwen3_5TextConfig`, `Qwen3_5VisionModel` all exist; no MTP), so
+`Qwen3_5ForCausalLM` reports these as unexpected keys.
+
+Kept by default anyway. Dropping them silently removes a capability, and the MTP-bearing
+community GGUFs of this model are among its most downloaded builds. `--drop-mtp` is
+opt-in.
+
+### The surgery
+
+1. Drop every key under `model.visual.` (333 tensors)
+2. Rename `model.language_model.` → `model.`
+3. Keep `lm_head.weight` — `tie_word_embeddings: false`
+4. Build the config from `text_config` via `Qwen3_5TextConfig`, dropping `image_token_id`,
+   `video_token_id`, `vision_start_token_id`, `vision_end_token_id`, `language_model_only`
+5. **Set `architectures = ["Qwen3_5ForCausalLM"]`** — `Qwen3_5TextConfig` will not, the
+   same trap as `Glm4Config` in the GLM split
+
+All six non-default keys (`attn_output_gate`, `full_attention_interval`,
+`mamba_ssm_dtype`, `mtp_num_hidden_layers`, `mtp_use_dedicated_embeddings`,
+`output_gate_type`) survive the round-trip through `Qwen3_5TextConfig` — verified.
+
+### Engine support is arriving
+
+sglang commit `01db8a7` (PR #35297, 2026-08-25) registers **Qwen3_5 text-only
+architectures** in the mamba radix cache whitelists, adding "Text-only entries of the
+same hybrid stack (`models/qwen3_5_text`...)". An engine is building the landing pad for
+this checkpoint shape.
+
 ## Why not to prune for size
 
 - [Structural Pruning of LVLMs](https://arxiv.org/abs/2604.24380) (IJCV 2026): at 15%
