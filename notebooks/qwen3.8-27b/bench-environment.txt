@@ -1,0 +1,37 @@
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.105.08
+CUDA (driver)          13.0
+CUDA (nvcc)            12.8
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Enabled
+Persistence            Enabled
+torch                  2.7.0 (cuda 12.8)
+Python                 3.12.3
+OS                     Ubuntu 24.04.4 LTS
+Kernel                 6.8.0-1046-nvidia
+CPU                    Intel(R) Xeon(R) Platinum 8480+ (26 cores)
+RAM                    221 GB
+=== JSON ===
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "gpu_memory": "81559 MiB",
+  "gpu_count": "1",
+  "driver": "580.105.08",
+  "cuda_driver": "13.0",
+  "nvcc": "12.8",
+  "compute_capability": "9.0",
+  "power_limit": "700.00 W",
+  "max_sm_clock": "1980 MHz",
+  "ecc": "Enabled",
+  "persistence_mode": "Enabled",
+  "torch": "2.7.0",
+  "torch_cuda": "12.8",
+  "python": "3.12.3",
+  "os": "Ubuntu 24.04.4 LTS",
+  "kernel": "6.8.0-1046-nvidia",
+  "cpu": "Intel(R) Xeon(R) Platinum 8480+",
+  "cpu_cores": "26",
+  "ram": "221 GB"
+}

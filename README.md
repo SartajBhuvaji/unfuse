@@ -15,6 +15,7 @@ extraction here is verified against the original before it ships.
 | Model | Encoder | Removable | Text-only | Encoder-only | Notes |
 |---|---|---|---|---|---|
 | [GLM-4.6V-Flash](https://huggingface.co/zai-org/GLM-4.6V-Flash) | 24-layer ViT + merger | 892,498,432 (8.671%) | done | done | bit-exact, published |
+| [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) | 27-layer ViT (1152d) | 460,730,096 (1.658%) | scripted | — | hybrid linear-attn; fused MTP head; tower is small |
 | [Gemma 4 12B](https://huggingface.co/google/gemma-4-12B) | none — 52.4M input embedder | 52,379,904 (0.438%) | scripted | n/a | encoder-free; not worth splitting for size |
 | [Gemma 4 31B NVFP4](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4) | 27-layer SigLIP | ~576M (1.9%) | scripted | — | quantized; the split is the small half of the work |
 

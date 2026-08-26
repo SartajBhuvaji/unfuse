@@ -1,0 +1,30 @@
+{
+  "label": "vLLM parent warm",
+  "model": "qwen38-parent",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 41.21,
+      "output_tok_s": 47.4,
+      "per_stream_tok_s": 47.4,
+      "ttft_ms_mean": 68.9,
+      "ttft_ms_p50": 69.0,
+      "ttft_ms_p99": 69.3,
+      "tpot_ms_mean": 20.42
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 25.27,
+      "output_tok_s": 635.8,
+      "per_stream_tok_s": 39.7,
+      "ttft_ms_mean": 638.9,
+      "ttft_ms_p50": 657.2,
+      "ttft_ms_p99": 669.5,
+      "tpot_ms_mean": 22.7
+    }
+  ]
+}

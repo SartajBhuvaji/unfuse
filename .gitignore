@@ -37,3 +37,6 @@ venv/
 *.log
 scratch/
 tmp/
+
+# private working notes, never published
+notes.txt

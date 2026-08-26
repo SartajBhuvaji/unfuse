@@ -167,6 +167,191 @@ slice, and watches both NLLs. Vision NLL rising while text NLL holds would mean
 vision-serving capacity emerged in the shared FFN despite the architecture — making the
 0.438% ceiling wrong. Roughly one GPU-day.
 
+## Qwen3.8-27B — split, verified, published
+
+`Qwen/Qwen3.8-27B`, `model_type: qwen3_5`, `Qwen3_5ForConditionalGeneration`.
+2.95M downloads/month and 12,691 likes at the time of writing — roughly 15x the demand
+of GLM-4.6V-Flash. That is the reason to do it. It is not because the split saves space.
+
+**The whole checkpoint, measured by reading all 18 shard headers over HTTP range
+requests — about 200 KB fetched, no weights downloaded.**
+
+| Group | Params | Share | GB |
+|---|---|---|---|
+| `model.language_model.*` (64 layers) | 25,624,600,064 | 92.236% | 51.25 |
+| `lm_head` (**untied**) | 1,271,398,400 | 4.576% | 2.54 |
+| `mtp.*` (fused MTP head, 15 tensors) | ~424,694,784 | ~1.529% | 0.85 |
+| **DELETE — `model.visual.*`, 333 tensors** | **460,730,096** | **1.658%** | **0.92** |
+| **Total** | **27,781,427,952** | 100% | **55.56** |
+
+**The tower is 1.658%.** GLM-4.6V-Flash was 8.671%. Removing it saves 0.92 GB out of
+55.56. This is the Gemma 4 lesson again, and the reason to run `inspect` before assuming
+a model is worth splitting: the win here is packaging — loads as a plain causal LM, no
+vision dependencies, no image preprocessing — not size.
+
+### `deepstack_visual_indexes` is a false alarm
+
+`vision_config.deepstack_visual_indexes` reads like it should complicate the split: it
+names the tower layers whose features are injected into the language model, which sounds
+like vision reaching into the LLM at several depths. It does not.
+
+**Zero tensors carry a deepstack name.** The only trees in the checkpoint are
+`model.visual.*`, `model.language_model.*`, `lm_head`, and `mtp.*` — 1199 tensors, all
+four accounted for, nothing unclassified. The indices are resolved inside the visual
+tree. The split is clean.
+
+Worth recording because the config *looks* like a problem and the answer cost one probe.
+
+### It is a hybrid, not a transformer
+
+`layer_types` is 48 `linear_attention` + 16 `full_attention`, `full_attention_interval:
+4` — every fourth layer is full attention, the rest are linear. With
+`linear_conv_kernel_dim: 4`, `linear_num_key_heads: 16`, `linear_num_value_heads: 48`,
+and `mamba_ssm_dtype: float32`.
+
+Do not carry over vanilla-transformer assumptions: KV cache sizing, GGUF conversion, and
+engine support all behave differently for the hybrid stack.
+
+### The MTP head has no home in transformers
+
+`mtp.*` is a fused multi-token-prediction speculative head — 15 tensors, ~424.7M params,
+`mtp_num_hidden_layers: 1`. There is **no `Qwen3_5` MTP class in transformers 5.16**
+(`Qwen3_5ForCausalLM`, `Qwen3_5TextConfig`, `Qwen3_5VisionModel` all exist; no MTP), so
+`Qwen3_5ForCausalLM` reports these as unexpected keys.
+
+Kept by default anyway. Dropping them silently removes a capability, and the MTP-bearing
+community GGUFs of this model are among its most downloaded builds. `--drop-mtp` is
+opt-in.
+
+### The surgery
+
+1. Drop every key under `model.visual.` (333 tensors)
+2. Rename `model.language_model.` → `model.`
+3. Keep `lm_head.weight` — `tie_word_embeddings: false`
+4. Build the config from `text_config` via `Qwen3_5TextConfig`, dropping `image_token_id`,
+   `video_token_id`, `vision_start_token_id`, `vision_end_token_id`, `language_model_only`
+5. **Set `architectures = ["Qwen3_5ForCausalLM"]`** — `Qwen3_5TextConfig` will not, the
+   same trap as `Glm4Config` in the GLM split
+
+All six non-default keys (`attn_output_gate`, `full_attention_interval`,
+`mamba_ssm_dtype`, `mtp_num_hidden_layers`, `mtp_use_dedicated_embeddings`,
+`output_gate_type`) survive the round-trip through `Qwen3_5TextConfig` — verified.
+
+### Engine support is arriving
+
+sglang commit `01db8a7` (PR #35297, 2026-08-25) registers **Qwen3_5 text-only
+architectures** in the mamba radix cache whitelists, adding "Text-only entries of the
+same hybrid stack (`models/qwen3_5_text`...)". An engine is building the landing pad for
+this checkpoint shape.
+
+### Verified three times, on two machines
+
+The split was run locally and twice on a rented H100, each time from a fresh download of
+the parent. All three produced **27,320,697,856 params / 54.64 GB**, and all three passed
+the byte-level check on all 866 kept tensors. Reproduction is not assumed here either.
+
+Verification is **tensor hashes, not logits**. `unfuse.verify.compare_logits` is right when
+the surgery could change arithmetic; this one only drops and renames. For a copy-and-rename
+byte equality over every kept tensor proves *every* input produces identical output, where
+matching logits proves it for the prompts you tried. It is also the only option on a box
+that cannot hold a 27B model in RAM.
+
+Two implementation notes that cost real time:
+
+- **numpy has no bfloat16.** `tensor.numpy()` raises `unsupported ScalarType BFloat16` on
+  exactly the dtype the checkpoint is stored in, so the verifier could not check the one
+  thing it existed to check. Hash `t.contiguous().view(torch.uint8).numpy().tobytes()`
+  instead — the claim is byte equality, not numeric equality, so this also works for fp8.
+- **Do not mirror the input sharding.** Read-shard-N-write-shard-N holds a whole ~3 GB
+  shard in RAM and dies partway on a small machine, leaving a checkpoint that still looks
+  plausible on disk. Buffer by bytes and flush on a budget; output sharding then does not
+  match input sharding, which is fine because the index is the map.
+
+### The MTP head is real, kept, and currently unusable
+
+Loading the split reports **26,895,998,464** parameters against **27,320,697,856** in the
+checkpoint. The difference is **424,699,392** — exactly the MTP head. transformers loads
+the model and silently ignores those tensors, because there is no `Qwen3_5` MTP class.
+
+vLLM 0.27.1 *does* ship `model_executor/models/qwen3_5_mtp.py` and registers
+`"Qwen3_5MTP"`, so this looked recoverable. It is not, and both paths were tested:
+
+| config `model_type` | result |
+|---|---|
+| `qwen3_5_text` (ours) | `NotImplementedError: Unsupported speculative method: 'mtp'` |
+| `qwen3_5` (forced) | resolves `Qwen3_5MTP`, then `AssertionError: Attempted to load weight (torch.Size([5120])) into parameter (torch.Size([4096]))` |
+
+The cause is in `vllm/config/speculative.py:516` — the MTP auto-detect fires only for
+`model_type in ("qwen3_5", "qwen3_5_moe")`, and that path then reads the *multimodal*
+config layout, expecting a nested `text_config`. A flattened text-only config makes it
+fall back to a default `hidden_size` of 4096 against our real 5120.
+
+So the head costs 0.85 GB and does nothing today. Kept anyway: it breaks nothing, and
+the alternative is deleting a capability that cannot be recovered without re-downloading
+55 GB. `--drop-mtp` exists for anyone who wants the clean load.
+
+### Serving traps
+
+**vLLM's default `max_num_seqs` will not start this model.**
+
+```
+ValueError: max_num_seqs (1024) exceeds available Mamba cache blocks (362).
+Each decode sequence requires one Mamba cache block, so CUDA graph capture cannot proceed.
+```
+
+This is the hybrid stack asserting itself: the 48 linear-attention layers need one Mamba
+cache block *per concurrent sequence*, a limit entirely separate from KV cache. Pass
+`--max-num-seqs 256`. Any copy-paste command for this model that omits it does not work.
+
+**The config still carries mRoPE.** `rope_parameters` retains `mrope_section` and
+`mrope_interleaved` from the multimodal parent; vLLM logs
+`Unrecognized keys in rope_parameters`. Harmless so far — but the GLM split explicitly
+dropped `mrope_section` and this one should too.
+
+### What removing 1.658% actually buys
+
+Same H100 80GB, same flags, vLLM 0.27.1:
+
+| | Parent | Text-only | Δ |
+|---|---|---|---|
+| Model weights | 51.10 GiB | 50.13 GiB | −0.97 GiB (−1.9%) |
+| KV cache available | 18.27 GiB | 19.84 GiB | **+1.57 GiB (+8.6%)** |
+| KV cache tokens | 277,435 | 301,465 | **+8.7%** |
+| Max concurrency @ 32k | 8.47× | 9.20× | **+8.6%** |
+
+The weights saving is small; it converts almost entirely into cache headroom, which is
+the number worth quoting.
+
+### The benchmark result that nearly got published wrong
+
+512-in / 256-out, greedy, `ignore_eos`, one shared OpenAI-compatible client, H100 80GB.
+
+| Engine | Model | c=1 tok/s | c=16 tok/s | c=16 TTFT p50 |
+|---|---|---|---|---|
+| vLLM 0.27.1 | parent | 47.4 | **635.8** | 657 ms |
+| vLLM 0.27.1 | text-only | 46.6 | 554.7 | 654 ms |
+| SGLang 0.5.18 | parent | 48.8 | 225.3 | 10,585 ms |
+| SGLang 0.5.18 | text-only | 47.2 | **628.5** | 715 ms |
+
+Three things to read off this, in order of how badly the first draft got them wrong:
+
+1. **Warmup moves the number by 21%.** The first vLLM run on the split gave 457.9 tok/s;
+   the same server and flags with one discarded warmup pass gave 554.7. Every row above
+   is warmed. An unwarmed row is not comparable to a warmed one, and mixing them silently
+   flips conclusions.
+2. **"The text-only split is faster" is false.** On vLLM the *parent* is 1.15× faster at
+   c=16. On SGLang the split is 2.79× faster — but only because SGLang's planner allocated
+   the parent `max_running_requests=5` versus the split's `16` and then starved it. That
+   is an engine memory-planning artifact, not a property of either model.
+3. **The real result is variance.** Across the two engines the parent's c=16 throughput
+   spans **2.82×** (635.8 vs 225.3); the split's spans **1.13×** (554.7 vs 628.5) on the
+   same hardware. The split is not faster. It is *predictable*, and predictability is
+   what you actually get for dropping the vision tower.
+
+At c=1 all four runs land between 46.6 and 48.8 tok/s. The same 64 text layers do the
+work in every case, and single-stream decode cannot tell the models apart — which is the
+sanity check that says the surgery did not change the compute path.
+
 ## Why not to prune for size
 
 - [Structural Pruning of LVLMs](https://arxiv.org/abs/2604.24380) (IJCV 2026): at 15%
@@ -663,6 +848,38 @@ down before the next observation demolished it. The published card asserted the 
 The pattern that eventually worked was: cheapest falsifying observation first, then a
 control against the unmodified upstream, then instrumentation at the point of failure, then
 the library's own source — and only then a claim, tested on the exact versions named in it.
+
+### Environment problems that cost real time
+
+Four from the Qwen3.8-27B run, all of which produced a *silent* wrong state rather than
+an error at the point of the mistake:
+
+- **`pip install` does not put the script on PATH.** `pip install huggingface_hub[cli]`
+  warns that it installed to `~/.local/bin`, which is not on PATH on a fresh Lambda image.
+  `nohup hf download ... &` then fails with `nohup: failed to run command 'hf'` *inside the
+  log*, while the launching shell happily echoes "download started". Twenty minutes of a
+  rented GPU went to a download that never began. Use absolute paths for anything
+  backgrounded, and verify bytes on disk rather than trusting an echo. Same family as the
+  `ninja` PATH trap already recorded above.
+- **`pkill -f <pattern>` matches your own SSH session.** The remote command string is in
+  the remote shell's `argv`, so `pkill -f pipeline.sh` issued over ssh kills the shell
+  running it — connection drops, exit 255, and whatever was mid-flight dies with it. This
+  bit three times. The `[p]attern` bracket trick only helps when the pattern is not also
+  present verbatim elsewhere in the command; a heredoc containing `launch_server` puts
+  that string in argv too. Kill by PID, or write the script to a file and scp it.
+- **`hf upload` creates the repo PUBLIC by default.** There is no prompt. A 54.64 GB
+  checkpoint began publishing to a public repo before its model card existed. Create the
+  repo explicitly, or check `model_info(...).private` immediately and flip it.
+- **A backgrounded job that outlives the SSH session needs `setsid`.** Plain `nohup ... &`
+  still died when its parent session was killed; `setsid nohup ... < /dev/null & disown`
+  survives.
+
+Two more from building the daily-intel routine, worth recording because they are network
+policy rather than code:
+
+- `reddit.com` returns **403** to datacenter IPs on `.json`, `.rss`, and `old.reddit`
+  alike, as does `x.com`. Neither is reachable programmatically from a cloud runner.
+- arXiv's API works over **https** and fails over plain `http`.
 
 ### Environment problems that cost real time
 
