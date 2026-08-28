@@ -317,6 +317,31 @@ Models that interleave linear/state-space layers with full-attention layers. Qwe
 *Why here:* forgetting it silently halves your parameter count estimate, and dropping
 `lm_head` during a split produces a model that loads and emits garbage.
 
+### 4.16 Expert share in a large MoE
+In a big sparse MoE almost the entire checkpoint is routed experts, and almost none of it
+is anything else. GLM-5.3 is 753.4 B parameters: 724.8 B (96.6%) are the 256 routed experts
+across its 75 sparse layers, 15.8 B (2.1%) is everything else put together (MLA projections,
+the sparse-attention indexer, router gates, norms, `embed_tokens`, `lm_head`), and the
+remaining 9.9 B is the MTP layer. Only 43 B is active per token.
+
+*Why here:* it decides what surgery is worth attempting. On a dense or lightly-sparse model
+the interesting removable block is a vision tower. On a model like this, anything that is
+not an expert is rounding error, and the only edit that changes the deployment story is one
+that removes experts. It also means a 755 GB checkpoint has a ~16 GB spine you can inspect,
+hash or load on its own.
+
+### 4.17 MLA and sparse-attention indexers
+Two things that break the usual attention arithmetic, both present in `glm_moe_dsa`.
+Multi-head latent attention factors K and V through a low-rank latent (`kv_lora_rank: 512`,
+`q_lora_rank: 2048`) so the cache stores the latent, not per-head K/V. DeepSeek sparse
+attention adds a small separate "lightning indexer" (`index_n_heads`, `index_head_dim`,
+`index_topk: 2048`) that scores which past positions each query attends to, so attention
+cost stops scaling with full context length.
+
+*Why here:* both add tensor names that look like typos if you have only seen MHA/GQA
+(`kv_a_proj_with_mqa`, `q_a_layernorm`, `indexer.wk`, `indexer.weights_proj`), and both must
+survive a split untouched. §4.8's KV-cache formula does not apply to an MLA model.
+
 ## 5. Gemma 4 specifically
 
 ### 5.1 The family is not uniform
@@ -785,6 +810,19 @@ H100 80GB that converts almost entirely into cache headroom: KV cache 18.27 → 
 *Why here:* quote the cache and concurrency numbers, not the weight saving. The weight
 saving sounds trivial; the thing users feel is how many concurrent requests fit.
 
+### 10.10 The hardware floor is set by the release, not the architecture
+How many GPUs a model needs is a fact about the artifact that shipped, and it moves when
+someone reshapes that artifact. GLM-5.3 at FP8 is 755 GB, which vLLM's own recipe puts at a
+floor of 8xH200 (8xB200 for the full 1M context). Its *active* footprint is 43 B. The gap
+between those two numbers is entirely idle experts sitting in memory waiting to be routed
+to.
+
+*Why here:* it is where the value in editing a large MoE comes from. Halving the expert
+count roughly halves the checkpoint and can drop the floor from eight GPUs to four, which
+is a bigger change in who can run the model than any quantization step. It is also the
+reason a single rented GPU can *edit* a model it can never *serve*: expert pruning is
+layer-local, and one layer of GLM-5.3 is ~9.7 GB.
+
 ## 11. Engineering environment
 
 Most of the failures below reported the **wrong layer**. That is the common thread, and it
@@ -904,11 +942,46 @@ targets, and the CI split between fast checks and notebook validation.
 
 ---
 
+### 12.10 Survey the derivative field before building, and check the premise
+Before committing to an artifact, list what already exists for that model and confirm the
+specific assumption its value rests on. Both halves matter. On GLM-5.3 launch day the plan
+was to extract the MTP layer and publish it for people whose quantization had dropped it,
+restoring speculative decoding. One loop over six published `model.safetensors.index.json`
+files showed unsloth, all three NVFP4 repos and the vendor's own BF16 each still carried all
+791 layer-78 tensors. Nobody had dropped it. The artifact had no audience, and the check
+cost about a minute.
+
+The field survey is the cheaper half and is pure HTTP: `/api/models?search=` for what is
+taken, `?blobs=true` for sizes, and the index file for what each one kept or removed.
+Identical byte sizes across repos (three NVFP4 builds all at 464.9 GB) mean one shared
+recipe, not three independent efforts.
+
+*Why here:* "be first" is the wrong frame for a small publisher. Vendors and the large
+quantization orgs mirror weights under embargo and publish within minutes, and on
+GLM-5.3-Flash all 40+ derivatives sat at zero downloads with likes concentrated on two
+names. What pays is occupying a lane nobody else is in, which you can only identify by
+looking. See §12.7.
+
 ## 13. Adjacent topics this repo touches but does not use
 
 ### 13.1 Pruning
 Structured vs unstructured sparsity; Minitron-style **width** pruning (safe to ~30%) vs
 depth pruning (much riskier).
+
+**Expert pruning** is the MoE-specific case, and the one closest to what this repo already
+does. Dropping routed experts is structurally the same edit as dropping a vision tower:
+delete a set of tensors, renumber, rewrite the config. It differs in one way that matters.
+A vision tower is *provably* unused by the text path, so the result is byte-exact and needs
+no eval. Expert removal changes what the model computes for every token, so the artifact is
+only worth publishing with an eval behind it. REAP-style methods score experts by
+contribution over a calibration set; a MoE's own learned routing bias
+(`e_score_correction_bias` under `noaux_tc` scoring) is a free, weaker signal that needs no
+forward pass.
+
+*Why here:* it is the only edit that meaningfully shrinks a model that is 96.6% experts
+(§4.16), and it is feasible on one GPU because it is layer-local (§10.10). It is also the
+point where this repo's verification bar has to change: §9.2's bit-exactness does not apply,
+so §9.1 logits and §9.5's alternatives come back into play.
 
 ### 13.2 Distillation
 Recovering quality after aggressive compression, and why this repo avoids anything needing
