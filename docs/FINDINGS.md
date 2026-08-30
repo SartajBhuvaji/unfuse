@@ -60,6 +60,66 @@ generate coherently. **No perplexity comparison against bf16 was run.**
 | Q5_K_M | 7.05 |
 | Q4_K_M | 6.17 |
 
+### Most of the memory win is the profiler, not the weights
+
+Benchmarked the GLM-4.6V-Flash parent against its text-only split on one A100-SXM4-40GB,
+which the card had never done: it only ever measured the derivative. Under vLLM 0.27.1 at
+`--max-model-len 32768` the split gets 479,280 KV tokens against the parent's 310,512,
++54%. The vision tower is only 1.79 GB of 20.59, so that number cannot be weights.
+
+vLLM's own profile says where it goes:
+
+| | parent | parent, `video: 0` | split |
+|---|---|---|---|
+| weights + non-torch | 19.67 GiB | 19.67 GiB | 17.85 GiB |
+| peak activation | 4.82 GiB | 0.97 GiB | 0.21 GiB |
+| KV cache | 11.85 GiB | 15.70 GiB | 18.28 GiB |
+| KV tokens | 310,512 | 411,552 | 479,280 |
+| engine init | 116 s | 23 s | 11 s |
+
+The parent's 4.82 GiB peak activation is vLLM profiling the multimodal path with one
+maximum-size *video* — not an image — and sizing a 66,242-token encoder cache off it. That
+memory is reserved for the life of the server whether or not anything multimodal is ever
+sent, and it costs 105 s of startup as well.
+
+Which means 60% of the headline gain (101,040 of 168,768 tokens) is available on the parent
+with `--limit-mm-per-prompt '{"video": 0}'` and no surgery at all. The split is worth +16%
+over a parent configured that way, plus 1.73 GiB of weights that no flag reaches. A card
+claiming the full +54% against a default-configured parent is not wrong, but it is
+comparing against a misconfiguration, so both numbers belong in it.
+
+Do not set `'{"video": 0, "image": 0}'`. vLLM 0.27.1 then skips loading the tower and dies
+in profiling with `AttributeError: 'NoneType' object has no attribute 'size'`.
+
+Both checkpoints store KV at an identical 40,960 bytes per token (40 layers, 2 KV heads,
+head_dim 128, bf16), which is the arithmetic check on every scraped figure above: tokens
+must equal GiB × 26,214.4. It also means none of the gain is a cheaper cache.
+
+### Throughput did not move, and that is the result
+
+Eight rows, two checkpoints, two engines, concurrency 1 and 16. Every c=1 row lands between
+61.8 and 63.7 tok/s and every c=16 row between 962.7 and 994.9 — a 3% spread. Both models
+read the same 18.80 GB per token, because decode never touches the resident vision tower,
+so both sit against the same 82.7 tok/s ceiling on the A100's 1.555 TB/s and both measure
+~77% of it.
+
+The trap in the bandwidth arithmetic is charging the parent for its whole 20.59 GB
+checkpoint. That lowers its ceiling by 9% and manufactures an advantage for the split that
+the measurements do not show. Pass the bytes decode actually reads.
+
+Two comparability checks that had to be made before any of this could be reported. vLLM
+gave both models `max_num_seqs=256`, clamped from `max_num_batched_tokens=2048`, but prints
+it only at DEBUG, so it took a separate start with identical flags to establish; two
+unlogged values are unverified, not equal. SGLang derived 3,085 for the parent and 4,096
+for the split, unequal but both ~200× the tested concurrency, so nothing was throttled —
+unlike the Qwen run, where the parent got 5 against an offered 16 and the resulting 2.79×
+nearly shipped.
+
+And warmup earned its keep on exactly one row of eight: SGLang on the split read 50.7 tok/s
+cold against 63.3 warm, +24.9%, with TPOT identical at 15.58 ms. Compared against SGLang's
+warmed parent at 63.7, the cold figure would have published the split as 20% slower than
+the model it was derived from.
+
 ## Keeping only the vision tower — done, ran locally
 
 The inverse operation. `Glm4vVisionModel` already exists in transformers and its

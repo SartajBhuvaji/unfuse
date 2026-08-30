@@ -1,0 +1,17 @@
+{
+  "label": "vllm-original-novideo",
+  "model": "zai-org/GLM-4.6V-Flash --limit-mm-per-prompt {video:0}",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 19.29,
+  "kv_cache_gib": 15.7,
+  "kv_cache_tokens": 411552,
+  "max_model_len": 32768,
+  "max_concurrency": 12.56,
+  "mm_encoder_budget_tokens": 6084,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "label": "vllm-original",
+  "model": "zai-org/GLM-4.6V-Flash",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 19.29,
+  "kv_cache_gib": 11.85,
+  "kv_cache_tokens": 310512,
+  "max_model_len": 32768,
+  "max_concurrency": 9.48,
+  "mm_encoder_budget_tokens": 66242,
+  "missing": [
+    "engine_version"
+  ],
+  "concurrency_limit": 256,
+  "concurrency_limit_source": "measured in a separate start with identical flags and VLLM_LOGGING_LEVEL=DEBUG; vLLM 0.27.1 does not print this at INFO",
+  "max_num_batched_tokens": 2048
+}
