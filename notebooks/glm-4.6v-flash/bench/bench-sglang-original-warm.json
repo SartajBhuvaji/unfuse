@@ -1,0 +1,30 @@
+{
+  "label": "sglang-original-warm",
+  "model": "zai-org/GLM-4.6V-Flash",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 31.39,
+      "output_tok_s": 63.7,
+      "per_stream_tok_s": 63.7,
+      "ttft_ms_mean": 63.4,
+      "ttft_ms_p50": 63.5,
+      "ttft_ms_p99": 63.7,
+      "tpot_ms_mean": 15.5
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 16.49,
+      "output_tok_s": 962.7,
+      "per_stream_tok_s": 60.2,
+      "ttft_ms_mean": 132.1,
+      "ttft_ms_p50": 132.0,
+      "ttft_ms_p99": 139.6,
+      "tpot_ms_mean": 16.14
+    }
+  ]
+}

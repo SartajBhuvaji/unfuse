@@ -13,6 +13,14 @@ set -uo pipefail
 
 json=0; [ "${1:-}" = "--json" ] && json=1
 
+# Which interpreter's torch to report. The ambient python is almost never the
+# one that served the benchmark: vLLM and SGLang each need their own venv, and
+# a Lambda Stack box ships a system torch that neither of them uses. Recording
+# the wrong torch next to a throughput table is a provenance error, so point
+# this at the venv that actually ran the model.
+#   PYTHON=~/venvs/vllm/bin/python bash tools/gpu_env.sh --json
+PY_BIN="${PYTHON:-python3}"
+
 gpu_name=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1)
 gpu_mem=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader 2>/dev/null | head -1)
 gpu_count=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | wc -l)
@@ -24,9 +32,9 @@ pcap=$(nvidia-smi --query-gpu=power.limit --format=csv,noheader 2>/dev/null | he
 clk=$(nvidia-smi --query-gpu=clocks.max.sm --format=csv,noheader 2>/dev/null | head -1)
 ecc=$(nvidia-smi --query-gpu=ecc.mode.current --format=csv,noheader 2>/dev/null | head -1)
 persist=$(nvidia-smi --query-gpu=persistence_mode --format=csv,noheader 2>/dev/null | head -1)
-torch_ver=$(python3 -c "import torch;print(torch.__version__)" 2>/dev/null)
-torch_cuda=$(python3 -c "import torch;print(torch.version.cuda)" 2>/dev/null)
-py_ver=$(python3 -c "import sys;print('.'.join(map(str,sys.version_info[:3])))" 2>/dev/null)
+torch_ver=$("$PY_BIN" -c "import torch;print(torch.__version__)" 2>/dev/null)
+torch_cuda=$("$PY_BIN" -c "import torch;print(torch.version.cuda)" 2>/dev/null)
+py_ver=$("$PY_BIN" -c "import sys;print('.'.join(map(str,sys.version_info[:3])))" 2>/dev/null)
 os_name=$(. /etc/os-release 2>/dev/null && echo "$PRETTY_NAME")
 kernel=$(uname -r)
 cpu=$(grep -m1 "model name" /proc/cpuinfo 2>/dev/null | cut -d: -f2- | sed 's/^ *//')

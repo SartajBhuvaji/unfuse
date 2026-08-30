@@ -1,0 +1,19 @@
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/GLM-4.6-Flash-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 17.56,
+  "kv_cache_gib": 18.28,
+  "kv_cache_tokens": 479280,
+  "max_model_len": 32768,
+  "max_concurrency": 14.63,
+  "missing": [
+    "engine_version",
+    "mm_encoder_budget_tokens"
+  ],
+  "concurrency_limit": 256,
+  "concurrency_limit_source": "measured in a separate start with identical flags and VLLM_LOGGING_LEVEL=DEBUG; vLLM 0.27.1 does not print this at INFO",
+  "max_num_batched_tokens": 2048
+}

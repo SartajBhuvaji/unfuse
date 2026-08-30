@@ -1,0 +1,30 @@
+{
+  "label": "sglang-derived-warm",
+  "model": "sartajbhuvaji/GLM-4.6-Flash-text",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 31.32,
+      "output_tok_s": 63.3,
+      "per_stream_tok_s": 63.3,
+      "ttft_ms_mean": 67.2,
+      "ttft_ms_p50": 67.1,
+      "ttft_ms_p99": 67.5,
+      "tpot_ms_mean": 15.58
+    },
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 16.26,
+      "output_tok_s": 976.2,
+      "per_stream_tok_s": 61.0,
+      "ttft_ms_mean": 88.5,
+      "ttft_ms_p50": 88.2,
+      "ttft_ms_p99": 96.0,
+      "tpot_ms_mean": 16.09
+    }
+  ]
+}
