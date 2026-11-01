@@ -35,6 +35,7 @@ venv/
 
 # logs and scratch
 *.log
+*.blg
 scratch/
 tmp/
 
