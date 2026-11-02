@@ -26,7 +26,7 @@ cd ~
 [ -d llama.cpp ] || git clone -q --depth 1 https://github.com/ggml-org/llama.cpp
 cd llama.cpp
 cmake -B build -DGGML_NATIVE=ON -DLLAMA_CURL=OFF -DCMAKE_BUILD_TYPE=Release >/dev/null
-cmake --build build --config Release -j"$(nproc)" --target llama-quantize llama-cli >/dev/null
+cmake --build build --config Release -j"$(nproc)" --target llama-quantize llama-cli llama-perplexity llama-mtmd-cli >/dev/null
 
 source ~/venv/bin/activate
 pip install -q gguf sentencepiece protobuf
