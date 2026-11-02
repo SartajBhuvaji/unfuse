@@ -12,6 +12,7 @@ LOG="$SW/phase_b.log"
 cd "$ROOT"
 source /root/venv/bin/activate
 : "${HF_TOKEN:?export HF_TOKEN in this shell}"
+chmod +x tools/*.sh
 mkdir -p "$SW"
 exec > >(tee -a "$LOG") 2>&1
 

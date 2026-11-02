@@ -1,0 +1,56 @@
+0.00.877.069 W model has unused tensor blk.64.attn_norm.weight (size = 20480 bytes) -- ignoring
+0.00.877.077 W model has unused tensor blk.64.post_attention_norm.weight (size = 20480 bytes) -- ignoring
+0.00.877.084 W model has unused tensor blk.64.attn_q.weight (size = 35389440 bytes) -- ignoring
+0.00.877.088 W model has unused tensor blk.64.attn_k.weight (size = 2949120 bytes) -- ignoring
+0.00.877.091 W model has unused tensor blk.64.attn_v.weight (size = 4300800 bytes) -- ignoring
+0.00.877.101 W model has unused tensor blk.64.attn_output.weight (size = 17694720 bytes) -- ignoring
+0.00.877.104 W model has unused tensor blk.64.attn_q_norm.weight (size = 1024 bytes) -- ignoring
+0.00.877.106 W model has unused tensor blk.64.attn_k_norm.weight (size = 1024 bytes) -- ignoring
+0.00.877.109 W model has unused tensor blk.64.ffn_gate.weight (size = 50135040 bytes) -- ignoring
+0.00.877.112 W model has unused tensor blk.64.ffn_down.weight (size = 73113600 bytes) -- ignoring
+0.00.877.114 W model has unused tensor blk.64.ffn_up.weight (size = 50135040 bytes) -- ignoring
+0.00.877.118 W model has unused tensor blk.64.nextn.eh_proj.weight (size = 29491200 bytes) -- ignoring
+0.00.877.121 W model has unused tensor blk.64.nextn.enorm.weight (size = 20480 bytes) -- ignoring
+0.00.877.124 W model has unused tensor blk.64.nextn.hnorm.weight (size = 20480 bytes) -- ignoring
+0.00.877.133 W model has unused tensor blk.64.nextn.shared_head_norm.weight (size = 20480 bytes) -- ignoring
+0.02.975.039 I cmn          init: llama threadpool init, n_threads = 20
+0.03.094.691 W load_hparams: Qwen-VL models require at minimum 1024 image tokens to function correctly on grounding tasks
+0.03.094.695 W load_hparams: if you encounter problems with accuracy, try adding --image-min-tokens 1024
+0.03.094.695 W load_hparams: more info: https://github.com/ggml-org/llama.cpp/issues/16842
+
+0.03.367.047 I mtmd_cli_context: chat template example:
+<|im_start|>system
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+
+0.03.367.051 I main: loading model: /root/gguf/Qwen3.8-27B-text-Q4_K_M.gguf
+0.03.367.220 W WARN: This is an experimental CLI for testing multimodal capability.
+0.03.367.222 W       For normal use cases, please use the standard llama-cli
+0.03.427.353 I encoding mtmd batch, n_chunks = 1 (done = 1, total = 3)
+0.04.208.516 I mtmd batch encoding done in 781 ms
+0.04.274.970 W find_slot: non-consecutive token position 4 after 3 for sequence 0 with 512 new tokens
+0.04.274.979 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 512 new tokens
+0.04.274.980 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 512 new tokens
+0.04.274.980 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 512 new tokens
+0.04.276.074 W find_slot: non-consecutive token position 4 after 3 for sequence 0 with 512 new tokens
+0.04.395.056 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 512 new tokens
+0.04.588.489 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 512 new tokens
+0.04.782.888 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 512 new tokens
+0.04.980.996 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 452 new tokens
+0.04.981.270 W find_slot: non-consecutive token position 4 after 4 for sequence 0 with 452 new tokens
+0.05.173.893 W find_slot: non-consecutive token position 69 after 4 for sequence 0 with 16 new tokens
+0.05.173.926 W find_slot: non-consecutive token position 69 after 4 for sequence 0 with 16 new tokens
+
+<think>
+
+</think>
+
+cat
+
+
