@@ -101,7 +101,7 @@ curl -fsSL -o "$IMG" "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/
   < /dev/null 2>&1 | tee "$GGUF_DIR/mmproj_mtmd_test.txt" || true
 
 echo "== private Hub upload (GGUF only, new private repos) =="
-python - <<'PY'
+OUT="$OUT" python - <<'PY'
 import os
 from pathlib import Path
 from huggingface_hub import HfApi
