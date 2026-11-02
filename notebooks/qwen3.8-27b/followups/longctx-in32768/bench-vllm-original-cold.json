@@ -1,0 +1,30 @@
+{
+  "label": "vllm-original-cold",
+  "model": "Qwen/Qwen3.8-27B",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 118.02,
+      "output_tok_s": 17.2,
+      "per_stream_tok_s": 17.2,
+      "ttft_ms_mean": 7508.4,
+      "ttft_ms_p50": 7906.2,
+      "ttft_ms_p99": 8864.9,
+      "tpot_ms_mean": 28.63
+    },
+    {
+      "concurrency": 16,
+      "requests": 16,
+      "failed": 0,
+      "duration_s": 159.73,
+      "output_tok_s": 25.4,
+      "per_stream_tok_s": 1.6,
+      "ttft_ms_mean": 82568.8,
+      "ttft_ms_p50": 77970.0,
+      "ttft_ms_p99": 143356.5,
+      "tpot_ms_mean": 221.61
+    }
+  ]
+}

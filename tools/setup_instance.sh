@@ -17,6 +17,8 @@ python -c "import torch; print('torch', torch.__version__, 'cuda', torch.cuda.is
 # so a plain install is enough now. Earlier versions need git main for Gemma 4.
 pip install -q "transformers>=5.15.1"
 pip install -q accelerate safetensors pillow huggingface_hub ipykernel jupyterlab
+# Qwen3.5 hybrid checkpoints (RoPE / logit checks in transformers): avoid slow Mamba fallbacks.
+pip install -q "causal-conv1d>=1.4.0" "flash-linear-attention>=0.2.0"
 
 python -m ipykernel install --user --name unfuse --display-name "unfuse (venv)"
 

@@ -35,6 +35,12 @@ so they ask for more than was run.
 - **Hardware.** Bf16 work needs one 80 GB card (H100 80 GB). A 40 GB card cannot
   load the model. GGUF conversion and quantization are CPU work. Budget roughly
   200 GB of disk: 55 GB checkpoint, 55 GB bf16 GGUF, ~40 GB of quants, 56 GB parent.
+- **Python (transformers RoPE / logit checks).** Qwen3.5 hybrids use Mamba blocks;
+  without optional kernels, transformers logs slow fallbacks for `causal_conv1d` and
+  `flash-linear-attention`. DO setup (`tools/setup_instance_do.sh`) installs
+  `pip install -e ".[...,qwen35]"` (`causal-conv1d`, `flash-linear-attention`).
+  On an existing box: `pip install causal-conv1d flash-linear-attention` into the
+  same venv as torch (after torch is installed; wheels may compile against CUDA).
 - **Tokens** come from the environment (`HF_TOKEN`). Never write one to a file on
   the machine and never commit one.
 - **Hub.** Create any new repo explicitly **private**. Do not make anything public

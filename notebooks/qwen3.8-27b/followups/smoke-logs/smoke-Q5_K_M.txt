@@ -1,0 +1,12 @@
+
+[1m== llama.cpp[0m
+  [ok] What is the capital of France? Answer in one
+  [ok] What is 84 * 3 / 2? Reply with just the numb
+  [ok] Translate to German: The weather is cold tod
+  [32mPASS[0m llamacpp 
+
+[1m== correctness  (sartajbhuvaji/unfuse-Qwen3.8-27B-text)[0m
+PASS  llamacpp  
+
+[1m== metrics[0m
+  (none)

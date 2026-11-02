@@ -1,0 +1,17 @@
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 50.13,
+  "kv_cache_gib": 19.84,
+  "kv_cache_tokens": 302811,
+  "max_model_len": 40960,
+  "max_concurrency": 7.39,
+  "missing": [
+    "engine_version",
+    "concurrency_limit",
+    "mm_encoder_budget_tokens"
+  ]
+}

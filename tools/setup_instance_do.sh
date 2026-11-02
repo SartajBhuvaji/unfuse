@@ -44,8 +44,15 @@ fi
 
 python -c "import torch; print('torch', torch.__version__, 'cuda', torch.cuda.is_available())"
 
-pip install -q -e ".[notebook,gguf,dev]"
+pip install -q -e ".[notebook,gguf,dev,qwen35]"
 pip install -q "huggingface_hub[cli]" datasets
+
+python - <<'PY'
+import importlib.util
+for mod in ("causal_conv1d", "fla"):
+    ok = importlib.util.find_spec(mod) is not None
+    print(f"qwen35 kernel {mod}: {'OK' if ok else 'MISSING'}")
+PY
 
 python -m ipykernel install --user --name unfuse --display-name "unfuse (venv)"
 
