@@ -23,9 +23,25 @@ LLAMA=~/llama.cpp
 BIN="$LLAMA/build/bin"
 BASE="$OUT/$NAME-BF16.gguf"
 QUANT="$OUT/$NAME-$Q.gguf"
+SRC="$MODELS/$NAME"
+MIN_BF16_BYTES=$((50 * 1024 * 1024 * 1024))
+
+need_bf16_convert() {
+  [ ! -f "$BASE" ] && return 0
+  local sz
+  sz=$(stat -c%s "$BASE" 2>/dev/null || stat -f%z "$BASE")
+  [ "$sz" -lt "$MIN_BF16_BYTES" ]
+}
+
+if need_bf16_convert; then
+  echo "== BF16 GGUF missing or truncated — re-converting from safetensors =="
+  rm -f "$BASE"
+  python "$LLAMA/convert_hf_to_gguf.py" "$SRC" \
+    --outfile "$BASE" --outtype bf16 2>&1 | tee "$GGUF_DIR/convert_bf16.log"
+fi
 
 if [ ! -f "$BASE" ]; then
-  echo "FATAL: missing $BASE — run full BF16 convert first"
+  echo "FATAL: still no $BASE after convert"
   exit 1
 fi
 
