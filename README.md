@@ -54,10 +54,13 @@ end to end.
 
 ## Published
 
-- [GLM-4.6-Flash-text](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text) — bf16 text-only, 9.4B params
-- [GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF) — F16, Q8_0, Q6_K, Q5_K_M, Q4_K_M
-- [GLM-4.6V-Flash-mmproj-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6V-Flash-mmproj-GGUF) — the vision half, F32/BF16/F16/Q8_0
-- [Qwen3.8-27B-text](https://huggingface.co/sartajbhuvaji/Qwen3.8-27B-text) — bf16 text-only, byte-exact on every kept tensor, no GGUF yet
+All of it is in the [unfuse collection](https://huggingface.co/collections/sartajbhuvaji/unfuse-6ae8b265e63951518e4e75cc).
+
+- [unfuse-GLM-4.6-Flash-text](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text) — bf16 text-only, 9.4B params
+- [unfuse-GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF) — F16, Q8_0, Q6_K, Q5_K_M, Q4_K_M
+- [unfuse-GLM-4.6V-Flash-mmproj-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6V-Flash-mmproj-GGUF) — the vision half, F32/BF16/F16/Q8_0
+- [unfuse-Qwen3.8-27B-text](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-text) — bf16 text-only, byte-exact on every kept tensor, no GGUF yet
+- [unfuse-Gemma-4-31B-IT-NVFP4-FP8attn-text](https://huggingface.co/sartajbhuvaji/unfuse-Gemma-4-31B-IT-NVFP4-FP8attn-text) — NVFP4 MLPs, FP8 attention, no vision tower, 23.0 GB
 
 The first two GLM repos recombine into the original multimodal model under llama.cpp.
 
