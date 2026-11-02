@@ -39,10 +39,9 @@ so they ask for more than was run.
   the machine and never commit one.
 - **Hub.** Create any new repo explicitly **private**. Do not make anything public
   and do not edit the existing public repos. Publishing is a separate decision.
-- **Commits.** Author as `Sartaj Bhuvaji <sbhuvaji@seattleu.edu>`. Plain, human
-  commit messages. No AI attribution or co-author trailers anywhere, in commits,
-  files or logs you add. Write prose in the results files the way a person would
-  write it: direct, specific, no filler.
+- **Commits.** Author as `Sartaj Bhuvaji <sbhuvaji@seattleu.edu>`. Short,
+  plain commit messages with no trailers. Write the results files the way you'd
+  write them by hand: direct, specific, no filler.
 - **Do not commit weights or GGUFs.** Commit JSON, logs and the results write-up.
 - **Report failures as failures.** A step that did not run is "not run", not
   "skipped" or "passed".
