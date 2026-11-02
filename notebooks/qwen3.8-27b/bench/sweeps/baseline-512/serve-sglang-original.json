@@ -1,0 +1,15 @@
+{
+  "label": "sglang-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 51.05,
+  "kv_cache_tokens": 79998,
+  "max_model_len": 32768,
+  "concurrency_limit": 5,
+  "kv_cache_gib": 4.88,
+  "max_concurrency": 2.44,
+  "max_concurrency_derived": true,
+  "missing": []
+}

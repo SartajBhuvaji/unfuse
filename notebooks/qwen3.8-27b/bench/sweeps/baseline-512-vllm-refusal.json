@@ -6,6 +6,6 @@
   "status": "failed_startup",
   "max_num_seqs_requested": 1024,
   "mamba_cache_blocks_available": 334,
-  "error": "max_num_seqs (1024) exceeds available Mamba cache blocks (334 parent / 362 text-only split). CUDA graph capture cannot proceed.",
+  "error": "max_num_seqs (1024) exceeds available Mamba cache blocks (334). CUDA graph capture cannot proceed.",
   "fix": "Re-run with --max-num-seqs 256 (see runbook / model card)"
 }

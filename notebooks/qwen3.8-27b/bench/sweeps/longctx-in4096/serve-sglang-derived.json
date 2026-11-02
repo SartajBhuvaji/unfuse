@@ -1,0 +1,15 @@
+{
+  "label": "sglang-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 50.16,
+  "kv_cache_tokens": 129884,
+  "max_model_len": 8192,
+  "concurrency_limit": 16,
+  "kv_cache_gib": 7.92,
+  "max_concurrency": 15.85,
+  "max_concurrency_derived": true,
+  "missing": []
+}

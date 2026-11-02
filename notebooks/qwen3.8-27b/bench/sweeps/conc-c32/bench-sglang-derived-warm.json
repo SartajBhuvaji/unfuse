@@ -1,0 +1,18 @@
+{
+  "label": "sglang-derived-warm",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "runs": [
+    {
+      "concurrency": 32,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 45.49,
+      "output_tok_s": 344.6,
+      "per_stream_tok_s": 10.8,
+      "ttft_ms_mean": 10968.4,
+      "ttft_ms_p50": 13818.6,
+      "ttft_ms_p99": 13975.6,
+      "tpot_ms_mean": 36.27
+    }
+  ]
+}
