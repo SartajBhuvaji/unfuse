@@ -10,6 +10,8 @@ LOG="$FUP/rope_server_job.log"
 
 cd "$ROOT"
 source /root/venv/bin/activate
+if [ -f "$ROOT/.env" ]; then set -a; source "$ROOT/.env"; set +a; fi
+bash "$FUP/ensure_qwen35_kernels.sh"
 exec > >(tee -a "$LOG") 2>&1
 echo "== job start $(date -Is) =="
 
@@ -19,8 +21,8 @@ if [ ! -x "$BIN/llama-server" ]; then
   cmake --build "$LLAMA/build" --target llama-server -j "$(nproc)"
 fi
 
-pkill -f llama-server 2>/dev/null || true
-sleep 2
+pkill -9 -f llama-server 2>/dev/null || true
+sleep 5
 nohup "$BIN/llama-server" -m "$GGUF" --port 8080 -ngl 99 -c 8192 \
   --reasoning-budget 0 > "$FUP/llama-server.log" 2>&1 &
 echo "waiting for llama-server..."
@@ -37,10 +39,14 @@ else:
     raise SystemExit("server timeout")
 PY
 
+python "$FUP/rope_server_compare.py" --phase collect-gguf --gguf-cache "$FUP/rope_gguf_cache.json"
+pkill -9 -f llama-server 2>/dev/null || true
+sleep 15
 python "$FUP/rope_server_compare.py" \
+  --phase run-hf \
+  --gguf-cache "$FUP/rope_gguf_cache.json" \
   --out-json "$FUP/rope_server_results.json" \
   --out-md "$FUP/ROPE.md"
-pkill -f llama-server 2>/dev/null || true
 
 : "${HF_TOKEN:?HF_TOKEN required for upload}"
 HUB_README="$FUP/.hub_readme_snapshot.md"

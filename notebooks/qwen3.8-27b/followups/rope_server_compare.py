@@ -7,7 +7,6 @@ import argparse
 import gc
 import json
 import math
-import subprocess
 import sys
 import time
 import urllib.error
@@ -23,18 +22,6 @@ from unfuse.verify import DEFAULT_PROMPTS, long_prompt  # noqa: E402
 
 SERVER = "http://127.0.0.1:8080/completion"
 WIKITEXT = ROOT / "notebooks/qwen3.8-27b/gguf/wikitext2-test.txt"
-
-
-def wait_server(timeout: int = 600) -> None:
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        try:
-            with urllib.request.urlopen("http://127.0.0.1:8080/health", timeout=2) as r:
-                if r.status == 200:
-                    return
-        except (urllib.error.URLError, TimeoutError):
-            time.sleep(2)
-    raise TimeoutError("llama-server did not become healthy")
 
 
 def completion_probs(prompt: str, n_probs: int = 20) -> list[dict]:
@@ -54,15 +41,13 @@ def completion_probs(prompt: str, n_probs: int = 20) -> list[dict]:
     )
     with urllib.request.urlopen(req, timeout=600) as resp:
         data = json.loads(resp.read())
-    # First predicted token's candidate list
     cps = data.get("completion_probabilities") or []
     if not cps:
         raise RuntimeError(f"no completion_probabilities in response keys={list(data.keys())}")
-    probs = cps[0].get("probs") or []
-    return probs
+    return cps[0].get("probs") or []
 
 
-def hf_top_logprobs(model, tok, input_ids, k: int = 20) -> list[tuple[int, float]]:
+def hf_top_logprobs(model, input_ids, k: int = 20) -> list[tuple[int, float]]:
     with torch.no_grad():
         logits = model(input_ids=input_ids).logits[0, -1, :].float()
         logp = F.log_softmax(logits, dim=-1)
@@ -70,21 +55,22 @@ def hf_top_logprobs(model, tok, input_ids, k: int = 20) -> list[tuple[int, float
     return [(int(i.item()), float(v.item())) for i, v in zip(idx, vals)]
 
 
-def compare_prompt_rows(
-    model,
-    tok,
-    user_text: str,
-    n_probs: int = 20,
-) -> dict:
+def chat_prompt(tok, user_text: str) -> tuple[torch.Tensor, str, int]:
     messages = [{"role": "user", "content": user_text}]
-    chat_ids = tok.apply_chat_template(
+    enc = tok.apply_chat_template(
         messages, add_generation_prompt=True, return_tensors="pt"
-    ).to(model.device)
+    )
+    if isinstance(enc, torch.Tensor):
+        chat_ids = enc
+    else:
+        chat_ids = enc["input_ids"]
     chat_text = tok.apply_chat_template(
         messages, add_generation_prompt=True, tokenize=False
     )
-    hf_top = hf_top_logprobs(model, tok, chat_ids, n_probs)
-    gg_probs = completion_probs(chat_text, n_probs)
+    return chat_ids, chat_text, int(chat_ids.shape[-1])
+
+
+def merge_row(tok, hf_top, gg_probs, user_text: str, chat_tokens: int) -> dict:
     gg_map = {int(p["id"]): float(p["logprob"]) for p in gg_probs if "id" in p}
     hf_map = dict(hf_top)
     hf_top1 = hf_top[0][0]
@@ -93,7 +79,7 @@ def compare_prompt_rows(
     max_lp_diff = max(abs(hf_map[t] - gg_map[t]) for t in shared) if shared else None
     return {
         "prompt_head": user_text[:60],
-        "chat_tokens": int(chat_ids.shape[-1]),
+        "chat_tokens": chat_tokens,
         "hf_top1_id": hf_top1,
         "hf_top1_token": tok.decode([hf_top1]),
         "gg_top1_id": gg_top1,
@@ -134,23 +120,67 @@ def wikitext_perplexity_llama_chunks(
     return math.exp(nll / count), n_chunk, count
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--hf-dir", default="/root/models/Qwen3.8-27B-text")
-    ap.add_argument("--out-json", required=True)
-    ap.add_argument("--out-md", default="")
-    args = ap.parse_args()
+def write_md(path: Path, payload: dict) -> None:
+    rows = payload["prompt_rows"]
+    lines = ["# RoPE check (bf16 GGUF vs safetensors)", "", "## Numbers", ""]
+    lines.append("| # | prompt (head) | chat tokens | top-1 match | max |logp| diff (shared top-20) |")
+    lines.append("|---|---------------|-------------|-------------|----------------------------------|")
+    for i, r in enumerate(rows, 1):
+        diff = r["max_logprob_diff_top20"]
+        diff_s = f"{diff:.6f}" if diff is not None else "n/a"
+        lines.append(
+            f"| {i} | {r['prompt_head']!r} | {r['chat_tokens']} | {r['top1_match']} | {diff_s} |"
+        )
+    ppl = payload["perplexity"]
+    lines.extend(
+        [
+            "",
+            f"- **GGUF bf16 PPL (llama-perplexity):** {ppl['gguf_bf16_llama_perplexity_reference']}",
+            f"- **Safetensors PPL (HF, llama chunking):** {ppl['transformers_bf16_llama_chunking']:.4f}",
+            f"- **Chunks / predictions:** {ppl['n_chunks']} / {ppl['token_predictions']}",
+            "",
+            "## Protocol",
+            "",
+            "- **GGUF:** `llama-server` on bf16 GGUF; `POST /completion` with `n_predict=1`, `temperature=0`, `n_probs=20`.",
+            "- **HF:** same user prompts via `apply_chat_template(..., add_generation_prompt=True)`; compare next-token top-20 ids/logprobs.",
+            "- **VRAM:** GGUF server stopped before loading HF (single 80GB GPU).",
+            "- **No llama-cli stdout parsing.**",
+            "- **PPL:** same `wikitext2-test.txt` as task 2; HF uses llama-perplexity non-stride chunking (512 ctx, score last 256 tokens per chunk). Residual gap vs GGUF may include tokenizer path (llama `common_tokenize` vs HF `tokenizer`).",
+        ]
+    )
+    path.write_text("\n".join(lines) + "\n")
 
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+def phase_collect_gguf(hf_dir: str, cache_path: Path, n_probs: int) -> None:
+    from transformers import AutoTokenizer
 
     prompts = list(DEFAULT_PROMPTS) + [long_prompt(120)]
-    tok = AutoTokenizer.from_pretrained(args.hf_dir, trust_remote_code=True)
-    print("loading HF model for logit pass...")
+    tok = AutoTokenizer.from_pretrained(hf_dir, trust_remote_code=True)
+    entries = []
+    for p in prompts:
+        _ids, chat_text, n_tok = chat_prompt(tok, p)
+        print(f"gguf /completion chat_tokens={n_tok} head={p[:40]!r}")
+        probs = completion_probs(chat_text, n_probs)
+        entries.append({"user_text": p, "chat_tokens": n_tok, "gg_probs": probs})
+    cache_path.write_text(json.dumps(entries, indent=2))
+
+
+def phase_run_hf(hf_dir: str, cache_path: Path, out_json: Path, out_md: str, n_probs: int) -> None:
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    entries = json.loads(cache_path.read_text())
+    tok = AutoTokenizer.from_pretrained(hf_dir, trust_remote_code=True)
+    print("loading HF model...")
     model = AutoModelForCausalLM.from_pretrained(
-        args.hf_dir, dtype=torch.bfloat16, device_map="cuda", trust_remote_code=True
+        hf_dir, dtype=torch.bfloat16, device_map="cuda", trust_remote_code=True
     ).eval()
 
-    rows = [compare_prompt_rows(model, tok, p) for p in prompts]
+    rows = []
+    for e in entries:
+        chat_ids, _, _ = chat_prompt(tok, e["user_text"])
+        hf_top = hf_top_logprobs(model, chat_ids.to(model.device), n_probs)
+        rows.append(merge_row(tok, hf_top, e["gg_probs"], e["user_text"], e["chat_tokens"]))
+
     print("HF perplexity on wikitext (llama-perplexity chunking, ctx=512)...")
     hf_ppl, n_chunk, ppl_count = wikitext_perplexity_llama_chunks(
         model, tok, WIKITEXT, ctx=512, add_bos=False
@@ -168,36 +198,30 @@ def main() -> None:
             "gguf_bf16_llama_perplexity_reference": 6.6497,
         },
     }
-    Path(args.out_json).write_text(json.dumps(payload, indent=2))
+    out_json.write_text(json.dumps(payload, indent=2))
     print(json.dumps(payload, indent=2))
+    if out_md:
+        write_md(Path(out_md), payload)
 
-    if args.out_md:
-        lines = ["# RoPE check (bf16 GGUF vs safetensors)", "", "## Numbers", ""]
-        lines.append("| # | prompt (head) | chat tokens | top-1 match | max |logp| diff (shared top-20) |")
-        lines.append("|---|---------------|-------------|-------------|----------------------------------|")
-        for i, r in enumerate(rows, 1):
-            diff = r["max_logprob_diff_top20"]
-            diff_s = f"{diff:.6f}" if diff is not None else "n/a"
-            lines.append(
-                f"| {i} | {r['prompt_head']!r} | {r['chat_tokens']} | {r['top1_match']} | {diff_s} |"
-            )
-        ppl = payload["perplexity"]
-        lines.extend(
-            [
-                "",
-                f"- **GGUF bf16 PPL (llama-perplexity):** {ppl['gguf_bf16_llama_perplexity_reference']}",
-                f"- **Safetensors PPL (HF, llama chunking):** {ppl['transformers_bf16_llama_chunking']:.4f}",
-                f"- **Chunks / predictions:** {ppl['n_chunks']} / {ppl['token_predictions']}",
-                "",
-                "## Protocol",
-                "",
-                "- **GGUF:** `llama-server` on bf16 GGUF; `POST /completion` with `n_predict=1`, `temperature=0`, `n_probs=20`.",
-                "- **HF:** same user prompts via `apply_chat_template(..., add_generation_prompt=True)`; compare next-token top-20 ids/logprobs.",
-                "- **No llama-cli stdout parsing.**",
-                "- **PPL:** same `wikitext2-test.txt` as task 2; HF uses llama-perplexity non-stride chunking (512 ctx, score last 256 tokens per chunk). Residual gap vs GGUF is mostly tokenizer/vocab path (llama `common_tokenize` vs HF `tokenizer`).",
-            ]
-        )
-        Path(args.out_md).write_text("\n".join(lines) + "\n")
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hf-dir", default="/root/models/Qwen3.8-27B-text")
+    ap.add_argument("--phase", choices=("collect-gguf", "run-hf"), required=True)
+    ap.add_argument("--gguf-cache", default="")
+    ap.add_argument("--out-json", default="")
+    ap.add_argument("--out-md", default="")
+    ap.add_argument("--n-probs", type=int, default=20)
+    args = ap.parse_args()
+
+    if args.phase == "collect-gguf":
+        if not args.gguf_cache:
+            sys.exit("--gguf-cache required for collect-gguf")
+        phase_collect_gguf(args.hf_dir, Path(args.gguf_cache), args.n_probs)
+    else:
+        if not args.gguf_cache or not args.out_json:
+            sys.exit("--gguf-cache and --out-json required for run-hf")
+        phase_run_hf(args.hf_dir, Path(args.gguf_cache), Path(args.out_json), args.out_md, args.n_probs)
 
 
 if __name__ == "__main__":

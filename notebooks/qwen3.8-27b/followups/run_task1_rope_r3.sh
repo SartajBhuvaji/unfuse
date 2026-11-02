@@ -6,6 +6,7 @@ FUP="$ROOT/notebooks/qwen3.8-27b/followups"
 LOG="$FUP/task1_rope_r3.log"
 cd "$ROOT"
 source /root/venv/bin/activate
+bash "$FUP/ensure_qwen35_kernels.sh"
 exec > >(tee -a "$LOG") 2>&1
 echo "== rope r3 $(date -Is) =="
 python "$FUP/rope_check.py"

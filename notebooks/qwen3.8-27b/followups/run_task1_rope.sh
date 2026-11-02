@@ -10,6 +10,7 @@ LOG="$FUP/task1_rope.log"
 
 cd "$ROOT"
 source /root/venv/bin/activate
+bash "$FUP/ensure_qwen35_kernels.sh"
 mkdir -p "$FUP"
 exec > >(tee -a "$LOG") 2>&1
 echo "== task1 start $(date -Is) =="
