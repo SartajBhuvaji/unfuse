@@ -1,0 +1,18 @@
+{
+  "label": "sglang-original-cold",
+  "model": "Qwen/Qwen3.8-27B",
+  "runs": [
+    {
+      "concurrency": 32,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 105.49,
+      "output_tok_s": 143.8,
+      "per_stream_tok_s": 4.5,
+      "ttft_ms_mean": 32512.3,
+      "ttft_ms_p50": 39788.6,
+      "ttft_ms_p99": 50621.0,
+      "tpot_ms_mean": 33.63
+    }
+  ]
+}

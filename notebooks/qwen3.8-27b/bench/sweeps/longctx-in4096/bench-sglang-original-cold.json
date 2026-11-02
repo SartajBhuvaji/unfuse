@@ -1,0 +1,30 @@
+{
+  "label": "sglang-original-cold",
+  "model": "Qwen/Qwen3.8-27B",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 61.87,
+      "output_tok_s": 31.6,
+      "per_stream_tok_s": 31.6,
+      "ttft_ms_mean": 125.0,
+      "ttft_ms_p50": 82.1,
+      "ttft_ms_p99": 88.8,
+      "tpot_ms_mean": 31.24
+    },
+    {
+      "concurrency": 16,
+      "requests": 32,
+      "failed": 0,
+      "duration_s": 59.42,
+      "output_tok_s": 132.9,
+      "per_stream_tok_s": 8.3,
+      "ttft_ms_mean": 14248.6,
+      "ttft_ms_p50": 17114.4,
+      "ttft_ms_p99": 25862.3,
+      "tpot_ms_mean": 34.01
+    }
+  ]
+}

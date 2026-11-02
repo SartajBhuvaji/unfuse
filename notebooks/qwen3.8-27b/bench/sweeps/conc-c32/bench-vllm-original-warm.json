@@ -1,0 +1,18 @@
+{
+  "label": "vllm-original-warm",
+  "model": "Qwen/Qwen3.8-27B",
+  "runs": [
+    {
+      "concurrency": 32,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 25.09,
+      "output_tok_s": 645.7,
+      "per_stream_tok_s": 20.2,
+      "ttft_ms_mean": 3234.4,
+      "ttft_ms_p50": 3051.9,
+      "ttft_ms_p99": 4037.7,
+      "tpot_ms_mean": 36.87
+    }
+  ]
+}

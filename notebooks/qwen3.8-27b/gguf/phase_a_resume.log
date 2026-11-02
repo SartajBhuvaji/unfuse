@@ -1,0 +1,113 @@
+== phase A resume 2026-11-02T18:04:32+00:00 ==
+
+[1m== llama.cpp[0m
+  [ok] What is the capital of France? Answer in one
+  [ok] What is 84 * 3 / 2? Reply with just the numb
+  [ok] Translate to German: The weather is cold tod
+  [32mPASS[0m llamacpp 
+
+[1m== correctness  (sartajbhuvaji/unfuse-Qwen3.8-27B-text)[0m
+PASS  llamacpp  
+
+[1m== metrics[0m
+  (none)
+tools/run_phase_a_resume.sh: line 36: unzip: command not found
+== phase A resume 2026-11-02T18:05:24+00:00 ==
+== smoke skipped (SKIP_SMOKE=1) ==
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "/usr/lib/python3.12/zipfile/__init__.py", line 1396, in __init__
+    self._RealGetContents()
+  File "/usr/lib/python3.12/zipfile/__init__.py", line 1463, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+== phase A resume 2026-11-02T18:05:37+00:00 ==
+== smoke skipped (SKIP_SMOKE=1) ==
+Traceback (most recent call last):
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 866, in hf_raise_for_status
+    response.raise_for_status()
+  File "/root/venv/lib/python3.12/site-packages/httpx2/_models.py", line 828, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx2.HTTPStatusError: Client error '404 Not Found' for url 'https://huggingface.co/datasets/Salesforce/wikitext/resolve/main/wikitext-2-raw-v1.zip'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 276, in _inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1047, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1117, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1763, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1670, in get_hf_file_metadata
+    response = _httpx2_follow_hub_redirects_with_backoff(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 771, in _httpx2_follow_hub_redirects_with_backoff
+    hf_raise_for_status(response)
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 886, in hf_raise_for_status
+    raise _format(RemoteEntryNotFoundError, message, response, repo_type=repo_type, repo_id=repo_id) from e
+huggingface_hub.errors.RemoteEntryNotFoundError: 404 Client Error. (Request ID: Root=1-6ae8d0f1-5ff0cca3018b8d1a0f188273;2a904546-6cca-45d4-8dcd-09a8e66a3341)
+
+Entry Not Found for url: https://huggingface.co/datasets/Salesforce/wikitext/resolve/main/wikitext-2-raw-v1.zip.
+== phase A resume 2026-11-02T18:06:10+00:00 ==
+== smoke skipped (SKIP_SMOKE=1) ==
+Traceback (most recent call last):
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 866, in hf_raise_for_status
+    response.raise_for_status()
+  File "/root/venv/lib/python3.12/site-packages/httpx2/_models.py", line 828, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx2.HTTPStatusError: Client error '404 Not Found' for url 'https://huggingface.co/datasets/Salesforce/wikitext/resolve/main/wikitext-2-raw-v1.zip'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 276, in _inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1047, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1117, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1763, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1670, in get_hf_file_metadata
+    response = _httpx2_follow_hub_redirects_with_backoff(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 771, in _httpx2_follow_hub_redirects_with_backoff
+    hf_raise_for_status(response)
+  File "/root/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 886, in hf_raise_for_status
+    raise _format(RemoteEntryNotFoundError, message, response, repo_type=repo_type, repo_id=repo_id) from e
+huggingface_hub.errors.RemoteEntryNotFoundError: 404 Client Error. (Request ID: Root=1-6ae8d112-0fd2be061ef4d6f16c68a9af;5ca42525-456a-435f-8f98-33d4936e8122)
+
+Entry Not Found for url: https://huggingface.co/datasets/Salesforce/wikitext/resolve/main/wikitext-2-raw-v1.zip.
+== phase A resume 2026-11-02T18:06:43+00:00 ==
+== smoke skipped (SKIP_SMOKE=1) ==
+1256449 /tmp/wikitext2-test.txt
+| quant | perplexity |
+|-------|------------|
+| BF16 | ? |

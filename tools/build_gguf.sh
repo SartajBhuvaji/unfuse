@@ -14,6 +14,9 @@ set -euo pipefail
 SRC="${SRC:-$HOME/models/GLM-4.6-Flash-text}"
 OUT="${OUT:-$HOME/gguf}"
 NAME="${NAME:-GLM-4.6-Flash-text}"
+# Base precision the quants are cut from. bf16 for models trained in bf16: an f16
+# base can overflow on activations/weights outside f16 range. GLM was built at f16.
+BASE="${BASE:-f16}"; BASE_UP="${BASE^^}"
 QUANTS=("${@:-Q8_0 Q6_K Q5_K_M Q4_K_M}")
 
 sudo apt-get update -qq
@@ -23,22 +26,22 @@ cd ~
 [ -d llama.cpp ] || git clone -q --depth 1 https://github.com/ggml-org/llama.cpp
 cd llama.cpp
 cmake -B build -DGGML_NATIVE=ON -DLLAMA_CURL=OFF -DCMAKE_BUILD_TYPE=Release >/dev/null
-cmake --build build --config Release -j"$(nproc)" --target llama-quantize llama-cli >/dev/null
+cmake --build build --config Release -j"$(nproc)" --target llama-quantize llama-cli llama-perplexity llama-mtmd-cli >/dev/null
 
 source ~/venv/bin/activate
 pip install -q gguf sentencepiece protobuf
 mkdir -p "$OUT"
 
-echo "== F16 =="
-python convert_hf_to_gguf.py "$SRC" --outfile "$OUT/$NAME-F16.gguf" --outtype f16
+echo "== $BASE_UP =="
+python convert_hf_to_gguf.py "$SRC" --outfile "$OUT/$NAME-$BASE_UP.gguf" --outtype "$BASE"
 
 for Q in ${QUANTS[*]}; do
   echo "== $Q =="
-  ./build/bin/llama-quantize "$OUT/$NAME-F16.gguf" "$OUT/$NAME-$Q.gguf" "$Q" "$(nproc)"
+  ./build/bin/llama-quantize "$OUT/$NAME-$BASE_UP.gguf" "$OUT/$NAME-$Q.gguf" "$Q" "$(nproc)"
 done
 
 echo "== smoke test =="
-for Q in F16 ${QUANTS[*]}; do
+for Q in $BASE_UP ${QUANTS[*]}; do
   printf '%-10s ' "$Q"
   timeout 600 ./build/bin/llama-cli -m "$OUT/$NAME-$Q.gguf" \
     -p "The capital of France is" -n 24 -t "$(nproc)" --temp 0 -st --no-warmup \
