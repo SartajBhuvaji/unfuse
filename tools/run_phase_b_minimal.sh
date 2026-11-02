@@ -18,12 +18,17 @@ exec > >(tee -a "$LOG") 2>&1
 
 echo "== phase B start $(date -Is) =="
 
+# vLLM defaults max_num_seqs=1024; Qwen3.8 hybrid Mamba cache caps near 334 blocks.
+# Parent refuses to start above that (see runbook). Pin vLLM only; leave SGLang unpinned
+# on baseline/longctx unless MAX_RUNNING is set for a sweep row.
+VLLM_MAX_SEQS="${VLLM_MAX_SEQS:-256}"
+
 OUT="$SW/baseline-512" IN_LEN=512 OUT_LEN=256 CONC="1 16" CTX=32768 \
-  MAX_SEQS= MAX_RUNNING= \
+  MAX_SEQS="$VLLM_MAX_SEQS" MAX_RUNNING= \
   tools/bench_pair.sh "$ORIG" "$DERV" vllm sglang
 
 OUT="$SW/longctx-in4096" IN_LEN=4096 OUT_LEN=256 CONC="1 16" CTX=8192 NPROMPTS=32 \
-  MAX_SEQS= MAX_RUNNING= \
+  MAX_SEQS="$VLLM_MAX_SEQS" MAX_RUNNING= \
   tools/bench_pair.sh "$ORIG" "$DERV" vllm sglang
 
 OUT="$SW/conc-c32" IN_LEN=512 OUT_LEN=256 CONC="32" CTX=32768 NPROMPTS=64 \
