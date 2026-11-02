@@ -74,18 +74,18 @@ WIKI="${ROOT}/notebooks/qwen3.8-27b/gguf/wikitext2-test.txt"
 if [ ! -s /tmp/wikitext2-test.txt ]; then
   cp "$WIKI" /tmp/wikitext2-test.txt
 fi
-wc -c /tmp/wikitext2-test.txt
-wc -c /tmp/wikitext2-test.txt
+head -c 262144 /tmp/wikitext2-test.txt > /tmp/wikitext2-eval.txt
+wc -c /tmp/wikitext2-eval.txt
 {
   echo "| quant | perplexity |"
   echo "|-------|------------|"
   for label in BF16 "$Q"; do
     f="$OUT/$NAME-${label}.gguf"
     [ "$label" = "BF16" ] && f="$BASE"
-    echo "--- $label ---"
-    ppl=$("$BIN/llama-perplexity" -m "$f" -f /tmp/wikitext2-test.txt -c 512 -ngl 99 2>&1 | tail -1)
-    echo "$ppl"
-    val=$(echo "$ppl" | grep -oE '[0-9]+\.[0-9]+' | tail -1 || echo "?")
+    plog="$GGUF_DIR/perplexity_${label}.log"
+    "$BIN/llama-perplexity" -m "$f" -f /tmp/wikitext2-eval.txt -c 512 -ngl 99 > "$plog" 2>&1 || true
+    val=$(grep -oE 'Final estimate: PPL = [0-9.]+' "$plog" | sed 's/Final estimate: PPL = //' | tail -1)
+    [ -z "$val" ] && val="?"
     echo "| $label | $val |"
   done
 } | tee "$GGUF_DIR/perplexity_table.md"
