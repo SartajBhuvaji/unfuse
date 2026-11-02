@@ -1,0 +1,122 @@
+{
+  "tools_qwen_gguf_rope_check": {
+    "status": "failed",
+    "error": "AttributeError in model.generate: apply_chat_template BatchEncoding passed where Tensor expected (line 98)"
+  },
+  "long_prompt_words": 1086,
+  "safetensors_self_compare": {
+    "worst_max_abs": 0.0,
+    "exact": true,
+    "report": "  max|d|=0.000e+00    argmax_match=True  'The capital of France is'\n  max|d|=0.000e+00    argmax_match=True  'def fibonacci(n):'\n  max|d|=0.000e+00    argmax_match=True  'Explain why the sky appears blue, in one sen'\n  max|d|=0.000e+00    argmax_match=True  '1, 1, 2, 3, 5, 8, 13,'\n  max|d|=0.000e+00    argmax_match=True  'Translate to German: The weather is cold tod'\n  max|d|=0.000e+00    argmax_match=True  'The three laws of thermodynamics state that'\n  max|d|=0.000e+00    argmax_match=True  'The following is a technical description rep'\n\nEXACT MATCH -- the extraction is lossless on these inputs."
+  },
+  "first_token_bf16_gguf_vs_transformers": [
+    {
+      "prompt_head": "The capital of France is",
+      "prompt_tokens_approx": 5,
+      "ref_argmax_id": 11751,
+      "ref_argmax_token": " Paris",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    },
+    {
+      "prompt_head": "def fibonacci(n):",
+      "prompt_tokens_approx": 4,
+      "ref_argmax_id": 198,
+      "ref_argmax_token": "\n",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    },
+    {
+      "prompt_head": "Explain why the sky appears blue, in one sentence.",
+      "prompt_tokens_approx": 12,
+      "ref_argmax_id": 271,
+      "ref_argmax_token": "\n\n",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    },
+    {
+      "prompt_head": "1, 1, 2, 3, 5, 8, 13,",
+      "prompt_tokens_approx": 21,
+      "ref_argmax_id": 220,
+      "ref_argmax_token": " ",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    },
+    {
+      "prompt_head": "Translate to German: The weather is cold today.",
+      "prompt_tokens_approx": 10,
+      "ref_argmax_id": 271,
+      "ref_argmax_token": "\n\n",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    },
+    {
+      "prompt_head": "The three laws of thermodynamics state that",
+      "prompt_tokens_approx": 8,
+      "ref_argmax_id": 318,
+      "ref_argmax_token": " (",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    },
+    {
+      "prompt_head": "The following is a technical description repeated for length",
+      "prompt_tokens_approx": 1207,
+      "ref_argmax_id": 421,
+      "ref_argmax_token": " that",
+      "gguf_first_token": "",
+      "gguf_token_id": null,
+      "argmax_match": false,
+      "note": "max|logit diff vs GGUF needs llama full-vocab logits; compare argmax token only"
+    }
+  ],
+  "greedy_64_raw_prompt": [
+    {
+      "prompt_head": "The capital of France is",
+      "transformers_64": " Paris.\nThe capital of Germany is Berlin.\nThe capital of Italy is Rome.\nThe capital of Spain is Madrid.\nThe capital of Portugal is Lisbon.\nThe capital of Greece is Athens.\nThe capital of the United Kingdom is London.\nThe capital of Ireland is Dublin.\nThe capital of",
+      "gguf_tail": "\n\nLoading model... |\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b \bError: the server exited before becoming ready\n",
+      "prefix_match_chars": 2
+    },
+    {
+      "prompt_head": "def fibonacci(n):",
+      "transformers_64": "\n    if n <= 0:\n        return 0\n    elif n == 1:\n        return 1\n    else:\n        return fibonacci(n - 1) + fibonacci(n - 2)\n\n# Example usage\nn = 10\nprint(f\"The {n}th",
+      "gguf_tail": "\n\nLoading model... |\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b \bError: the server exited before becoming ready\n",
+      "prefix_match_chars": 9
+    },
+    {
+      "prompt_head": "Explain why the sky appears blue, in one sentence.",
+      "transformers_64": "\n\nThe sky appears blue because shorter wavelengths of sunlight, such as blue and violet, are scattered more effectively by the molecules in the atmosphere than longer wavelengths, a phenomenon known as Rayleigh scattering.",
+      "gguf_tail": "\n\nLoading model... |\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b \bError: the server exited before becoming ready\n",
+      "prefix_match_chars": 5
+    },
+    {
+      "prompt_head": "1, 1, 2, 3, 5, 8, 13,",
+      "transformers_64": " 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765",
+      "gguf_tail": "\n\nLoading model... |\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b \bError: the server exited before becoming ready\n",
+      "prefix_match_chars": 0
+    },
+    {
+      "prompt_head": "Translate to German: The weather is cold today.",
+      "transformers_64": "\n\n<think>\nThe user wants me to translate \"The weather is cold today\" into German.\n\nLet me think about the best translation:\n\n- \"The weather\" = \"Das Wetter\"\n- \"is cold\" = \"ist kalt\"\n- \"today\" = \"heute\"\n\nSo the full",
+      "gguf_tail": "\n\nLoading model... |\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b \bError: the server exited before becoming ready\n",
+      "prefix_match_chars": 7
+    },
+    {
+      "prompt_head": "The three laws of thermodynamics state that",
+      "transformers_64": " (1) energy is conserved, (2) entropy of an isolated system never decreases, and (3) absolute zero temperature cannot be reached in a finite number of steps. \n**What is the \u201czeroth law of thermodynamics,\u201d and why is it considered more fundamental than these three laws?**\n\n1.",
+      "gguf_tail": "\n\nLoading model... |\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b\\\b|\b/\b-\b \bError: the server exited before becoming ready\n",
+      "prefix_match_chars": 2
+    }
+  ]
+}
