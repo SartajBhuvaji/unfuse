@@ -1,10 +1,8 @@
-| quant | perplexity | log |
-|-------|------------|-----|
-== perplexity BF16 full wikitext ==
-| BF16 | 6.6497 | perplexity_BF16.log |
-== perplexity Q8_0 full wikitext ==
-| Q8_0 | 6.6514 | perplexity_Q8_0.log |
-== perplexity Q5_K_M full wikitext ==
-| Q5_K_M | 6.6746 | perplexity_Q5_K_M.log |
-== perplexity Q4_K_M full wikitext ==
-| Q4_K_M | 6.6959 | perplexity_Q4_K_M.log |
+Full wikitext-2 test split, context 512, llama-perplexity, H100.
+
+| quant | perplexity | vs BF16 | log |
+|-------|-----------|---------|-----|
+| BF16 | 6.6497 | | perplexity_BF16.log |
+| Q8_0 | 6.6514 | +0.03% | perplexity_Q8_0.log |
+| Q5_K_M | 6.6746 | +0.37% | perplexity_Q5_K_M.log |
+| Q4_K_M | 6.6959 | +0.69% | perplexity_Q4_K_M.log |

@@ -12,7 +12,7 @@ source /root/venv/bin/activate
 bash notebooks/qwen3.8-27b/followups/ensure_qwen35_kernels.sh
 ```
 
-That script is invoked automatically by `run_rope_and_upload.sh`, `run_task1_rope.sh`, and `run_task1_rope_r3.sh`. Manual install:
+That script is invoked automatically by `run_rope_and_upload.sh`. Manual install:
 
 ```bash
 pip install causal-conv1d flash-linear-attention
