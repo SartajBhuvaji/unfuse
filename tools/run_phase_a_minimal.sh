@@ -15,6 +15,7 @@ UPLOAD="${UPLOAD:-0}"
 cd "$ROOT"
 source /root/venv/bin/activate
 : "${HF_TOKEN:?export HF_TOKEN in this shell}"
+chmod +x tools/*.sh 2>/dev/null || true
 
 mkdir -p "$GGUF_DIR" "$OUT"
 exec > >(tee -a "$LOG") 2>&1
