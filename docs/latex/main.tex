@@ -667,6 +667,51 @@ itself the sanity check confirming the surgery did not change the compute path, 
 Section~\ref{sec:qwen-bandwidth}'s bandwidth-bound explanation for exactly this
 pattern.
 
+\subsection{The GGUF, and a Second Round of Measurements}
+\label{sec:qwen-gguf}
+
+\texttt{llama.cpp} now converts \texttt{Qwen3\_5ForCausalLM}. The bf16 GGUF has 866
+tensors, with the MTP head as block~64, and the quants were cut from bf16 rather than f16.
+Perplexity on the full wikitext-2 test split at context 512:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+Quant & Perplexity & vs.\ bf16 \\
+\midrule
+BF16 & 6.6497 & \\
+Q8\_0 & 6.6514 & +0.03\% \\
+Q5\_K\_M & 6.6746 & +0.37\% \\
+Q4\_K\_M & 6.6959 & +0.69\% \\
+\bottomrule
+\end{tabular}
+\caption{Qwen3.8-27B-text GGUF perplexity, full wikitext-2 test, context 512.}
+\end{table}
+
+The converter prints \texttt{Unknown RoPE type: default}, and it does not matter. The
+safetensors model scores 6.6516 on the same text chunked the same way, within 0.03\% of the
+bf16 GGUF, and the top-1 token matches on seven prompts including a 1{,}259-token one.
+The first attempts at this check parsed \texttt{llama-cli} output and read its progress
+lines as the model's token, which reported a false 0/7; the working check asks
+\texttt{llama-server} for top-20 logprobs.
+
+A second set of vLLM runs did not reproduce the throughput table above. With \texttt{--max-num-seqs} at
+64, 128, 256 and 320, the parent and the split both read 360 to 402~tok/s at
+concurrency~16, level with each other, and the 555 to 636~tok/s range never returned. The
+1.15$\times$ vLLM gap should be treated as unconfirmed; what made the first run different
+was not found. At 8k and 32k input the throughput is level as well (97.0 vs.\ 95.0 and 26.3
+vs.\ 26.4~tok/s) although the split holds 2\% and 9\% more KV cache.
+
+The SGLang result needs a correction to the wording above. SGLang caps the parent at five
+running requests because of its Mamba state cache (28 slots at five per request), against
+sixteen for the split (48 slots at three per request), and setting the flag to 32 does not
+lift the cap. The parent's log also shows less total token capacity (79{,}998 vs.\
+129{,}884), which fits the vision stack taking memory, but that link was inferred and not
+measured. So the cap is what the parent gets by default on SGLang, not a pure planner
+accident.
+
 \section{Case Study: Gemma 4 31B --- Quantization, Not Splitting}
 \label{sec:gemma}
 

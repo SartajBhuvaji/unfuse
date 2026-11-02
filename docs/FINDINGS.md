@@ -435,6 +435,33 @@ At c=1 all four runs land between 46.6 and 48.8 tok/s. The same 64 text layers d
 work in every case, and single-stream decode cannot tell the models apart — which is the
 sanity check that says the surgery did not change the compute path.
 
+### The GGUF, and a second round of measurements
+
+llama.cpp now converts `Qwen3_5ForCausalLM`, which the earlier notes had as blocked. The
+bf16 GGUF is 866 tensors including the MTP head as block 64; quants were cut from bf16,
+not f16. Perplexity on the full wikitext-2 test split at context 512: BF16 6.6497, Q8_0
+6.6514, Q5_K_M 6.6746, Q4_K_M 6.6959. Q4_K_M is 0.7% above bf16.
+
+The converter prints `Unknown RoPE type: default`. It does not matter. The safetensors
+model scores 6.6516 on the same text chunked the same way, 0.03% from the GGUF, and the
+top-1 token matches on seven prompts including a 1,259-token one. The first attempts at
+this check parsed `llama-cli` output and read its progress lines as the model's token,
+which produced a false 0/7; the working check asks `llama-server` for top-20 logprobs.
+
+A second set of vLLM runs did not reproduce the table above. With `--max-num-seqs` at 64,
+128, 256 and 320 the parent and the split both read 360 to 402 tok/s at c=16, level with
+each other, and the 555 to 636 range never returned. The 1.15× gap in item 2 should be
+treated as unconfirmed; what made the first run different was not found. At 8k and 32k
+input the throughput is level too (97.0 vs 95.0 and 26.3 vs 26.4 tok/s) although the split
+holds 2% and 9% more KV cache.
+
+Item 2 also needs a correction. SGLang caps the parent at 5 running requests because of
+its Mamba state cache (28 slots, 5 per request) against 16 for the split (48 slots, 3 per
+request), and pinning the flag to 32 does not change that. The parent log shows less
+total token capacity too (79,998 vs 129,884), which fits the vision stack taking memory,
+but that link was inferred, not measured. So the cap is what the parent gets by default
+on SGLang, not a pure planner accident.
+
 ## Why not to prune for size
 
 - [Structural Pruning of LVLMs](https://arxiv.org/abs/2604.24380) (IJCV 2026): at 15%
