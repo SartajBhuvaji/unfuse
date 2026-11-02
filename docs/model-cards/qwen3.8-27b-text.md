@@ -113,7 +113,9 @@ CORRECTNESS 4/4
 
 ### Notes on the numbers
 
-This model is not faster than the original, and any claim that it is has been measured on one engine only. On vLLM the original wins by 1.15× at concurrency 16. On SGLang this model wins by 2.79×, but only because SGLang's memory planner gave the original `max_running_requests=5` against this model's `16` and then starved it. That's an engine artifact, not a property of either checkpoint.
+This model is not faster than the original, and any claim that it is has been measured on one engine only. On vLLM the original wins by 1.15× at concurrency 16. On SGLang this model wins by 2.79×, but only because SGLang's memory planner gave the original `max_running_requests=5` against this model's `16` and then starved it. The planner caps both by the size of the Mamba state cache (28 slots against 48), so this is the default behaviour of the original on SGLang, not a difference in speed per request. Setting the flag to 32 on the original does not lift the cap.
+
+A later session on the same GPU class did not reproduce the vLLM gap. With `--max-num-seqs` at 64, 128, 256 and 320, vLLM read 360 to 402 tok/s at concurrency 16 for both models, with the two level at every setting, and the 555 to 636 tok/s above did not come back. Why that earlier run read differently was not found, so treat the 1.15× vLLM gap as unconfirmed. Long inputs showed no throughput difference either: 97.0 against 95.0 tok/s at 8k and 26.3 against 26.4 at 32k, concurrency 16, even though this model holds 2% to 9% more KV cache there.
 
 What holds across both engines is the spread:
 
@@ -161,7 +163,7 @@ The 48 linear-attention layers need one Mamba cache block per concurrent sequenc
 | vLLM 0.27.1 | tested | needs `--max-num-seqs` |
 | SGLang 0.5.18 | tested | best throughput at concurrency here |
 | transformers 5.15.1 | tested | single-GPU scripting, research |
-| llama.cpp | not supported | no `Qwen3_5` in `convert_hf_to_gguf.py` yet |
+| llama.cpp | tested | GGUF quants in [unfuse-Qwen3.8-27B-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-text-GGUF); vision projector in [unfuse-Qwen3.8-27B-mmproj-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-mmproj-GGUF) |
 
 Needs ~55 GB of VRAM in bf16, so one 80 GB card (H100/H200/A100-80GB), or shard it with `--tensor-parallel-size`.
 
@@ -265,6 +267,6 @@ Split on `</think>` and take the last part if you only want the answer.
 - Barely smaller: 54.64 GB against 55.56 GB. The gain is cache headroom and cross-engine predictability, not footprint.
 - No vision. Send it an image and it will fail. Use the original.
 - The MTP head is inert on every loader tested, so 0.85 GB of the download does nothing today.
-- No GGUF or llama.cpp path until `convert_hf_to_gguf.py` supports `Qwen3_5`.
+- GGUF quants (Q8_0, Q5_K_M, Q4_K_M) are in a separate repo; see the table above. Perplexity there is within 0.7% of bf16.
 - Benchmarks cover one GPU and one shape: 512-in/256-out on a single H100 80GB at concurrency 1 and 16. Other context lengths, batch shapes or hardware will rank the engines differently.
 - `rope_parameters` still carries `mrope_section` and `mrope_interleaved` from the multimodal parent. vLLM logs `Unrecognized keys in rope_parameters`. Harmless, will be removed.

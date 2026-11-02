@@ -19,7 +19,7 @@ and why quantization turned out to matter more than splitting for one of them.
 | Model | Encoder | Removable | Text-only | Encoder-only | Notes |
 |---|---|---|---|---|---|
 | [GLM-4.6V-Flash](https://huggingface.co/zai-org/GLM-4.6V-Flash) | 24-layer ViT + merger | 892,498,432 (8.671%) | done | done | bit-exact, published |
-| [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) | 27-layer ViT (1152d) | 460,730,096 (1.658%) | done | — | hybrid linear-attn; fused MTP head; tower is small |
+| [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) | 27-layer ViT (1152d) | 460,730,096 (1.658%) | done | mmproj GGUF | hybrid linear-attn; fused MTP head; tower is small |
 | [Gemma 4 12B](https://huggingface.co/google/gemma-4-12B) | none — 52.4M input embedder | 52,379,904 (0.438%) | scripted | n/a | encoder-free; not worth splitting for size |
 | [Gemma 4 31B NVFP4](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4) | 27-layer SigLIP | ~576M (1.9%) | scripted | — | quantized; the split is the small half of the work |
 
@@ -59,10 +59,12 @@ All of it is in the [unfuse collection](https://huggingface.co/collections/sarta
 - [unfuse-GLM-4.6-Flash-text](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text) — bf16 text-only, 9.4B params
 - [unfuse-GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF) — F16, Q8_0, Q6_K, Q5_K_M, Q4_K_M
 - [unfuse-GLM-4.6V-Flash-mmproj-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6V-Flash-mmproj-GGUF) — the vision half, F32/BF16/F16/Q8_0
-- [unfuse-Qwen3.8-27B-text](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-text) — bf16 text-only, byte-exact on every kept tensor, no GGUF yet
+- [unfuse-Qwen3.8-27B-text](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-text) — bf16 text-only, byte-exact on every kept tensor
+- [unfuse-Qwen3.8-27B-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-text-GGUF) — Q8_0, Q5_K_M, Q4_K_M; Q4_K_M perplexity +0.7% over bf16
+- [unfuse-Qwen3.8-27B-mmproj-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-Qwen3.8-27B-mmproj-GGUF) — the vision half, F16
 - [unfuse-Gemma-4-31B-IT-NVFP4-FP8attn-text](https://huggingface.co/sartajbhuvaji/unfuse-Gemma-4-31B-IT-NVFP4-FP8attn-text) — NVFP4 MLPs, FP8 attention, no vision tower, 23.0 GB
 
-The first two GLM repos recombine into the original multimodal model under llama.cpp.
+The first two GLM repos, and the two Qwen GGUF repos, recombine into the original multimodal model under llama.cpp.
 
 ## Layout
 
