@@ -35,18 +35,11 @@ else
   echo "== smoke skipped (SKIP_SMOKE=1) =="
 fi
 
+WIKI="${ROOT}/notebooks/qwen3.8-27b/gguf/wikitext2-test.txt"
 if [ ! -s /tmp/wikitext2-test.txt ]; then
-  curl -fsSL -o /tmp/wt2.zip https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-raw-v1.zip
-  python3 - <<'PY'
-import zipfile
-from pathlib import Path
-
-with zipfile.ZipFile("/tmp/wt2.zip") as z:
-    data = z.read("wikitext-2-raw/test.txt")
-Path("/tmp/wikitext2-test.txt").write_bytes(data)
-print("bytes", len(data))
-PY
+  cp "$WIKI" /tmp/wikitext2-test.txt
 fi
+wc -c /tmp/wikitext2-test.txt
 {
   echo "| quant | perplexity |"
   echo "|-------|------------|"
