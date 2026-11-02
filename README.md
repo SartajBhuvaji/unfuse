@@ -10,12 +10,16 @@ and a rename. No retraining, no distillation, no quality loss.
 The split itself is easy. The work is **proving the result is unchanged**, and every
 extraction here is verified against the original before it ships.
 
+[`docs/latex/main.pdf`](docs/latex/main.pdf) is a technical report covering all three
+case studies below end to end — the verification methodology, what split, what didn't,
+and why quantization turned out to matter more than splitting for one of them.
+
 ## Models
 
 | Model | Encoder | Removable | Text-only | Encoder-only | Notes |
 |---|---|---|---|---|---|
 | [GLM-4.6V-Flash](https://huggingface.co/zai-org/GLM-4.6V-Flash) | 24-layer ViT + merger | 892,498,432 (8.671%) | done | done | bit-exact, published |
-| [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) | 27-layer ViT (1152d) | 460,730,096 (1.658%) | scripted | — | hybrid linear-attn; fused MTP head; tower is small |
+| [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) | 27-layer ViT (1152d) | 460,730,096 (1.658%) | done | — | hybrid linear-attn; fused MTP head; tower is small |
 | [Gemma 4 12B](https://huggingface.co/google/gemma-4-12B) | none — 52.4M input embedder | 52,379,904 (0.438%) | scripted | n/a | encoder-free; not worth splitting for size |
 | [Gemma 4 31B NVFP4](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4) | 27-layer SigLIP | ~576M (1.9%) | scripted | — | quantized; the split is the small half of the work |
 
@@ -53,8 +57,9 @@ end to end.
 - [GLM-4.6-Flash-text](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text) — bf16 text-only, 9.4B params
 - [GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF) — F16, Q8_0, Q6_K, Q5_K_M, Q4_K_M
 - [GLM-4.6V-Flash-mmproj-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6V-Flash-mmproj-GGUF) — the vision half, F32/BF16/F16/Q8_0
+- [Qwen3.8-27B-text](https://huggingface.co/sartajbhuvaji/Qwen3.8-27B-text) — bf16 text-only, byte-exact on every kept tensor, no GGUF yet
 
-The last two recombine into the original multimodal model under llama.cpp.
+The first two GLM repos recombine into the original multimodal model under llama.cpp.
 
 ## Layout
 
@@ -66,7 +71,8 @@ tools/        Lambda provisioning, GGUF build, HF upload, notebook guard, FP8
               requantization, speculative-decoding benchmark, cross-engine
               serving smoke test + benchmark
 tests/        unit tests for the core (no GPU, no network)
-docs/         findings, a study guide, the guide for adding a model, model cards
+docs/         the technical report, findings, a study guide, the guide for adding a
+              model, model cards
 ```
 
 ```bash
