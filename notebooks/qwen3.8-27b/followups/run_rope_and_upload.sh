@@ -48,6 +48,12 @@ python "$FUP/rope_server_compare.py" \
   --out-json "$FUP/rope_server_results.json" \
   --out-md "$FUP/ROPE.md"
 
+if [ "${SKIP_HUB_UPLOAD:-0}" = 1 ]; then
+  echo "SKIP_HUB_UPLOAD=1; skipping Hub upload"
+  echo "== job end $(date -Is) =="
+  exit 0
+fi
+
 : "${HF_TOKEN:?HF_TOKEN required for upload}"
 HUB_README="$FUP/.hub_readme_snapshot.md"
 python3 - <<'PY'

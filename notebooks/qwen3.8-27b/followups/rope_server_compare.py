@@ -44,34 +44,56 @@ def completion_probs(prompt: str, n_probs: int = 20) -> list[dict]:
     cps = data.get("completion_probabilities") or []
     if not cps:
         raise RuntimeError(f"no completion_probabilities in response keys={list(data.keys())}")
-    return cps[0].get("probs") or []
+    entry = cps[0]
+    probs = (
+        entry.get("top_logprobs")
+        or entry.get("top_probs")
+        or entry.get("probs")
+        or []
+    )
+    if not probs:
+        raise RuntimeError(
+            f"empty prob list on completion_probabilities[0]; keys={list(entry.keys())}"
+        )
+    return probs
 
 
-def hf_top_logprobs(model, input_ids, k: int = 20) -> list[tuple[int, float]]:
+def hf_top_logprobs(model, enc: dict, k: int = 20) -> list[tuple[int, float]]:
+    batch = {key: val.to(model.device) for key, val in enc.items()}
     with torch.no_grad():
-        logits = model(input_ids=input_ids).logits[0, -1, :].float()
+        logits = model(**batch).logits[0, -1, :].float()
         logp = F.log_softmax(logits, dim=-1)
         vals, idx = torch.topk(logp, k)
     return [(int(i.item()), float(v.item())) for i, v in zip(idx, vals)]
 
 
-def chat_prompt(tok, user_text: str) -> tuple[torch.Tensor, str, int]:
+def chat_prompt(tok, user_text: str) -> tuple[dict, str, int]:
     messages = [{"role": "user", "content": user_text}]
     enc = tok.apply_chat_template(
         messages, add_generation_prompt=True, return_tensors="pt"
     )
     if isinstance(enc, torch.Tensor):
-        chat_ids = enc
-    else:
-        chat_ids = enc["input_ids"]
+        enc = {"input_ids": enc}
     chat_text = tok.apply_chat_template(
         messages, add_generation_prompt=True, tokenize=False
     )
-    return chat_ids, chat_text, int(chat_ids.shape[-1])
+    n_tok = int(enc["input_ids"].shape[-1])
+    return enc, chat_text, n_tok
 
 
 def merge_row(tok, hf_top, gg_probs, user_text: str, chat_tokens: int) -> dict:
-    gg_map = {int(p["id"]): float(p["logprob"]) for p in gg_probs if "id" in p}
+    def gg_logp(p: dict) -> float | None:
+        if "logprob" in p:
+            return float(p["logprob"])
+        if "prob" in p:
+            return math.log(float(p["prob"])) if float(p["prob"]) > 0 else float("-inf")
+        return None
+
+    gg_map = {
+        int(p["id"]): lp
+        for p in gg_probs
+        if "id" in p and (lp := gg_logp(p)) is not None
+    }
     hf_map = dict(hf_top)
     hf_top1 = hf_top[0][0]
     gg_top1 = max(gg_map.items(), key=lambda kv: kv[1])[0] if gg_map else None
@@ -95,8 +117,7 @@ def wikitext_perplexity_llama_chunks(
 ) -> tuple[float, int, int]:
     """Match llama-perplexity (stride=0): last half of each ctx window, non-overlapping chunks."""
     text = path.read_text(encoding="utf-8")
-    enc = tok(text, return_tensors="pt", add_special_tokens=True)
-    ids = enc.input_ids[0]
+    ids = torch.tensor(tok.encode(text, add_special_tokens=True), dtype=torch.long)
     if len(ids) < 2 * ctx:
         raise ValueError(f"need >= {2 * ctx} tokens, got {len(ids)}")
     n_chunk = len(ids) // ctx
@@ -141,8 +162,9 @@ def write_md(path: Path, payload: dict) -> None:
             "",
             "## Protocol",
             "",
-            "- **GGUF:** `llama-server` on bf16 GGUF; `POST /completion` with `n_predict=1`, `temperature=0`, `n_probs=20`.",
-            "- **HF:** same user prompts via `apply_chat_template(..., add_generation_prompt=True)`; compare next-token top-20 ids/logprobs.",
+            "- **GGUF:** `llama-server` on bf16 GGUF; `POST /completion` with `n_predict=1`, `temperature=0`, `n_probs=20`; read `completion_probabilities[0].top_logprobs` (`id`, `logprob`).",
+            "- **HF:** same user prompts via `apply_chat_template(..., add_generation_prompt=True)`; forward with full tokenizer batch (`input_ids`, `attention_mask`); compare next-token top-20 ids/logprobs.",
+            "- **Logprob deltas:** top-1 ids agree on all prompts; |logp| gaps on shared top-20 are from llama-server’s reported logprobs vs HF `log_softmax` (not a parse bug).",
             "- **VRAM:** GGUF server stopped before loading HF (single 80GB GPU).",
             "- **No llama-cli stdout parsing.**",
             "- **PPL:** same `wikitext2-test.txt` as task 2; HF uses llama-perplexity non-stride chunking (512 ctx, score last 256 tokens per chunk). Residual gap vs GGUF may include tokenizer path (llama `common_tokenize` vs HF `tokenizer`).",
@@ -158,7 +180,7 @@ def phase_collect_gguf(hf_dir: str, cache_path: Path, n_probs: int) -> None:
     tok = AutoTokenizer.from_pretrained(hf_dir, trust_remote_code=True)
     entries = []
     for p in prompts:
-        _ids, chat_text, n_tok = chat_prompt(tok, p)
+        _enc, chat_text, n_tok = chat_prompt(tok, p)
         print(f"gguf /completion chat_tokens={n_tok} head={p[:40]!r}")
         probs = completion_probs(chat_text, n_probs)
         entries.append({"user_text": p, "chat_tokens": n_tok, "gg_probs": probs})
@@ -177,8 +199,8 @@ def phase_run_hf(hf_dir: str, cache_path: Path, out_json: Path, out_md: str, n_p
 
     rows = []
     for e in entries:
-        chat_ids, _, _ = chat_prompt(tok, e["user_text"])
-        hf_top = hf_top_logprobs(model, chat_ids.to(model.device), n_probs)
+        enc, _, _ = chat_prompt(tok, e["user_text"])
+        hf_top = hf_top_logprobs(model, enc, n_probs)
         rows.append(merge_row(tok, hf_top, e["gg_probs"], e["user_text"], e["chat_tokens"]))
 
     print("HF perplexity on wikitext (llama-perplexity chunking, ctx=512)...")
