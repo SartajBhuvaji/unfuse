@@ -158,7 +158,7 @@ Verified 2026-08-22 on an H100 PCIe 80 GB against the current vLLM release:
 pip install vllm==0.27.1 'transformers==5.14.1'
 
 git clone https://github.com/SartajBhuvaji/unfuse && cd unfuse
-hf download sartajbhuvaji/Gemma-4-31B-IT-NVFP4-FP8attn-text --local-dir ./ckpt
+hf download sartajbhuvaji/unfuse-Gemma-4-31B-IT-NVFP4-FP8attn-text --local-dir ./ckpt
 python tools/dequantize.py ./ckpt ./ckpt-bf16
 
 vllm serve ./ckpt-bf16

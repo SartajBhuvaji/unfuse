@@ -1,6 +1,6 @@
 ---
 license: mit
-base_model: sartajbhuvaji/GLM-4.6-Flash-text
+base_model: sartajbhuvaji/unfuse-GLM-4.6-Flash-text
 base_model_relation: quantized
 pipeline_tag: text-generation
 language:
@@ -17,7 +17,7 @@ tags:
 
 # GLM-4.6-Flash-text GGUF
 
-GGUF quantizations of [`sartajbhuvaji/GLM-4.6-Flash-text`](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text), which is `zai-org/GLM-4.6V-Flash` with its 892M-parameter vision stack removed.
+GGUF quantizations of [`sartajbhuvaji/unfuse-GLM-4.6-Flash-text`](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text), which is `zai-org/GLM-4.6V-Flash` with its 892M-parameter vision stack removed.
 
 9,400,279,040 params, `glm4` architecture, 131072 context, text-only.
 
@@ -34,12 +34,12 @@ Sizes are GB (10⁹ bytes) as the Hub reports them. `ls -h` shows smaller GiB nu
 ## Usage
 
 ```bash
-llama-cli -hf sartajbhuvaji/GLM-4.6-Flash-text-GGUF:Q4_K_M \
+llama-cli -hf sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF:Q4_K_M \
   -p "Explain gradient descent" -n 400 -st
 ```
 
 ```bash
-ollama run hf.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF:Q4_K_M
+ollama run hf.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF:Q4_K_M
 ```
 
 `-st` (`--single-turn`) matters for scripted use. Without it `llama-cli` drops into interactive mode and waits on stdin. The older `-no-cnv` flag has been removed from current llama.cpp.
@@ -58,7 +58,7 @@ The parent model is `Glm4vForConditionalGeneration`: a 24-layer ViT feeding soft
 
 892,498,432 params removed, 8.671% of the model.
 
-The extraction was verified bit-exact against the original on text input: `max|d| = 0.000e+00` across six prompts and again at 1,207 tokens. Full detail and the architecture diagram are on the [parent model card](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text).
+The extraction was verified bit-exact against the original on text input: `max|d| = 0.000e+00` across six prompts and again at 1,207 tokens. Full detail and the architecture diagram are on the [parent model card](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text).
 
 ## Verification of these quants
 

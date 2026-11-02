@@ -19,7 +19,7 @@ tags:
 
 The vision half of `zai-org/GLM-4.6V-Flash`, packaged as a llama.cpp multimodal
 projector. This is the counterpart to
-[sartajbhuvaji/GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF),
+[sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF),
 which is the same model with vision removed.
 
 892,498,432 params, 24-layer ViT + merger, `clip.projector_type: glm4v`.
@@ -56,12 +56,12 @@ llama-mtmd-cli \
 ```
 
 Get the text half from
-[sartajbhuvaji/GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF):
+[sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF):
 
 ```bash
-hf download sartajbhuvaji/GLM-4.6-Flash-text-GGUF \
+hf download sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF \
   GLM-4.6-Flash-text-Q4_K_M.gguf --local-dir .
-hf download sartajbhuvaji/GLM-4.6V-Flash-mmproj-GGUF \
+hf download sartajbhuvaji/unfuse-GLM-4.6V-Flash-mmproj-GGUF \
   mmproj-GLM-4.6V-Flash-F16.gguf --local-dir .
 ```
 
@@ -105,6 +105,6 @@ Exported with `convert_hf_to_gguf.py --mmproj` from llama.cpp at master. Derived
 [zai-org/GLM-4.6V-Flash](https://huggingface.co/zai-org/GLM-4.6V-Flash) (MIT); this
 repo is MIT.
 
-Related: [GLM-4.6-Flash-text](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text)
-(bf16 text-only) · [GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF)
+Related: [GLM-4.6-Flash-text](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text)
+(bf16 text-only) · [GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF)
 (text quants).

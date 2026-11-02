@@ -141,7 +141,7 @@ bf16 safetensors at the root, quantizations under `gguf/`.
 
 All five load and generate coherently under llama.cpp (`architecture: glm4`, 131072 context). Sizes are GB (10⁹ bytes) as the Hub reports them; `ls -h` will show smaller GiB numbers for the same files.
 
-If you only want GGUF, the same quantizations sit at the repo root of [sartajbhuvaji/GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF), where the Hub's quantization picker renders and `llama-cli -hf` / `ollama run hf.co/…` resolve directly. The `gguf/` copies here are identical, so use whichever is convenient.
+If you only want GGUF, the same quantizations sit at the repo root of [sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF), where the Hub's quantization picker renders and `llama-cli -hf` / `ollama run hf.co/…` resolve directly. The `gguf/` copies here are identical, so use whichever is convenient.
 
 There is no NVFP4 build. NVFP4 is NVIDIA's Blackwell format (E2M1, 16-element blocks, FP8 E4M3 block scales) and needs SM100+ hardware to quantize and serve. It is not a GGUF quant and can't be produced on Ampere. If you want one, run [LLM Compressor](https://docs.vllm.ai/projects/llm-compressor/en/latest/examples/quantization_w4a4_fp4/) on a B200 with the bf16 weights here as input.
 
@@ -161,7 +161,7 @@ Every command below was run end to end on a single A100-SXM4-40GB at the version
 ```bash
 pip install vllm==0.27.1 ninja
 
-vllm serve sartajbhuvaji/GLM-4.6-Flash-text \
+vllm serve sartajbhuvaji/unfuse-GLM-4.6-Flash-text \
   --served-model-name GLM-4.6-Flash-text \
   --max-model-len 32768 \
   --reasoning-parser glm45 \
@@ -178,7 +178,7 @@ If you hit `FileNotFoundError: ninja`: vLLM's compile path shells out to `ninja`
 pip install "sglang[all]==0.5.18"
 
 python -m sglang.launch_server \
-  --model-path sartajbhuvaji/GLM-4.6-Flash-text \
+  --model-path sartajbhuvaji/unfuse-GLM-4.6-Flash-text \
   --served-model-name GLM-4.6-Flash-text \
   --context-length 32768 \
   --reasoning-parser glm45 --tool-call-parser glm45 \
@@ -226,9 +226,9 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model = AutoModelForCausalLM.from_pretrained(
-    "sartajbhuvaji/GLM-4.6-Flash-text", dtype=torch.bfloat16, device_map="auto"
+    "sartajbhuvaji/unfuse-GLM-4.6-Flash-text", dtype=torch.bfloat16, device_map="auto"
 )
-tok = AutoTokenizer.from_pretrained("sartajbhuvaji/GLM-4.6-Flash-text")
+tok = AutoTokenizer.from_pretrained("sartajbhuvaji/unfuse-GLM-4.6-Flash-text")
 
 msgs = [{"role": "user", "content": "What is a mixture-of-experts layer?"}]
 enc = tok.apply_chat_template(
@@ -242,10 +242,10 @@ Needs a transformers version carrying `Glm4ForCausalLM` (v4.52+). Keep `max_new_
 
 ### llama.cpp
 
-Use the [GGUF repo](https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF), where the files sit at the root and `-hf` resolves them:
+Use the [GGUF repo](https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF), where the files sit at the root and `-hf` resolves them:
 
 ```bash
-llama-cli -hf sartajbhuvaji/GLM-4.6-Flash-text-GGUF:Q4_K_M \
+llama-cli -hf sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF:Q4_K_M \
   -p "Explain gradient descent" -n 900 -ngl 99 -st
 ```
 
@@ -254,7 +254,7 @@ llama-cli -hf sartajbhuvaji/GLM-4.6-Flash-text-GGUF:Q4_K_M \
 To use the copies in this repo instead, download by explicit path, since `-hf` only resolves root-level GGUFs:
 
 ```bash
-hf download sartajbhuvaji/GLM-4.6-Flash-text \
+hf download sartajbhuvaji/unfuse-GLM-4.6-Flash-text \
   gguf/GLM-4.6-Flash-text-Q4_K_M.gguf --local-dir .
 llama-cli -m gguf/GLM-4.6-Flash-text-Q4_K_M.gguf -p "Explain gradient descent" -n 900 -ngl 99 -st
 ```
@@ -271,7 +271,7 @@ cmake --build build -j --target llama-cli llama-server
 ### Ollama
 
 ```bash
-ollama run hf.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF:Q4_K_M
+ollama run hf.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF:Q4_K_M
 ```
 
 ## Output format

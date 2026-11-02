@@ -32,9 +32,9 @@ gguf = ["gguf>=0.10", "sentencepiece>=0.2", "protobuf>=4.0"]
 dev = ["ruff>=0.6", "pytest>=8.0"]
 
 [project.urls]
-"Text-only model" = "https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text"
-"Text-only GGUF" = "https://huggingface.co/sartajbhuvaji/GLM-4.6-Flash-text-GGUF"
-"Vision mmproj GGUF" = "https://huggingface.co/sartajbhuvaji/GLM-4.6V-Flash-mmproj-GGUF"
+"Text-only model" = "https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text"
+"Text-only GGUF" = "https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text-GGUF"
+"Vision mmproj GGUF" = "https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6V-Flash-mmproj-GGUF"
 
 [build-system]
 requires = ["hatchling"]

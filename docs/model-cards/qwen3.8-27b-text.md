@@ -170,7 +170,7 @@ Needs ~55 GB of VRAM in bf16, so one 80 GB card (H100/H200/A100-80GB), or shard 
 ```bash
 pip install "vllm>=0.27.1"
 
-vllm serve sartajbhuvaji/Qwen3.8-27B-text \
+vllm serve sartajbhuvaji/unfuse-Qwen3.8-27B-text \
   --max-model-len 32768 \
   --max-num-seqs 256
 ```
@@ -183,7 +183,7 @@ Cold start on an H100 is about 75 s. On two smaller cards add `--tensor-parallel
 pip install "sglang[all]>=0.5.18"
 
 python -m sglang.launch_server \
-  --model-path sartajbhuvaji/Qwen3.8-27B-text \
+  --model-path sartajbhuvaji/unfuse-Qwen3.8-27B-text \
   --port 8001 \
   --context-length 32768 \
   --max-running-requests 256
@@ -197,7 +197,7 @@ Both expose an OpenAI-compatible API, so the same client works against either. O
 curl http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "sartajbhuvaji/Qwen3.8-27B-text",
+    "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
     "messages": [{"role": "user", "content": "Write a Python one-liner that reverses a string."}],
     "max_tokens": 256,
     "temperature": 0
@@ -210,7 +210,7 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:8000/v1", api_key="none")
 
 resp = client.chat.completions.create(
-    model="sartajbhuvaji/Qwen3.8-27B-text",
+    model="sartajbhuvaji/unfuse-Qwen3.8-27B-text",
     messages=[{"role": "user", "content": "Explain a mutex vs a semaphore."}],
     max_tokens=512,
     temperature=0,
@@ -224,7 +224,7 @@ print(resp.choices[0].message.content)
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-model_id = "sartajbhuvaji/Qwen3.8-27B-text"
+model_id = "sartajbhuvaji/unfuse-Qwen3.8-27B-text"
 tok = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.bfloat16, device_map="cuda")
 
