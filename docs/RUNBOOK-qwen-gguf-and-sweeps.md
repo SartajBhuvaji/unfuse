@@ -5,6 +5,16 @@ conversion is only dry-run checked and nothing below has been executed.
 
 Branch: `qwen-gguf-and-sweeps`. Commit results there. Do not touch `main`.
 
+## Status
+
+A reduced version of this ran on 2026-11-02; see
+`notebooks/qwen3.8-27b/RESULTS.md` for what it found and what it left undone. The two
+scripts that did the work are `tools/qwen_gguf.sh` (convert, quantize, smoke test,
+perplexity, mmproj, optional private upload) and `tools/qwen_sweeps.sh` (the
+parent-vs-split benchmarks). Not done: the RoPE logit comparison, quants other than
+Q4_K_M, the 8k and 32k rows, and Task 3. The sections below are the original spec,
+so they ask for more than was run.
+
 ## What is already established (don't redo it)
 
 - `sartajbhuvaji/unfuse-Qwen3.8-27B-text` is the text-only checkpoint, bf16,

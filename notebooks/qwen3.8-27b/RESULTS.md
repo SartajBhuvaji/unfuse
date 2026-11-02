@@ -16,23 +16,20 @@ Machine: 1× H100 80GB, Ubuntu 22.04, llama.cpp `d02b4c0d66796e0a44380611d038123
 
 **Not run:** Full GGUF quant ladder, full wikitext-2 perplexity, RoPE logit-diff table, 8k/32k bench rows, Task 3 Mamba block analysis, public Hub.
 
-## Phase A commands (on GPU)
+## Commands
 
 ```bash
-bash tools/run_phase_a_minimal.sh   # after bf16 on disk; UPLOAD=0 default
-bash tools/run_perplexity_qwen.sh # parser fix rerun
-bash tools/run_mmproj_qwen.sh
+tools/qwen_gguf.sh     # bf16 -> Q4_K_M, smoke, perplexity, mmproj; UPLOAD=1 pushes private
+tools/qwen_sweeps.sh   # baseline 512/256, 4k context, c=32; VLLM_MAX_SEQS=256 by default
 ```
 
-## Phase B commands
-
-```bash
-VLLM_MAX_SEQS=256 bash tools/run_phase_b_minimal.sh
-```
+These replaced a set of one-off scripts used during the run (Phase A, a resume script,
+separate perplexity and mmproj scripts, a Hub upload wrapper). The logs under
+`gguf/` and `bench/sweeps/` still show those script names.
 
 Artifacts under `notebooks/qwen3.8-27b/bench/sweeps/{baseline-512,longctx-in4096,conc-c32}/`.
 
 ## Failures (first attempts)
 
 - vLLM at max_num_seqs 1024: refused (see refusal JSON).
-- Overlapping Phase B processes: SGLang killed mid-start; resolved with `flock` on `phase_b.lock` and a single rerun.
+- Overlapping Phase B processes: SGLang killed mid-start; resolved with a `flock` (now `/tmp/qwen_sweeps.lock`) and a single rerun.
