@@ -14,6 +14,11 @@ source /root/venv/bin/activate
 : "${HF_TOKEN:?export HF_TOKEN in this shell}"
 chmod +x tools/*.sh
 mkdir -p "$SW"
+exec 9>"$SW/phase_b.lock"
+if ! flock -n 9; then
+  echo "FATAL: another Phase B holds $SW/phase_b.lock"
+  exit 1
+fi
 exec > >(tee -a "$LOG") 2>&1
 
 echo "== phase B start $(date -Is) =="
