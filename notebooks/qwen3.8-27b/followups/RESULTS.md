@@ -4,7 +4,7 @@ Machine: 1× H100 80GB, Ubuntu 22.04, llama.cpp `d02b4c0d66796e0a44380611d038123
 
 ## Findings
 
-**RoPE warning:** Converter still emits `Unknown RoPE type: default`; GGUF metadata carries `qwen35.rope.dimension_sections` / `rope.freq_base` (see prior `gguf/` logs). **Safetensors self-check** on seven prompts (six defaults + ~1086-word long prompt) is **exact** (max |Δlogit| = 0). **`tools/qwen_gguf_rope_check.py` failed** on greedy-64 (`apply_chat_template` BatchEncoding passed to `generate`). Follow-up **`rope_check.py`** ran with raw prompts; first-token GGUF vs transformers parsing was broken on r2 (empty `llama-cli` tokens). **r3** (fixed parser, `--reasoning off`, optional `causal-conv1d` + `flash-linear-attention`) was queued after benches — see `rope_check.json` mtime and `task1_rope_r3.log`. Full-vocab **max |Δlogit|** between bf16 GGUF and transformers was **not** exported (llama.cpp CLI does not dump full logits); argmax-on-next-token comparison is the practical check.
+**RoPE warning:** Converter still emits `Unknown RoPE type: default`; GGUF metadata carries `qwen35.rope.dimension_sections` / `rope.freq_base` (see prior `gguf/` logs). **Safetensors self-check** on seven prompts (six defaults + ~1086-word long prompt) is **exact** (max |Δlogit| = 0). **`tools/qwen_gguf_rope_check.py` failed** on greedy-64 (`apply_chat_template` BatchEncoding passed to `generate`). Follow-up **`rope_check.py`**: r2 wrote `rope_check.json` but **first-token GGUF comparisons were empty** (parser / reasoning). **r3** (fixed parser, `--reasoning off`, `causal-conv1d` + `flash-linear-attention`) was **still running or blocked on pip compile** when this was written — re-run `bash notebooks/qwen3.8-27b/followups/run_task1_rope_r3.sh` on a warm box and refresh `rope_check.json`. Full-vocab **max |Δlogit|** between bf16 GGUF and transformers was **not** exported (llama.cpp CLI does not dump full logits).
 
 **Quants:** Q8_0 and Q5_K_M cut on disk; smokes **PASS**. Full **wikitext-2 test** perplexity @ ctx **512** (not the old 256 KiB slice): BF16 **6.6497**, Q8_0 **6.6514**, Q5_K_M **6.6746**, Q4_K_M **6.6959** — table in `perplexity_full_table.md`.
 
@@ -54,7 +54,7 @@ Prior minimal run @ max-seq **256**: ~**360** tok/s (both). Mamba cache block co
 |------|--------|
 | `tools/qwen_gguf_rope_check.py` | **Failed** — `AttributeError` on greedy-64 (`task1_official_failure.txt`) |
 | Full GGUF vs HF max-logit vector diff | **Not run** (no full-vocab GGUF logits in tooling) |
-| RoPE r3 with fixed parser | **Started** post-bench; confirm `rope_check.json` timestamp |
+| RoPE r3 with fixed parser | **Not finished** — pip/SSH hung; run `run_task1_rope_r3.sh` locally on box |
 | vLLM @ max-seq 1024 | **Refused** (unchanged from minimal run) |
 | SGLang sweeps in follow-ups | **Not run** (Task 5 read-only) |
 | Hub upload / model card edits | **Not run** (per scope) |
