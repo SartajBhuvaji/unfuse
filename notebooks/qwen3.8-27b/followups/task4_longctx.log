@@ -1,0 +1,148 @@
+== task4 start 2026-11-02T21:47:26+00:00 ==
+== IN_LEN=8192 NPROMPTS=16 ==
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  ready in 130s
+  not found in log: engine_version, concurrency_limit
+{
+  "label": "vllm-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 51.1,
+  "kv_cache_gib": 18.27,
+  "kv_cache_tokens": 278674,
+  "max_model_len": 40960,
+  "max_concurrency": 6.8,
+  "mm_encoder_budget_tokens": 16384,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== vllm / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 90s
+  not found in log: engine_version, concurrency_limit, mm_encoder_budget_tokens
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 50.13,
+  "kv_cache_gib": 18.57,
+  "kv_cache_tokens": 283794,
+  "max_model_len": 40960,
+  "max_concurrency": 6.93,
+  "missing": [
+    "engine_version",
+    "concurrency_limit",
+    "mm_encoder_budget_tokens"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== concurrency limits the engines chose[0m
+  vllm     {'derived': None, 'original': None}  comparable
+
+[1m== results[0m
+| engine | model | c | out tok/s | per stream | TTFT p50 | TTFT p99 | TPOT |
+|---|---|---|---|---|---|---|---|
+| vllm | derived | 1 | 25.3 | 25.3 | 2016.7 ms | 2086.5 ms | 31.66 ms |
+| vllm | derived | 16 | 95.0 | 5.9 | 20842.2 ms | 32627.6 ms | 90.49 ms |
+| vllm | original | 1 | 25.8 | 25.8 | 1958.9 ms | 2000.6 ms | 31.17 ms |
+| vllm | original | 16 | 97.0 | 6.1 | 20379.2 ms | 31896.7 ms | 88.71 ms |
+== IN_LEN=32768 NPROMPTS=8 ==
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  ready in 70s
+  not found in log: engine_version, concurrency_limit
+{
+  "label": "vllm-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 51.1,
+  "kv_cache_gib": 18.27,
+  "kv_cache_tokens": 278674,
+  "max_model_len": 40960,
+  "max_concurrency": 6.8,
+  "mm_encoder_budget_tokens": 16384,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== vllm / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 45s
+  not found in log: engine_version, concurrency_limit, mm_encoder_budget_tokens
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 50.13,
+  "kv_cache_gib": 19.84,
+  "kv_cache_tokens": 302811,
+  "max_model_len": 40960,
+  "max_concurrency": 7.39,
+  "missing": [
+    "engine_version",
+    "concurrency_limit",
+    "mm_encoder_budget_tokens"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== concurrency limits the engines chose[0m
+  vllm     {'derived': None, 'original': None}  comparable
+
+[1m== results[0m
+| engine | model | c | out tok/s | per stream | TTFT p50 | TTFT p99 | TPOT |
+|---|---|---|---|---|---|---|---|
+| vllm | derived | 1 | 15.2 | 15.2 | 9066.4 ms | 9165.8 ms | 30.4 ms |
+| vllm | derived | 16 | 26.4 | 1.6 | 74345.0 ms | 139401.6 ms | 232.4 ms |
+| vllm | original | 1 | 15.2 | 15.2 | 9110.8 ms | 9177.6 ms | 30.26 ms |
+| vllm | original | 16 | 26.3 | 1.6 | 72728.4 ms | 138140.7 ms | 217.57 ms |
+== task4 end 2026-11-02T22:21:08+00:00 ==

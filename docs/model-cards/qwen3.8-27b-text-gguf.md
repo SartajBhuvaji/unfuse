@@ -23,9 +23,11 @@ removed. Part of the [unfuse collection](https://huggingface.co/collections/sart
 
 | File | Quant | Size |
 |---|---|---|
+| `Qwen3.8-27B-text-Q8_0.gguf` | Q8_0 | 29.1 GB |
+| `Qwen3.8-27B-text-Q5_K_M.gguf` | Q5_K_M | 19.5 GB |
 | `Qwen3.8-27B-text-Q4_K_M.gguf` | Q4_K_M | 16.8 GB |
 
-Only Q4_K_M so far. It was cut from a bf16 GGUF (not f16) with llama.cpp commit
+All three were cut from a bf16 GGUF (not f16) with llama.cpp commit
 `d02b4c0d66796e0a44380611d038123fefb9fe83`. The architecture is `qwen35`, 866 tensors,
 including the multi-token-prediction block as block 64.
 
@@ -43,24 +45,29 @@ and use `llama-mtmd-cli`.
 
 ## What was checked
 
-- **Known answers.** Three prompts through llama.cpp, each checked for the right answer
-  rather than a clean exit: capital of France, `84 * 3 / 2`, and a German translation.
-  All passed.
-- **Perplexity.** On the first 256 KiB of the wikitext-2 test split at context 512:
-  bf16 6.7324, Q4_K_M 6.7769 (+0.7%). This is a small slice. Use it to compare the two
-  rows, not as a benchmark.
-- **With the projector.** One image (a cat) with this file and the mmproj; the answer
-  was "cat".
+- **Perplexity.** Full wikitext-2 test split, context 512, llama-perplexity:
+
+  | | PPL | vs bf16 |
+  |---|---|---|
+  | BF16 | 6.6497 | |
+  | Q8_0 | 6.6514 | +0.03% |
+  | Q5_K_M | 6.6746 | +0.37% |
+  | Q4_K_M | 6.6959 | +0.69% |
+
+- **RoPE.** The converter prints `Unknown RoPE type: default`. It does not matter: the
+  safetensors model scores 6.6516 on the same text with the same chunking, against 6.6497
+  for the bf16 GGUF, and the top-1 token matches on seven prompts including a 1,259-token
+  one.
+- **Known answers.** Prompts with checkable answers (capital of France, `84 * 3 / 2`, a
+  German translation) passed on Q4_K_M, and on Q8_0 and Q5_K_M.
+- **With the projector.** One image (a cat) with Q4_K_M and the mmproj; the answer was
+  "cat".
 
 ## What was not checked
 
-- **RoPE.** The converter prints `Unknown RoPE type: default`. This model uses
-  interleaved multimodal RoPE, and nobody has yet compared this GGUF's logits against
-  the safetensors model. The outputs above look fine, which is encouraging but is not
-  that comparison.
-- Other quants, a full-length perplexity run, and serving throughput are not covered
-  here. The parent-versus-split benchmark runs are in the
-  [unfuse repo](https://github.com/SartajBhuvaji/unfuse) under `notebooks/qwen3.8-27b/`.
+Serving throughput of this GGUF, a Q6_K, and vision quality with the projector. The
+parent-versus-split benchmark runs are in the
+[unfuse repo](https://github.com/SartajBhuvaji/unfuse) under `notebooks/qwen3.8-27b/`.
 
 ## Provenance
 

@@ -1,0 +1,17 @@
+{
+  "label": "vllm-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 51.1,
+  "kv_cache_gib": 18.52,
+  "kv_cache_tokens": 281804,
+  "max_model_len": 32768,
+  "max_concurrency": 8.6,
+  "mm_encoder_budget_tokens": 16384,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}

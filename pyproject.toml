@@ -30,6 +30,8 @@ unfuse = "unfuse.cli:main"
 notebook = ["jupyter>=1.0", "nbconvert>=7.0", "ipykernel>=6.0"]
 gguf = ["gguf>=0.10", "sentencepiece>=0.2", "protobuf>=4.0"]
 dev = ["ruff>=0.6", "pytest>=8.0"]
+# Qwen3.5 hybrid (Mamba + attention): transformers falls back to slow PyTorch without these.
+qwen35 = ["causal-conv1d>=1.4.0", "flash-linear-attention>=0.2.0"]
 
 [project.urls]
 "Text-only model" = "https://huggingface.co/sartajbhuvaji/unfuse-GLM-4.6-Flash-text"

@@ -1,0 +1,30 @@
+{
+  "label": "vllm-derived-cold",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "runs": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "failed": 0,
+      "duration_s": 121.34,
+      "output_tok_s": 16.7,
+      "per_stream_tok_s": 16.7,
+      "ttft_ms_mean": 7894.4,
+      "ttft_ms_p50": 8551.0,
+      "ttft_ms_p99": 8934.6,
+      "tpot_ms_mean": 28.74
+    },
+    {
+      "concurrency": 16,
+      "requests": 16,
+      "failed": 0,
+      "duration_s": 155.18,
+      "output_tok_s": 26.2,
+      "per_stream_tok_s": 1.6,
+      "ttft_ms_mean": 78236.3,
+      "ttft_ms_p50": 74643.6,
+      "ttft_ms_p99": 140326.7,
+      "tpot_ms_mean": 233.95
+    }
+  ]
+}

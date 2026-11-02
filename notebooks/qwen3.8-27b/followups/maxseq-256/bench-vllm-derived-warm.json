@@ -1,0 +1,18 @@
+{
+  "label": "vllm-derived-warm",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "runs": [
+    {
+      "concurrency": 16,
+      "requests": 64,
+      "failed": 0,
+      "duration_s": 43.11,
+      "output_tok_s": 377.1,
+      "per_stream_tok_s": 23.6,
+      "ttft_ms_mean": 2097.1,
+      "ttft_ms_p50": 2137.2,
+      "ttft_ms_p99": 2272.9,
+      "tpot_ms_mean": 34.3
+    }
+  ]
+}
