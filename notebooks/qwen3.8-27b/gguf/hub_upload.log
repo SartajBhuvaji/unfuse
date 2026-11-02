@@ -1,0 +1,451 @@
+== hub upload start 2026-11-02T18:18:48+00:00 ==
+authenticated as sartajbhuvaji
+repo: sartajbhuvaji/unfuse-Qwen3.8-27B-text-GGUF private= True
+README uploaded in 1s
+
+== uploading Qwen3.8-27B-text-Q4_K_M.gguf (16.81 GB) ==
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   0%|          | 50.9MB / 16.8GB            [A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   0%|          | 50.9MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   0%|          | 50.9MB / 16.8GB,   ???B/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   1%|          |  123MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   1%|          |  123MB / 16.8GB, 12.1MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   1%|          |  208MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   1%|          |  208MB / 16.8GB, 20.5MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   2%|▏         |  287MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  287MB / 16.8GB, 28.0MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   2%|▏         |  373MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  373MB / 16.8GB, 36.2MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   2%|▏         |  373MB / 16.8GB            [A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   2%|▏         |  373MB / 16.8GB            [A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   3%|▎         |  485MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  485MB / 16.8GB, 46.1MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   4%|▎         |  621MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   4%|▎         |  621MB / 16.8GB, 58.8MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   5%|▍         |  757MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   5%|▍         |  757MB / 16.8GB, 71.4MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   5%|▌         |  901MB / 16.8GB            [A[AProcessing Files (0 / 1)      :   5%|▌         |  901MB / 16.8GB, 84.6MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   6%|▌         | 1.04GB / 16.8GB            [A[AProcessing Files (0 / 1)      :   6%|▌         | 1.04GB / 16.8GB, 96.9MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   7%|▋         | 1.18GB / 16.8GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.18GB / 16.8GB,  110MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   8%|▊         | 1.32GB / 16.8GB            [A[AProcessing Files (0 / 1)      :   8%|▊         | 1.32GB / 16.8GB,  122MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:   9%|▊         | 1.46GB / 16.8GB            [A[AProcessing Files (0 / 1)      :   9%|▊         | 1.46GB / 16.8GB,  134MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  10%|▉         | 1.61GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  10%|▉         | 1.61GB / 16.8GB,  147MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  10%|█         | 1.70GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  10%|█         | 1.70GB / 16.8GB,  154MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  10%|█         | 1.70GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  10%|█         | 1.70GB / 16.8GB,  153MB/s  
+New Data Upload               :   2%|▏         | 1.14MB / 67.0MB,  108kB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  10%|█         | 1.74GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  10%|█         | 1.74GB / 16.8GB,  155MB/s  
+New Data Upload               :  58%|█████▊    | 38.7MB / 67.0MB, 3.65MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  11%|█         | 1.77GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  11%|█         | 1.77GB / 16.8GB,  157MB/s  
+New Data Upload               : 100%|█████████▉| 67.0MB / 67.0MB, 6.29MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  11%|█         | 1.77GB / 16.8GB            [A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  11%|█         | 1.79GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  11%|█         | 1.79GB / 16.8GB,  155MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  11%|█         | 1.87GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  11%|█         | 1.87GB / 16.8GB,  162MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  11%|█         | 1.88GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  11%|█         | 1.88GB / 16.8GB,  161MB/s  
+New Data Upload               :  35%|███▍      | 69.7MB /  201MB, 6.31MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  11%|█▏        | 1.92GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  11%|█▏        | 1.92GB / 16.8GB,  163MB/s  
+New Data Upload               :  57%|█████▋    |  114MB /  201MB, 10.4MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  12%|█▏        | 1.94GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.94GB / 16.8GB,  163MB/s  
+New Data Upload               :  67%|██████▋   |  134MB /  201MB, 12.1MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  12%|█▏        | 1.97GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.97GB / 16.8GB,  164MB/s  
+New Data Upload               :  80%|███████▉  |  160MB /  201MB, 14.5MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  12%|█▏        | 2.01GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 2.01GB / 16.8GB,  167MB/s  
+New Data Upload               : 100%|█████████▉|  200MB /  201MB, 18.0MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  12%|█▏        | 2.02GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 2.02GB / 16.8GB,  167MB/s  
+New Data Upload               : 100%|█████████▉|  201MB /  201MB, 17.9MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  13%|█▎        | 2.17GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  13%|█▎        | 2.17GB / 16.8GB,  178MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  14%|█▎        | 2.30GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  14%|█▎        | 2.30GB / 16.8GB,  189MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  14%|█▍        | 2.42GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  14%|█▍        | 2.42GB / 16.8GB,  198MB/s  
+New Data Upload               : 100%|█████████▉|  201MB /  201MB, 17.4MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  15%|█▌        | 2.55GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  15%|█▌        | 2.55GB / 16.8GB,  208MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  16%|█▌        | 2.68GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  16%|█▌        | 2.68GB / 16.8GB,  218MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  17%|█▋        | 2.81GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  17%|█▋        | 2.81GB / 16.8GB,  228MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  18%|█▊        | 2.95GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 2.95GB / 16.8GB,  239MB/s  
+New Data Upload               : 100%|██████████|  201MB /  201MB, 16.8MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  18%|█▊        | 3.09GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 3.09GB / 16.8GB,  249MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  19%|█▉        | 3.23GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 3.23GB / 16.8GB,  260MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  20%|██        | 3.37GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  20%|██        | 3.37GB / 16.8GB,  269MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  21%|██        | 3.50GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  21%|██        | 3.50GB / 16.8GB,  279MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  22%|██▏       | 3.62GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  22%|██▏       | 3.62GB / 16.8GB,  287MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  22%|██▏       | 3.71GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  22%|██▏       | 3.71GB / 16.8GB,  293MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  23%|██▎       | 3.85GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  23%|██▎       | 3.85GB / 16.8GB,  303MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  24%|██▍       | 4.00GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  24%|██▍       | 4.00GB / 16.8GB,  313MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  25%|██▍       | 4.13GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  25%|██▍       | 4.13GB / 16.8GB,  322MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  25%|██▌       | 4.27GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  25%|██▌       | 4.27GB / 16.8GB,  332MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  26%|██▌       | 4.40GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  26%|██▌       | 4.40GB / 16.8GB,  341MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  27%|██▋       | 4.52GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  27%|██▋       | 4.52GB / 16.8GB,  348MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  28%|██▊       | 4.64GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  28%|██▊       | 4.64GB / 16.8GB,  355MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  28%|██▊       | 4.75GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  28%|██▊       | 4.75GB / 16.8GB,  362MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  29%|██▉       | 4.87GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  29%|██▉       | 4.87GB / 16.8GB,  369MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  30%|██▉       | 5.01GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  30%|██▉       | 5.01GB / 16.8GB,  379MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  31%|███       | 5.14GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  31%|███       | 5.14GB / 16.8GB,  386MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  31%|███▏      | 5.28GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 5.28GB / 16.8GB,  396MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  32%|███▏      | 5.42GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  32%|███▏      | 5.42GB / 16.8GB,  404MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  33%|███▎      | 5.56GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 5.56GB / 16.8GB,  412MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  34%|███▍      | 5.70GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  34%|███▍      | 5.70GB / 16.8GB,  421MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  35%|███▍      | 5.84GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  35%|███▍      | 5.84GB / 16.8GB,  429MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  36%|███▌      | 5.98GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  36%|███▌      | 5.98GB / 16.8GB,  438MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  36%|███▋      | 6.12GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  36%|███▋      | 6.12GB / 16.8GB,  446MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  37%|███▋      | 6.25GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  37%|███▋      | 6.25GB / 16.8GB,  454MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  38%|███▊      | 6.40GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  38%|███▊      | 6.40GB / 16.8GB,  462MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  39%|███▉      | 6.53GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  39%|███▉      | 6.53GB / 16.8GB,  470MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  40%|███▉      | 6.67GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  40%|███▉      | 6.67GB / 16.8GB,  479MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  41%|████      | 6.81GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  41%|████      | 6.81GB / 16.8GB,  486MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  41%|████▏     | 6.94GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  41%|████▏     | 6.94GB / 16.8GB,  493MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  42%|████▏     | 7.05GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  42%|████▏     | 7.05GB / 16.8GB,  498MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  43%|████▎     | 7.17GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  43%|████▎     | 7.17GB / 16.8GB,  504MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  44%|████▎     | 7.31GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  44%|████▎     | 7.31GB / 16.8GB,  512MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  44%|████▍     | 7.46GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  44%|████▍     | 7.46GB / 16.8GB,  520MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  45%|████▌     | 7.59GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  45%|████▌     | 7.59GB / 16.8GB,  527MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  46%|████▌     | 7.74GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  46%|████▌     | 7.74GB / 16.8GB,  535MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  47%|████▋     | 7.87GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  47%|████▋     | 7.87GB / 16.8GB,  541MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  48%|████▊     | 8.00GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     | 8.00GB / 16.8GB,  548MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  48%|████▊     | 8.15GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     | 8.15GB / 16.8GB,  555MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  49%|████▉     | 8.28GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  49%|████▉     | 8.28GB / 16.8GB,  562MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  50%|█████     | 8.41GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  50%|█████     | 8.41GB / 16.8GB,  568MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  51%|█████     | 8.55GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  51%|█████     | 8.55GB / 16.8GB,  576MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  52%|█████▏    | 8.69GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  52%|█████▏    | 8.69GB / 16.8GB,  582MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  52%|█████▏    | 8.79GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  52%|█████▏    | 8.79GB / 16.8GB,  586MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  53%|█████▎    | 8.90GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  53%|█████▎    | 8.90GB / 16.8GB,  590MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  54%|█████▎    | 9.02GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  54%|█████▎    | 9.02GB / 16.8GB,  595MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  54%|█████▍    | 9.15GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  54%|█████▍    | 9.15GB / 16.8GB,  601MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  55%|█████▌    | 9.30GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  55%|█████▌    | 9.30GB / 16.8GB,  608MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  56%|█████▌    | 9.43GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  56%|█████▌    | 9.43GB / 16.8GB,  614MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  57%|█████▋    | 9.57GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    | 9.57GB / 16.8GB,  620MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  58%|█████▊    | 9.70GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  58%|█████▊    | 9.70GB / 16.8GB,  627MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  59%|█████▊    | 9.84GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  59%|█████▊    | 9.84GB / 16.8GB,  633MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  59%|█████▉    | 9.98GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  59%|█████▉    | 9.98GB / 16.8GB,  639MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  60%|██████    | 10.1GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  60%|██████    | 10.1GB / 16.8GB,  645MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  61%|██████    | 10.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  61%|██████    | 10.3GB / 16.8GB,  651MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  62%|██████▏   | 10.4GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  62%|██████▏   | 10.4GB / 16.8GB,  658MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  63%|██████▎   | 10.5GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 10.5GB / 16.8GB,  663MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  63%|██████▎   | 10.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 10.7GB / 16.8GB,  669MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  64%|██████▍   | 10.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  64%|██████▍   | 10.8GB / 16.8GB,  673MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  65%|██████▍   | 10.9GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  65%|██████▍   | 10.9GB / 16.8GB,  676MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  65%|██████▌   | 11.0GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  65%|██████▌   | 11.0GB / 16.8GB,  679MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  66%|██████▌   | 11.1GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  66%|██████▌   | 11.1GB / 16.8GB,  682MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  67%|██████▋   | 11.2GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   | 11.2GB / 16.8GB,  685MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  67%|██████▋   | 11.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   | 11.3GB / 16.8GB,  690MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  68%|██████▊   | 11.5GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  68%|██████▊   | 11.5GB / 16.8GB,  695MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  69%|██████▉   | 11.6GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  69%|██████▉   | 11.6GB / 16.8GB,  700MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  70%|██████▉   | 11.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  70%|██████▉   | 11.7GB / 16.8GB,  705MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  71%|███████   | 11.9GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  71%|███████   | 11.9GB / 16.8GB,  711MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  71%|███████▏  | 12.0GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  71%|███████▏  | 12.0GB / 16.8GB,  716MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  72%|███████▏  | 12.1GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  72%|███████▏  | 12.1GB / 16.8GB,  720MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  73%|███████▎  | 12.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  73%|███████▎  | 12.3GB / 16.8GB,  726MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  74%|███████▍  | 12.4GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 12.4GB / 16.8GB,  731MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  75%|███████▍  | 12.5GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  75%|███████▍  | 12.5GB / 16.8GB,  734MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  75%|███████▌  | 12.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  75%|███████▌  | 12.7GB / 16.8GB,  739MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  76%|███████▌  | 12.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  76%|███████▌  | 12.8GB / 16.8GB,  744MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  77%|███████▋  | 12.9GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  77%|███████▋  | 12.9GB / 16.8GB,  749MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  78%|███████▊  | 13.0GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 13.0GB / 16.8GB,  752MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  78%|███████▊  | 13.2GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 13.2GB / 16.8GB,  755MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  79%|███████▉  | 13.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  79%|███████▉  | 13.3GB / 16.8GB,  759MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  80%|███████▉  | 13.4GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  80%|███████▉  | 13.4GB / 16.8GB,  764MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  81%|████████  | 13.6GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  81%|████████  | 13.6GB / 16.8GB,  769MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  81%|████████▏ | 13.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  81%|████████▏ | 13.7GB / 16.8GB,  774MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  82%|████████▏ | 13.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  82%|████████▏ | 13.8GB / 16.8GB,  778MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  83%|████████▎ | 14.0GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  83%|████████▎ | 14.0GB / 16.8GB,  783MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  84%|████████▍ | 14.1GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  84%|████████▍ | 14.1GB / 16.8GB,  787MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  85%|████████▍ | 14.2GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  85%|████████▍ | 14.2GB / 16.8GB,  791MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  85%|████████▌ | 14.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  85%|████████▌ | 14.3GB / 16.8GB,  794MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  86%|████████▌ | 14.5GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  86%|████████▌ | 14.5GB / 16.8GB,  798MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  87%|████████▋ | 14.6GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 14.6GB / 16.8GB,  801MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  87%|████████▋ | 14.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 14.7GB / 16.8GB,  804MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  88%|████████▊ | 14.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  88%|████████▊ | 14.8GB / 16.8GB,  806MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  89%|████████▉ | 14.9GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  89%|████████▉ | 14.9GB / 16.8GB,  810MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  90%|████████▉ | 15.1GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  90%|████████▉ | 15.1GB / 16.8GB,  814MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  90%|█████████ | 15.2GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  90%|█████████ | 15.2GB / 16.8GB,  817MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  91%|█████████ | 15.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  91%|█████████ | 15.3GB / 16.8GB,  820MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  92%|█████████▏| 15.4GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  92%|█████████▏| 15.4GB / 16.8GB,  823MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  93%|█████████▎| 15.6GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  93%|█████████▎| 15.6GB / 16.8GB,  826MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  93%|█████████▎| 15.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  93%|█████████▎| 15.7GB / 16.8GB,  830MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  94%|█████████▍| 15.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 15.8GB / 16.8GB,  833MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  95%|█████████▍| 15.9GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  95%|█████████▍| 15.9GB / 16.8GB,  836MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  95%|█████████▌| 16.0GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  95%|█████████▌| 16.0GB / 16.8GB,  838MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  96%|█████████▌| 16.1GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌| 16.1GB / 16.8GB,  839MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  97%|█████████▋| 16.3GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 16.3GB / 16.8GB,  841MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  97%|█████████▋| 16.4GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 16.4GB / 16.8GB,  844MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  98%|█████████▊| 16.5GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 16.5GB / 16.8GB,  846MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf:  99%|█████████▉| 16.6GB / 16.8GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 16.6GB / 16.8GB,  850MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.7GB / 16.8GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 16.7GB / 16.8GB,  853MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 16.8GB / 16.8GB,  850MB/s  
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 16.8GB / 16.8GB,  844MB/s  
+New Data Upload               :  97%|█████████▋|  216MB /  221MB, 7.87MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 16.8GB / 16.8GB,  838MB/s  
+New Data Upload               : 100%|█████████▉|  221MB /  221MB, 8.27MB/s  [A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 16.8GB / 16.8GB,  825MB/s  
+New Data Upload               : 100%|██████████|  221MB /  221MB, 8.14MB/s  [A
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[A
+
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (0 / 1)      : 100%|█████████▉| 16.8GB / 16.8GB,  801MB/s  
+New Data Upload               : 100%|██████████|  221MB /  221MB, 7.90MB/s  
+Validating                    : ██████████| 100%            
+  ...n3.8-27B-text-Q4_K_M.gguf: 100%|█████████▉| 16.8GB / 16.8GB            
+done in 21s
+
+root gguf files: ['Qwen3.8-27B-text-Q4_K_M.gguf']
+quant widget ok: True
+authenticated as sartajbhuvaji
+repo: sartajbhuvaji/unfuse-Qwen3.8-27B-mmproj-GGUF private= True
+README uploaded in 1s
+
+== uploading mmproj-Qwen3.8-27B-F16.gguf (0.93 GB) ==
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  ...proj-Qwen3.8-27B-F16.gguf:   0%|          | 61.2kB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf:   0%|          | 61.2kB /  928MB            [A[AProcessing Files (0 / 1)      :   0%|          | 61.2kB /  928MB,   ???B/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:   0%|          | 61.2kB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf:   2%|▏         | 14.5MB /  928MB            [A[AProcessing Files (0 / 1)      :   2%|▏         | 14.5MB /  928MB,   ???B/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  10%|▉         | 89.2MB /  928MB            [A[AProcessing Files (0 / 1)      :  10%|▉         | 89.2MB /  928MB, 8.83MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  18%|█▊        |  163MB /  928MB            [A[AProcessing Files (0 / 1)      :  18%|█▊        |  163MB /  928MB, 16.0MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  26%|██▌       |  238MB /  928MB            [A[AProcessing Files (0 / 1)      :  26%|██▌       |  238MB /  928MB, 23.2MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  34%|███▎      |  311MB /  928MB            [A[AProcessing Files (0 / 1)      :  34%|███▎      |  311MB /  928MB, 30.2MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  38%|███▊      |  348MB /  928MB            [A[AProcessing Files (0 / 1)      :  38%|███▊      |  348MB /  928MB, 33.5MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  50%|████▉     |  463MB /  928MB            [A[AProcessing Files (0 / 1)      :  50%|████▉     |  463MB /  928MB, 44.4MB/s  
+New Data Upload               :  30%|███       | 20.5MB / 67.1MB, 2.00MB/s  [A
+
+  ...proj-Qwen3.8-27B-F16.gguf:  63%|██████▎   |  580MB /  928MB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   |  580MB /  928MB, 55.4MB/s  
+New Data Upload               :  96%|█████████▌| 64.5MB / 67.1MB, 6.27MB/s  [A
+
+  ...proj-Qwen3.8-27B-F16.gguf:  71%|███████   |  657MB /  928MB            [A[AProcessing Files (0 / 1)      :  71%|███████   |  657MB /  928MB, 62.3MB/s  
+New Data Upload               : 100%|█████████▉| 67.1MB / 67.1MB, 6.45MB/s  [A
+
+  ...proj-Qwen3.8-27B-F16.gguf:  78%|███████▊  |  723MB /  928MB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  |  723MB /  928MB, 68.1MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  86%|████████▌ |  796MB /  928MB            [A[AProcessing Files (0 / 1)      :  86%|████████▌ |  796MB /  928MB, 74.5MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  94%|█████████▎|  869MB /  928MB            [A[AProcessing Files (0 / 1)      :  94%|█████████▎|  869MB /  928MB, 80.8MB/s  
+
+  ...proj-Qwen3.8-27B-F16.gguf:  95%|█████████▌|  881MB /  928MB            [A[AProcessing Files (0 / 1)      :  95%|█████████▌|  881MB /  928MB, 81.2MB/s  
+New Data Upload               :  59%|█████▉    | 67.6MB /  114MB, 6.26MB/s  [A
+
+  ...proj-Qwen3.8-27B-F16.gguf:  98%|█████████▊|  911MB /  928MB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊|  911MB /  928MB, 83.3MB/s  
+New Data Upload               :  85%|████████▌ | 97.1MB /  114MB, 9.02MB/s  [A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉|  928MB /  928MB, 84.0MB/s  
+New Data Upload               : 100%|█████████▉|  114MB /  114MB, 10.5MB/s  [A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|█████████▉|  928MB /  928MB            [A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|██████████|  928MB /  928MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  928MB /  928MB, 78.6MB/s  
+New Data Upload               : 100%|██████████|  114MB /  114MB, 9.85MB/s  [A
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|██████████|  928MB /  928MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|██████████|  928MB /  928MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|██████████|  928MB /  928MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[A
+
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|██████████|  928MB /  928MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  928MB /  928MB, 76.1MB/s  
+New Data Upload               : 100%|██████████|  114MB /  114MB, 9.54MB/s  
+Validating                    : ██████████| 100%            
+  ...proj-Qwen3.8-27B-F16.gguf: 100%|██████████|  928MB /  928MB            
+done in 9s
+
+root gguf files: ['mmproj-Qwen3.8-27B-F16.gguf']
+quant widget ok: True
+== hub upload end 2026-11-02T18:19:23+00:00 ==

@@ -35,6 +35,7 @@ venv/
 
 # logs and scratch
 *.log
+!notebooks/qwen3.8-27b/**/*.log
 *.blg
 scratch/
 tmp/

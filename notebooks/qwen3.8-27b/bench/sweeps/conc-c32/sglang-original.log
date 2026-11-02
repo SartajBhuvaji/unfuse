@@ -1,0 +1,1026 @@
+/root/venvs/sglang/lib/python3.12/site-packages/sglang/launch_server.py:57: UserWarning: 'python -m sglang.launch_server' is still supported, but 'sglang serve' is the recommended entrypoint.
+  Example: sglang serve --model-path <model> [options]
+  warnings.warn(
+[2026-11-02 19:18:46] Attention backend not specified. Use fa3 backend by default.
+[2026-11-02 19:18:47] Compiled-kernel caches now live under SGLANG_CACHE_DIR (/root/.cache/sglang). These older directories are no longer used by sglang, but may still be used by other frameworks on this machine, so they were left alone: /root/.triton, /root/.cache/flashinfer. Remove them yourself if nothing else needs them.
+[2026-11-02 19:18:47] server_args=ServerArgs(model_path='Qwen/Qwen3.8-27B', tokenizer_path='Qwen/Qwen3.8-27B', tokenizer_mode='auto', tokenizer_backend='huggingface', tokenizer_worker_num=1, detokenizer_worker_num=1, skip_tokenizer_init=False, load_format='auto', model_loader_extra_config='{}', trust_remote_code=False, context_length=32768, is_embedding=False, enable_multimodal=None, revision=None, model_impl='auto', model_config_parser='auto', json_model_override_args='{}', dtype='auto', quantization=None, quantization_param_path=None, kv_cache_dtype='auto', enable_fp32_lm_head=False, modelopt_quant=None, modelopt_checkpoint_restore_path=None, modelopt_checkpoint_save_path=None, modelopt_export_path=None, quantize_and_serve=False, rl_quant_profile=None, enable_tf32_matmul=False, mem_fraction_static=0.7675554687499999, max_running_requests=32, max_queued_requests=None, max_total_tokens=None, chunked_prefill_size=8192, enable_dynamic_chunking=False, max_prefill_tokens=16384, prefill_max_requests=None, schedule_policy='fcfs', enable_priority_scheduling=False, disable_priority_preemption=False, default_priority_value=None, abort_on_priority_when_disabled=False, schedule_low_priority_values_first=False, priority_scheduling_preemption_threshold=10, retraction_policy='length', schedule_conservativeness=1.0, page_size=1, c128_page_size=16, swa_full_tokens_ratio=0.8, disable_hybrid_swa_memory=False, radix_eviction_policy='lru', prefill_only_disable_kv_cache=False, disable_radix_cache=False, enable_page_major_kv_layout=False, enable_unified_memory=False, disable_chunked_prefix_cache=False, disable_overlap_schedule=False, num_continuous_decode_steps=1, scheduler_recv_interval=1, enable_mixed_chunk=False, nccl_port=None, dist_timeout=None, dist_init_addr=None, nnodes=1, node_rank=0, tp_size=1, dcp_size=1, pp_size=1, pp_max_micro_batch_size=None, pp_async_batch_depth=0, dp_size=1, load_balance_method='round_robin', attn_cp_size=1, moe_dp_size=1, dwdp_size=1, dcp_comm_backend='ag_rs', dcp_replicate_q_proj=None, enable_prefill_cp=False, cp_strategy=None, enable_dsa_cache_layer_split=False, enable_dsa_prefill_context_parallel=False, dsa_prefill_cp_mode='round-robin-split', enable_prefill_context_parallel=False, prefill_cp_mode='in-seq-split', enable_cp_decode_attn_tp=False, enable_dp_attention=False, enable_dp_attention_local_control_broadcast=False, enable_dp_lm_head=False, enable_tp_lm_head_all_to_all=False, enable_attn_tp_input_scattered=False, disable_attn_tp_gather=False, enable_p2p_check=False, device='cuda', base_gpu_id=0, gpu_id_step=1, random_seed=8875462, mlx_enable_sampling=False, watchdog_timeout=300, soft_watchdog_timeout=None, sleep_on_idle=False, use_ray=False, custom_sigquit_handler=None, numa_node=None, gc_threshold=None, host='127.0.0.1', port=30000, fastapi_root_path='', smg_grpc_mode=False, grpc_mode=False, grpc_port=None, sidecar=None, sidecar_args=None, skip_server_warmup=False, warmups=None, enable_http2=False, http2_max_concurrent_streams=200, ssl_keyfile=None, ssl_certfile=None, ssl_ca_certs=None, ssl_keyfile_password=None, enable_ssl_refresh=False, api_key=None, admin_api_key=None, served_model_name='Qwen/Qwen3.8-27B', weight_version='default', chat_template=None, hf_chat_template_name=None, completion_template=None, file_storage_path='sglang_storage', enable_cache_report=False, reasoning_parser='glm45', default_chat_template_kwargs=None, strip_thinking_cache=False, enable_strict_thinking=False, tool_call_parser=None, tool_server=None, sampling_defaults='model', asr_max_buffer_seconds=60, asr_max_concurrent_sessions=32, preferred_sampling_params=None, allow_auto_truncate=False, stream_interval=1, batch_notify_size=16, stream_response_default_include_usage=False, incremental_streaming_output=False, enable_streaming_session=False, enable_session_radix_cache=False, log_level='info', log_level_http=None, log_requests=False, log_requests_level=2, log_requests_format='text', log_requests_target=None, uvicorn_access_log_exclude_prefixes=[], crash_dump_folder=None, show_time_cost=False, enable_metrics=False, smg_http_sidecar_port=None, enable_mfu_metrics=False, enable_metrics_for_all_schedulers=False, load_snapshot_publish_interval=15, tokenizer_metrics_custom_labels_header='x-custom-labels', tokenizer_metrics_allowed_custom_labels=None, extra_metric_labels=None, bucket_time_to_first_token=None, bucket_inter_token_latency=None, bucket_e2e_request_latency=None, prompt_tokens_buckets=None, generation_tokens_buckets=None, gc_warning_threshold_secs=0.0, decode_log_interval=40, enable_request_time_stats_logging=False, kv_events_config=None, enable_forward_pass_metrics=False, forward_pass_metrics_worker_id='', forward_pass_metrics_ipc_name=None, enable_trace=False, trace_modules='request', otlp_traces_endpoint='localhost:4317', export_metrics_to_file=False, export_metrics_to_file_dir=None, stat_loggers=None, constrained_json_whitespace_pattern=None, constrained_json_disable_any_whitespace=False, attention_backend='fa3', decode_attention_backend=None, prefill_attention_backend=None, sampling_backend='flashinfer', grammar_backend='xgrammar', radix_cache_backend=None, mm_attention_backend=None, fp8_gemm_runner_backend='auto', fp4_gemm_runner_backend='auto', bf16_gemm_backend='auto', dsa_prefill_backend=None, dsa_decode_backend=None, dsa_paged_mqa_logits_backend='auto', dsa_topk_backend='sgl-kernel', disable_flashinfer_autotune=False, flashinfer_autotune_skip_ops=None, mamba_backend='triton', cuda_graph_config=CudaGraphConfig(decode=PhaseConfig(backend='full', max_bs=256, bs=[1, 2, 4, 8, 12, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256], tc_compiler='eager', full_prefill_max_req=None, full_prefill_prefix_chunk_tokens=None), prefill=PhaseConfig(backend='breakable', max_bs=8192, bs=[4, 8, 12, 16, 20, 24, 28, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 288, 320, 352, 384, 416, 448, 480, 512, 576, 640, 704, 768, 832, 896, 960, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 2816, 3072, 3328, 3584, 3840, 4096, 4608, 5120, 5632, 6144, 6656, 7168, 7680, 8192], tc_compiler='eager', full_prefill_max_req=None, full_prefill_prefix_chunk_tokens=None)), cuda_graph_backend_decode=None, cuda_graph_backend_prefill=None, cuda_graph_max_bs_decode=None, cuda_graph_max_bs_prefill=None, cuda_graph_bs_decode=None, cuda_graph_bs_prefill=None, cuda_graph_tc_compiler=None, disable_prefill_cuda_graph=False, disable_decode_cuda_graph=False, disable_cuda_graph=False, disable_cuda_graph_padding=False, enable_profile_cuda_graph=False, enable_cudagraph_gc=False, debug_cuda_graph=False, enable_layerwise_nvtx_marker=False, enable_nccl_nvls=False, enable_symm_mem=False, triton_attention_reduce_in_fp32=False, triton_attention_num_kv_splits=8, triton_attention_split_tile_size=None, flashinfer_mla_disable_ragged=False, enable_fused_qk_norm_rope=False, enable_precise_embedding_interpolation=False, enable_fused_moe_sum_all_reduce=False, enable_deepseek_v4_fp4_indexer=False, disable_custom_all_reduce=False, enable_mscclpp=False, enable_torch_symm_mem=False, enable_scattered_sconv=False, pre_warm_nccl=False, enable_quant_communications=False, enable_flashinfer_allreduce_fusion=False, enforce_disable_flashinfer_allreduce_fusion=False, flashinfer_allreduce_fusion_backend=None, enable_aiter_allreduce_fusion=False, enable_torch_compile=False, enable_torch_compile_debug_mode=False, torch_compile_max_bs=32, speculative_algorithm=None, speculative_draft_model_path=None, speculative_draft_model_revision=None, speculative_draft_load_format=None, speculative_num_steps=None, speculative_eagle_topk=None, speculative_num_draft_tokens=None, speculative_dflash_block_size=None, speculative_dspark_block_size=None, speculative_dspark_sps_table_path=None, speculative_dspark_confidence_sts_path=None, speculative_dspark_align_verify_tokens_to_graph_tier=False, speculative_accept_threshold_single=1.0, speculative_accept_threshold_acc=1.0, speculative_use_rejection_sampling=False, speculative_token_map=None, speculative_attention_mode='prefill', speculative_draft_attention_backend=None, speculative_draft_kv_cache_dtype=None, speculative_draft_window_size=None, speculative_moe_runner_backend='auto', speculative_moe_a2a_backend=None, speculative_draft_model_quantization=None, _speculative_draft_quantization_explicitly_set=False, speculative_skip_dp_mlp_sync=False, enable_multi_layer_eagle=False, speculative_adaptive=False, speculative_adaptive_config=None, decoupled_spec_bind_endpoint=None, decoupled_spec_connect_endpoints=None, decoupled_spec_rank=None, decoupled_spec_role='null', spec_trace_dir=None, speculative_ngram_min_bfs_breadth=1, speculative_ngram_max_bfs_breadth=10, speculative_ngram_match_type='BFS', speculative_ngram_max_trie_depth=18, speculative_ngram_capacity=10000000, speculative_ngram_external_corpus_path=None, speculative_ngram_external_sam_budget=0, speculative_ngram_external_corpus_max_tokens=10000000, ep_size=1, moe_a2a_backend='none', moe_runner_backend='auto', flashinfer_mxfp4_moe_precision='default', deepep_mode='auto', fuseep_mode=2, deepep_dispatcher_output_dtype='auto', ep_num_redundant_experts=0, ep_dispatch_algorithm=None, init_expert_location='trivial', enable_eplb=False, eplb_algorithm='auto', eplb_rebalance_num_iterations=1000, eplb_rebalance_layers_per_chunk=None, eplb_min_rebalancing_utilization_threshold=1.0, expert_distribution_recorder_mode=None, expert_distribution_recorder_buffer_size=1000, expert_balancedness_report_mode='off', deepep_config=None, moe_dense_tp_size=None, elastic_ep_backend=None, enable_elastic_expert_backup=False, mooncake_ib_device=None, enable_waterfill=False, ep_join_mode=None, ep_join_rank_offset=0, elastic_ep_initial_size=None, max_ep_size=None, elastic_ep_scale_timeout=600, elastic_ep_rejoin=False, disable_flashinfer_cutlass_moe_fp4_allgather=False, disable_shared_experts_fusion=False, enforce_shared_experts_fusion=False, max_mamba_cache_size=None, mamba_ssm_dtype=None, mamba_max_states_per_path=-1, enable_mamba_cache_stochastic_rounding=False, mamba_cache_philox_rounds=0, mamba_full_memory_ratio=0.9, mamba_radix_cache_strategy='extra_buffer', uses_mamba_radix_cache=True, mamba_track_interval=256, enable_int8_mamba_checkpoint=False, int8_mamba_ckpt_size=None, linear_attn_backend='triton', linear_attn_decode_backend=None, linear_attn_prefill_backend=None, linear_attn_verify_backend=None, enable_linear_replayssm=False, linear_replayssm_cache_len=16, enable_linear_replayssm_spec=False, enable_hierarchical_cache=False, hicache_ratio=2.0, hicache_size=0, hicache_write_policy='write_through', hicache_io_backend='kernel', hicache_mem_layout='page_first', hicache_storage_backend=None, hicache_storage_prefetch_policy='timeout', hicache_storage_backend_extra_config=None, enable_hisparse=False, hisparse_config=None, enable_broadcast_mm_inputs_process=False, enable_prefix_mm_cache=False, mm_enable_dp_encoder=False, mm_process_config={}, mm_processor_worker_num=0, mm_io_worker_num=0, allowed_media_domains=[], media_url_max_file_size_mb=64, mm_preprocess_cache_size_mb=None, trust_mm_content_hashes=False, limit_mm_data_per_request=None, enable_mm_global_cache=False, image_processor_backend='auto', mm_global_cache_backend='mooncake', disable_fast_image_processor=False, mm_feature_transport='cpu', keep_mm_feature_on_device=False, enable_lora=None, enable_lora_overlap_loading=None, max_lora_rank=None, lora_target_modules=None, lora_paths=None, max_loaded_loras=None, max_loras_per_batch=8, lora_eviction_policy='lru', lora_backend='csgmv', max_lora_chunk_size=16, experts_shared_outer_loras=None, lora_use_virtual_experts=False, lora_strict_loading=False, lora_drain_wait_threshold=0.0, enable_two_batch_overlap=False, enable_single_batch_overlap=False, tbo_token_distribution_threshold=0.48, cpu_offload_gb=0, offload_group_size=-1, offload_num_in_group=1, offload_prefetch_step=1, offload_mode='cpu', enable_lmcache=False, lmcache_config_file=None, enable_flexkv=False, flexkv_config_file=None, kt_weight_path=None, kt_method='AMXINT4', kt_cpuinfer=None, kt_threadpool_count=2, kt_num_gpu_experts=None, kt_max_deferred_experts_per_token=None, dllm_algorithm=None, dllm_algorithm_config=None, dllm_fdfo=True, disaggregation_mode='null', disaggregation_transfer_backend='mooncake', disaggregation_bootstrap_port=8998, disaggregation_ib_device=None, disaggregation_decode_enable_radix_cache=False, disaggregation_decode_enable_offload_kvcache=False, disaggregation_decode_retraction_backup=None, num_reserved_decode_tokens=512, disaggregation_decode_extra_slots=None, disaggregation_decode_polling_interval=1, optimistic_prefill_attempts=0, encoder_only=False, language_only=False, language_model_only=False, encoder_transfer_backend='zmq_to_scheduler', encoder_urls=[], encoder_bootstrap_port=8997, encoder_register_urls=[], enable_adaptive_dispatch_to_encoder=False, enable_pdmux=False, pdmux_config_path=None, sm_group_num=8, startup_weight_load_mode='serial', custom_weight_loader=[], weight_loader_disable_mmap=False, weight_loader_prefetch_checkpoints=False, weight_loader_prefetch_num_threads=4, weight_loader_drop_cache_after_load=False, remote_instance_weight_loader_seed_instance_ip=None, remote_instance_weight_loader_seed_instance_service_port=None, remote_instance_weight_loader_send_weights_group_ports=None, remote_instance_weight_loader_backend='nccl', remote_instance_weight_loader_start_seed_via_transfer_engine=False, engine_info_bootstrap_port=6789, modelexpress_config=None, download_dir=None, model_checksum=None, delete_ckpt_after_loading=False, decrypted_config_file=None, decrypted_draft_config_file=None, checkpoint_engine_wait_weights_before_ready=False, enable_prefill_delayer=False, prefill_delayer_max_delay_passes=30, prefill_delayer_token_usage_low_watermark=None, prefill_delayer_forward_passes_buckets=None, prefill_delayer_wait_seconds_buckets=None, prefill_delayer_queue_min_ratio=None, prefill_delayer_max_delay_ms=None, min_free_slots_delay=None, enable_deterministic_inference=False, rl_on_policy_target=None, kv_canary='none', kv_canary_real_data='none', kv_canary_sweep_interval=0, enable_dynamic_batch_tokenizer=False, dynamic_batch_tokenizer_batch_size=32, dynamic_batch_tokenizer_batch_timeout=0.002, enable_tokenizer_batch_encode=False, disable_tokenizer_batch_decode=False, debug_tensor_dump_output_folder=None, debug_tensor_dump_layers=None, debug_tensor_dump_input_file=None, enable_memory_saver=False, enable_weights_cpu_backup=False, enable_draft_weights_cpu_backup=False, enable_custom_logit_processor=False, enable_return_hidden_states=False, return_hidden_states_mode=None, enable_return_routed_experts=False, enable_return_indexer_topk=False, disable_outlines_disk_cache=False, enable_mis=False, weight_cache_mode='off', weight_cache_socket=None, weight_cache_timeout=1800, forward_hooks=None, msprobe_dump_config=None)
+[2026-11-02 19:18:47] Ignore import error when loading sglang.srt.multimodal.processors.mimo_audio: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.13.0+cu130) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.56: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+[2026-11-02 19:18:47] Ignore import error when loading sglang.srt.multimodal.processors.mimo_v2: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.13.0+cu130) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.56: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+[2026-11-02 19:18:47] Ignore import error when loading sglang.srt.multimodal.processors.mimo_v2_asr: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.13.0+cu130) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.56: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+[2026-11-02 19:18:47] Ignore import error when loading sglang.srt.multimodal.processors.sarashina2_vision: cannot import name 'MultimodalDataItem' from 'sglang.srt.managers.mm_utils' (/root/venvs/sglang/lib/python3.12/site-packages/sglang/srt/managers/mm_utils.py)
+[2026-11-02 19:18:49] Ignore import error when loading sglang.srt.models.sarashina2_vision: cannot import name 'MultimodalDataItem' from 'sglang.srt.managers.mm_utils' (/root/venvs/sglang/lib/python3.12/site-packages/sglang/srt/managers/mm_utils.py)
+[2026-11-02 19:18:49] Multimodal data loading enabled with 16 worker threads (auto).
+[2026-11-02 19:18:51] Multimodal processor concurrency enabled with 2 isolated worker threads (auto).
+[2026-11-02 19:18:51] Using default HuggingFace chat template with detected content format: openai
+[2026-11-02 19:18:51] Auto-detected template features: reasoning_config=ReasoningToggleConfig(toggle_param='enable_thinking', default_enabled=True, special_case=None, effort_kwarg=None), reasoning_parser=qwen3, tool_call_parser=qwen3_coder
+[2026-11-02 19:18:55] Ignore import error when loading sglang.srt.multimodal.processors.mimo_audio: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.13.0+cu130) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.56: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+[2026-11-02 19:18:55] Ignore import error when loading sglang.srt.multimodal.processors.mimo_v2: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.13.0+cu130) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.56: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+[2026-11-02 19:18:55] Ignore import error when loading sglang.srt.multimodal.processors.mimo_v2_asr: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.13.0+cu130) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core8.so
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core7.so
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core6.so
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core5.so
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1516, in load_library
+    ctypes.CDLL(path)
+  File "/usr/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.56: cannot open shared object file: No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/root/venvs/sglang/lib/python3.12/site-packages/torch/_ops.py", line 1518, in load_library
+    raise OSError(f"Could not load this library: {path}") from e
+OSError: Could not load this library: /root/venvs/sglang/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so
+[end of libtorchcodec loading traceback].
+[2026-11-02 19:18:55] Ignore import error when loading sglang.srt.multimodal.processors.sarashina2_vision: cannot import name 'MultimodalDataItem' from 'sglang.srt.managers.mm_utils' (/root/venvs/sglang/lib/python3.12/site-packages/sglang/srt/managers/mm_utils.py)
+[2026-11-02 19:18:55] Multimodal data loading enabled with 16 worker threads (auto).
+[2026-11-02 19:18:55] Init torch distributed begin.
+[2026-11-02 19:18:55] Init torch distributed ends. elapsed=0.01 s, mem usage=0.09 GB
+[2026-11-02 19:18:55] Ignore import error when loading sglang.srt.models.sarashina2_vision: cannot import name 'MultimodalDataItem' from 'sglang.srt.managers.mm_utils' (/root/venvs/sglang/lib/python3.12/site-packages/sglang/srt/managers/mm_utils.py)
+[2026-11-02 19:18:55] Load weight begin. avail mem=78.47 GB
+[2026-11-02 19:18:55] Multimodal attention backend not set. Use fa3.
+[2026-11-02 19:18:55] Using fa3 as multimodal attention backend.
+[2026-11-02 19:18:55] using attn output gate!
+[2026-11-02 19:18:55] Found local HF snapshot for Qwen/Qwen3.8-27B at /root/.cache/huggingface/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0; skipping download.
+Multi-thread loading shards:   0% Completed | 0/18 [00:00<?, ?it/s]Multi-thread loading shards:   6% Completed | 1/18 [00:00<00:09,  1.85it/s]Multi-thread loading shards:  11% Completed | 2/18 [00:00<00:07,  2.03it/s]Multi-thread loading shards:  17% Completed | 3/18 [00:01<00:06,  2.31it/s]Multi-thread loading shards:  22% Completed | 4/18 [00:01<00:06,  2.12it/s]Multi-thread loading shards:  28% Completed | 5/18 [00:02<00:05,  2.39it/s]Multi-thread loading shards:  33% Completed | 6/18 [00:02<00:05,  2.19it/s]Multi-thread loading shards:  39% Completed | 7/18 [00:03<00:04,  2.42it/s]Multi-thread loading shards:  44% Completed | 8/18 [00:03<00:04,  2.21it/s]Multi-thread loading shards:  50% Completed | 9/18 [00:03<00:03,  2.40it/s]Multi-thread loading shards:  56% Completed | 10/18 [00:04<00:03,  2.22it/s]Multi-thread loading shards:  61% Completed | 11/18 [00:04<00:02,  2.44it/s]Multi-thread loading shards:  67% Completed | 12/18 [00:05<00:02,  2.25it/s]Multi-thread loading shards:  72% Completed | 13/18 [00:05<00:02,  2.43it/s]Multi-thread loading shards:  78% Completed | 14/18 [00:06<00:01,  2.24it/s]Multi-thread loading shards:  83% Completed | 15/18 [00:06<00:01,  2.42it/s]Multi-thread loading shards:  89% Completed | 16/18 [00:07<00:00,  2.21it/s]Multi-thread loading shards:  94% Completed | 17/18 [00:07<00:00,  2.44it/s]Multi-thread loading shards: 100% Completed | 18/18 [00:07<00:00,  2.55it/s]Multi-thread loading shards: 100% Completed | 18/18 [00:07<00:00,  2.33it/s]
+[2026-11-02 19:19:03] Load weight end. elapsed=8.01 s, type=Qwen3_5ForConditionalGeneration, avail mem=27.42 GB, mem usage=51.05 GB.
+[2026-11-02 19:19:05] Reserving 0.10 GB of the KV budget for post-sizing multimodal allocations (feature-transport pools + embedding cache).
+[2026-11-02 19:19:05] max_running_requests is capped to 5 by the mamba state cache (max_mamba_cache_size=28, 5 state slots per request). To raise it: increase --mamba-full-memory-ratio or --max-mamba-cache-size, or halve the state size with --mamba-ssm-dtype bfloat16.
+[2026-11-02 19:19:05] Mamba Cache is allocated. max_mamba_cache_size: 28, conv_state size: 0.08GB, ssm_state size: 4.08GB 
+[2026-11-02 19:19:05] KV Cache is allocated. dtype: torch.bfloat16, #tokens: 79998, K size: 2.44 GB, V size: 2.44 GB
+[2026-11-02 19:19:05] Memory pool end. avail mem=18.31 GB
+[2026-11-02 19:19:05] Linear attention kernel backend: decode=triton, prefill=triton, verify=triton
+[2026-11-02 19:19:05] Using hybrid linear attention backend for hybrid GDN models.
+[2026-11-02 19:19:05] GDN kernel dispatcher: decode=TritonGDNKernel, extend=TritonGDNKernel, verify=TritonGDNKernel packed_decode=True
+[2026-11-02 19:19:05] Capture target prefill CUDA graph begin. backend=breakable, num_tokens=[4, 8, 12, 16, 20, 24, 28, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 288, 320, 352, 384, 416, 448, 480, 512, 576, 640, 704, 768, 832, 896, 960, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 2816, 3072, 3328, 3584, 3840, 4096, 4608, 5120, 5632, 6144, 6656, 7168, 7680, 8192], avail mem=18.21 GB
+  0%|          | 0/58 [00:00<?, ?it/s]Capturing num tokens (num_tokens=8192 avail_mem=18.13 GB):   0%|          | 0/58 [00:00<?, ?it/s]Capturing num tokens (num_tokens=8192 avail_mem=18.13 GB):   2%|▏         | 1/58 [00:02<02:13,  2.34s/it]Capturing num tokens (num_tokens=7680 avail_mem=13.86 GB):   2%|▏         | 1/58 [00:02<02:13,  2.34s/it]Capturing num tokens (num_tokens=7680 avail_mem=13.86 GB):   3%|▎         | 2/58 [00:03<01:39,  1.78s/it]Capturing num tokens (num_tokens=7168 avail_mem=13.85 GB):   3%|▎         | 2/58 [00:03<01:39,  1.78s/it]Capturing num tokens (num_tokens=7168 avail_mem=13.85 GB):   5%|▌         | 3/58 [00:05<01:31,  1.66s/it]Capturing num tokens (num_tokens=6656 avail_mem=13.84 GB):   5%|▌         | 3/58 [00:05<01:31,  1.66s/it]Capturing num tokens (num_tokens=6656 avail_mem=13.84 GB):   7%|▋         | 4/58 [00:06<01:23,  1.55s/it]Capturing num tokens (num_tokens=6144 avail_mem=13.83 GB):   7%|▋         | 4/58 [00:06<01:23,  1.55s/it]Capturing num tokens (num_tokens=6144 avail_mem=13.83 GB):   9%|▊         | 5/58 [00:07<01:17,  1.45s/it]Capturing num tokens (num_tokens=5632 avail_mem=13.82 GB):   9%|▊         | 5/58 [00:07<01:17,  1.45s/it]Capturing num tokens (num_tokens=5632 avail_mem=13.82 GB):  10%|█         | 6/58 [00:09<01:10,  1.36s/it]Capturing num tokens (num_tokens=5120 avail_mem=13.81 GB):  10%|█         | 6/58 [00:09<01:10,  1.36s/it]Capturing num tokens (num_tokens=5120 avail_mem=13.81 GB):  12%|█▏        | 7/58 [00:10<01:07,  1.32s/it]Capturing num tokens (num_tokens=4608 avail_mem=13.80 GB):  12%|█▏        | 7/58 [00:10<01:07,  1.32s/it]Capturing num tokens (num_tokens=4608 avail_mem=13.80 GB):  14%|█▍        | 8/58 [00:11<01:02,  1.25s/it]Capturing num tokens (num_tokens=4096 avail_mem=13.79 GB):  14%|█▍        | 8/58 [00:11<01:02,  1.25s/it]Capturing num tokens (num_tokens=4096 avail_mem=13.79 GB):  16%|█▌        | 9/58 [00:12<00:56,  1.15s/it]Capturing num tokens (num_tokens=3840 avail_mem=13.78 GB):  16%|█▌        | 9/58 [00:12<00:56,  1.15s/it]Capturing num tokens (num_tokens=3840 avail_mem=13.78 GB):  17%|█▋        | 10/58 [00:13<00:52,  1.09s/it]Capturing num tokens (num_tokens=3584 avail_mem=13.77 GB):  17%|█▋        | 10/58 [00:13<00:52,  1.09s/it]Capturing num tokens (num_tokens=3584 avail_mem=13.77 GB):  19%|█▉        | 11/58 [00:14<00:47,  1.02s/it]Capturing num tokens (num_tokens=3328 avail_mem=13.76 GB):  19%|█▉        | 11/58 [00:14<00:47,  1.02s/it]Capturing num tokens (num_tokens=3328 avail_mem=13.76 GB):  21%|██        | 12/58 [00:14<00:43,  1.06it/s]Capturing num tokens (num_tokens=3072 avail_mem=13.75 GB):  21%|██        | 12/58 [00:14<00:43,  1.06it/s]Capturing num tokens (num_tokens=3072 avail_mem=13.75 GB):  22%|██▏       | 13/58 [00:15<00:38,  1.17it/s]Capturing num tokens (num_tokens=2816 avail_mem=13.74 GB):  22%|██▏       | 13/58 [00:15<00:38,  1.17it/s]Capturing num tokens (num_tokens=2816 avail_mem=13.74 GB):  24%|██▍       | 14/58 [00:16<00:40,  1.08it/s]Capturing num tokens (num_tokens=2560 avail_mem=13.73 GB):  24%|██▍       | 14/58 [00:16<00:40,  1.08it/s]Capturing num tokens (num_tokens=2560 avail_mem=13.73 GB):  26%|██▌       | 15/58 [00:17<00:37,  1.14it/s]Capturing num tokens (num_tokens=2304 avail_mem=13.72 GB):  26%|██▌       | 15/58 [00:17<00:37,  1.14it/s]Capturing num tokens (num_tokens=2304 avail_mem=13.72 GB):  28%|██▊       | 16/58 [00:18<00:33,  1.24it/s]Capturing num tokens (num_tokens=2048 avail_mem=13.71 GB):  28%|██▊       | 16/58 [00:18<00:33,  1.24it/s]Capturing num tokens (num_tokens=2048 avail_mem=13.71 GB):  29%|██▉       | 17/58 [00:18<00:29,  1.39it/s]Capturing num tokens (num_tokens=1792 avail_mem=13.70 GB):  29%|██▉       | 17/58 [00:18<00:29,  1.39it/s]Capturing num tokens (num_tokens=1792 avail_mem=13.70 GB):  31%|███       | 18/58 [00:18<00:24,  1.63it/s]Capturing num tokens (num_tokens=1536 avail_mem=13.69 GB):  31%|███       | 18/58 [00:18<00:24,  1.63it/s]Capturing num tokens (num_tokens=1536 avail_mem=13.69 GB):  33%|███▎      | 19/58 [00:19<00:20,  1.89it/s]Capturing num tokens (num_tokens=1280 avail_mem=13.68 GB):  33%|███▎      | 19/58 [00:19<00:20,  1.89it/s]Capturing num tokens (num_tokens=1280 avail_mem=13.68 GB):  34%|███▍      | 20/58 [00:19<00:18,  2.00it/s]Capturing num tokens (num_tokens=1024 avail_mem=13.68 GB):  34%|███▍      | 20/58 [00:19<00:18,  2.00it/s]Capturing num tokens (num_tokens=1024 avail_mem=13.68 GB):  36%|███▌      | 21/58 [00:20<00:16,  2.22it/s]Capturing num tokens (num_tokens=960 avail_mem=13.67 GB):  36%|███▌      | 21/58 [00:20<00:16,  2.22it/s] Capturing num tokens (num_tokens=960 avail_mem=13.67 GB):  38%|███▊      | 22/58 [00:20<00:15,  2.38it/s]Capturing num tokens (num_tokens=896 avail_mem=13.62 GB):  38%|███▊      | 22/58 [00:20<00:15,  2.38it/s]Capturing num tokens (num_tokens=896 avail_mem=13.62 GB):  40%|███▉      | 23/58 [00:20<00:14,  2.46it/s]Capturing num tokens (num_tokens=832 avail_mem=13.60 GB):  40%|███▉      | 23/58 [00:20<00:14,  2.46it/s]Capturing num tokens (num_tokens=832 avail_mem=13.60 GB):  41%|████▏     | 24/58 [00:21<00:13,  2.58it/s]Capturing num tokens (num_tokens=768 avail_mem=13.59 GB):  41%|████▏     | 24/58 [00:21<00:13,  2.58it/s]Capturing num tokens (num_tokens=768 avail_mem=13.59 GB):  43%|████▎     | 25/58 [00:21<00:11,  2.85it/s]Capturing num tokens (num_tokens=704 avail_mem=13.57 GB):  43%|████▎     | 25/58 [00:21<00:11,  2.85it/s]Capturing num tokens (num_tokens=704 avail_mem=13.57 GB):  45%|████▍     | 26/58 [00:21<00:10,  3.06it/s]Capturing num tokens (num_tokens=640 avail_mem=13.56 GB):  45%|████▍     | 26/58 [00:21<00:10,  3.06it/s]Capturing num tokens (num_tokens=640 avail_mem=13.56 GB):  47%|████▋     | 27/58 [00:21<00:09,  3.29it/s]Capturing num tokens (num_tokens=576 avail_mem=13.54 GB):  47%|████▋     | 27/58 [00:21<00:09,  3.29it/s]Capturing num tokens (num_tokens=576 avail_mem=13.54 GB):  48%|████▊     | 28/58 [00:22<00:08,  3.49it/s]Capturing num tokens (num_tokens=512 avail_mem=13.53 GB):  48%|████▊     | 28/58 [00:22<00:08,  3.49it/s]Capturing num tokens (num_tokens=512 avail_mem=13.53 GB):  50%|█████     | 29/58 [00:22<00:07,  3.68it/s]Capturing num tokens (num_tokens=480 avail_mem=13.52 GB):  50%|█████     | 29/58 [00:22<00:07,  3.68it/s]Capturing num tokens (num_tokens=480 avail_mem=13.52 GB):  52%|█████▏    | 30/58 [00:22<00:07,  3.78it/s]Capturing num tokens (num_tokens=448 avail_mem=13.50 GB):  52%|█████▏    | 30/58 [00:22<00:07,  3.78it/s]Capturing num tokens (num_tokens=448 avail_mem=13.50 GB):  53%|█████▎    | 31/58 [00:22<00:07,  3.80it/s]Capturing num tokens (num_tokens=416 avail_mem=13.49 GB):  53%|█████▎    | 31/58 [00:22<00:07,  3.80it/s]Capturing num tokens (num_tokens=416 avail_mem=13.49 GB):  55%|█████▌    | 32/58 [00:23<00:06,  3.79it/s]Capturing num tokens (num_tokens=384 avail_mem=13.47 GB):  55%|█████▌    | 32/58 [00:23<00:06,  3.79it/s]Capturing num tokens (num_tokens=384 avail_mem=13.47 GB):  57%|█████▋    | 33/58 [00:23<00:06,  3.87it/s]Capturing num tokens (num_tokens=352 avail_mem=13.46 GB):  57%|█████▋    | 33/58 [00:23<00:06,  3.87it/s]Capturing num tokens (num_tokens=352 avail_mem=13.46 GB):  59%|█████▊    | 34/58 [00:23<00:06,  3.96it/s]Capturing num tokens (num_tokens=320 avail_mem=13.44 GB):  59%|█████▊    | 34/58 [00:23<00:06,  3.96it/s]Capturing num tokens (num_tokens=320 avail_mem=13.44 GB):  60%|██████    | 35/58 [00:23<00:05,  4.03it/s]Capturing num tokens (num_tokens=288 avail_mem=13.43 GB):  60%|██████    | 35/58 [00:23<00:05,  4.03it/s]Capturing num tokens (num_tokens=288 avail_mem=13.43 GB):  62%|██████▏   | 36/58 [00:24<00:05,  4.04it/s]Capturing num tokens (num_tokens=256 avail_mem=13.41 GB):  62%|██████▏   | 36/58 [00:24<00:05,  4.04it/s]Capturing num tokens (num_tokens=256 avail_mem=13.41 GB):  64%|██████▍   | 37/58 [00:24<00:05,  4.09it/s]Capturing num tokens (num_tokens=240 avail_mem=13.40 GB):  64%|██████▍   | 37/58 [00:24<00:05,  4.09it/s]Capturing num tokens (num_tokens=240 avail_mem=13.40 GB):  66%|██████▌   | 38/58 [00:24<00:04,  4.09it/s]Capturing num tokens (num_tokens=224 avail_mem=13.38 GB):  66%|██████▌   | 38/58 [00:24<00:04,  4.09it/s]Capturing num tokens (num_tokens=224 avail_mem=13.38 GB):  67%|██████▋   | 39/58 [00:24<00:04,  4.11it/s]Capturing num tokens (num_tokens=208 avail_mem=13.37 GB):  67%|██████▋   | 39/58 [00:24<00:04,  4.11it/s]Capturing num tokens (num_tokens=208 avail_mem=13.37 GB):  69%|██████▉   | 40/58 [00:25<00:04,  4.09it/s]Capturing num tokens (num_tokens=192 avail_mem=13.35 GB):  69%|██████▉   | 40/58 [00:25<00:04,  4.09it/s]Capturing num tokens (num_tokens=192 avail_mem=13.35 GB):  71%|███████   | 41/58 [00:25<00:04,  4.13it/s]Capturing num tokens (num_tokens=176 avail_mem=13.34 GB):  71%|███████   | 41/58 [00:25<00:04,  4.13it/s]Capturing num tokens (num_tokens=176 avail_mem=13.34 GB):  72%|███████▏  | 42/58 [00:25<00:03,  4.10it/s]Capturing num tokens (num_tokens=160 avail_mem=13.32 GB):  72%|███████▏  | 42/58 [00:25<00:03,  4.10it/s]Capturing num tokens (num_tokens=160 avail_mem=13.32 GB):  74%|███████▍  | 43/58 [00:25<00:03,  4.09it/s]Capturing num tokens (num_tokens=144 avail_mem=13.31 GB):  74%|███████▍  | 43/58 [00:25<00:03,  4.09it/s]Capturing num tokens (num_tokens=144 avail_mem=13.31 GB):  76%|███████▌  | 44/58 [00:26<00:03,  4.07it/s]Capturing num tokens (num_tokens=128 avail_mem=13.29 GB):  76%|███████▌  | 44/58 [00:26<00:03,  4.07it/s]Capturing num tokens (num_tokens=128 avail_mem=13.29 GB):  78%|███████▊  | 45/58 [00:26<00:03,  4.08it/s]Capturing num tokens (num_tokens=112 avail_mem=13.28 GB):  78%|███████▊  | 45/58 [00:26<00:03,  4.08it/s]Capturing num tokens (num_tokens=112 avail_mem=13.28 GB):  79%|███████▉  | 46/58 [00:26<00:02,  4.10it/s]Capturing num tokens (num_tokens=96 avail_mem=13.26 GB):  79%|███████▉  | 46/58 [00:26<00:02,  4.10it/s] Capturing num tokens (num_tokens=96 avail_mem=13.26 GB):  81%|████████  | 47/58 [00:26<00:02,  4.09it/s]Capturing num tokens (num_tokens=80 avail_mem=13.25 GB):  81%|████████  | 47/58 [00:26<00:02,  4.09it/s]Capturing num tokens (num_tokens=80 avail_mem=13.25 GB):  83%|████████▎ | 48/58 [00:27<00:02,  3.93it/s]Capturing num tokens (num_tokens=64 avail_mem=13.23 GB):  83%|████████▎ | 48/58 [00:27<00:02,  3.93it/s]Capturing num tokens (num_tokens=64 avail_mem=13.23 GB):  84%|████████▍ | 49/58 [00:27<00:02,  3.95it/s]Capturing num tokens (num_tokens=48 avail_mem=13.21 GB):  84%|████████▍ | 49/58 [00:27<00:02,  3.95it/s]Capturing num tokens (num_tokens=48 avail_mem=13.21 GB):  86%|████████▌ | 50/58 [00:27<00:02,  3.99it/s]Capturing num tokens (num_tokens=32 avail_mem=13.20 GB):  86%|████████▌ | 50/58 [00:27<00:02,  3.99it/s]Capturing num tokens (num_tokens=32 avail_mem=13.20 GB):  88%|████████▊ | 51/58 [00:27<00:01,  3.99it/s]Capturing num tokens (num_tokens=28 avail_mem=13.18 GB):  88%|████████▊ | 51/58 [00:27<00:01,  3.99it/s]Capturing num tokens (num_tokens=28 avail_mem=13.18 GB):  90%|████████▉ | 52/58 [00:28<00:01,  4.02it/s]Capturing num tokens (num_tokens=24 avail_mem=13.17 GB):  90%|████████▉ | 52/58 [00:28<00:01,  4.02it/s]Capturing num tokens (num_tokens=24 avail_mem=13.17 GB):  91%|█████████▏| 53/58 [00:28<00:01,  4.04it/s]Capturing num tokens (num_tokens=20 avail_mem=13.15 GB):  91%|█████████▏| 53/58 [00:28<00:01,  4.04it/s]Capturing num tokens (num_tokens=20 avail_mem=13.15 GB):  93%|█████████▎| 54/58 [00:28<00:00,  4.08it/s]Capturing num tokens (num_tokens=16 avail_mem=13.14 GB):  93%|█████████▎| 54/58 [00:28<00:00,  4.08it/s]Capturing num tokens (num_tokens=16 avail_mem=13.14 GB):  95%|█████████▍| 55/58 [00:28<00:00,  3.96it/s]Capturing num tokens (num_tokens=12 avail_mem=13.12 GB):  95%|█████████▍| 55/58 [00:28<00:00,  3.96it/s]Capturing num tokens (num_tokens=12 avail_mem=13.12 GB):  97%|█████████▋| 56/58 [00:29<00:00,  3.96it/s]Capturing num tokens (num_tokens=8 avail_mem=13.11 GB):  97%|█████████▋| 56/58 [00:29<00:00,  3.96it/s] Capturing num tokens (num_tokens=8 avail_mem=13.11 GB):  98%|█████████▊| 57/58 [00:29<00:00,  3.96it/s]Capturing num tokens (num_tokens=4 avail_mem=13.09 GB):  98%|█████████▊| 57/58 [00:29<00:00,  3.96it/s]Capturing num tokens (num_tokens=4 avail_mem=13.09 GB): 100%|██████████| 58/58 [00:29<00:00,  4.03it/s]Capturing num tokens (num_tokens=4 avail_mem=13.09 GB): 100%|██████████| 58/58 [00:29<00:00,  1.96it/s]
+[2026-11-02 19:19:35] Capture target prefill CUDA graph end. elapsed=30.21 s, mem usage=2.84 GB, avail mem=15.37 GB.
+[2026-11-02 19:19:35] Capture target decode CUDA graph begin. backend=full, num_tokens_per_req=1, bs=[1, 2, 4, 5], avail mem=15.37 GB
+  0%|          | 0/4 [00:00<?, ?it/s]Capturing batches (bs=5 avail_mem=15.37 GB):   0%|          | 0/4 [00:00<?, ?it/s]Capturing batches (bs=5 avail_mem=15.37 GB):  25%|██▌       | 1/4 [00:00<00:00,  4.76it/s]Capturing batches (bs=4 avail_mem=15.31 GB):  25%|██▌       | 1/4 [00:00<00:00,  4.76it/s]Capturing batches (bs=4 avail_mem=15.31 GB):  50%|█████     | 2/4 [00:00<00:00,  6.05it/s]Capturing batches (bs=2 avail_mem=15.31 GB):  50%|█████     | 2/4 [00:00<00:00,  6.05it/s]Capturing batches (bs=2 avail_mem=15.31 GB):  75%|███████▌  | 3/4 [00:00<00:00,  6.51it/s]Capturing batches (bs=1 avail_mem=15.31 GB):  75%|███████▌  | 3/4 [00:00<00:00,  6.51it/s]Capturing batches (bs=1 avail_mem=15.31 GB): 100%|██████████| 4/4 [00:00<00:00,  6.94it/s]Capturing batches (bs=1 avail_mem=15.31 GB): 100%|██████████| 4/4 [00:00<00:00,  6.52it/s]
+[2026-11-02 19:19:36] Capture target decode CUDA graph end. elapsed=1.20 s, mem usage=0.07 GB, avail mem=15.30 GB.
+[2026-11-02 19:19:36] max_total_num_tokens=79998, chunked_prefill_size=8192, max_prefill_tokens=16384, max_running_requests=5, context_len=32768, available_gpu_mem=15.30 GB
+[2026-11-02 19:19:36] Init Unified Radix Cache. Components: (<ComponentType.FULL: 0>, <ComponentType.MAMBA: 2>). Tree Core: UnifiedTreeCore
+[2026-11-02 19:19:36] Tree cache initialized: source=default impl=UnifiedRadixCache hybrid_swa=False hybrid_ssm=True hicache_attached=False streaming_wrapped=False
+[2026-11-02 19:19:37] Engine startup timings (s): load_weight=8.01, kv_cache_allocation=0.01, scheduler_e2e=44.17, cuda_graph={prefill=30.21, decode=1.20, target_verify=0.00, draft_prefill=0.00, draft_decode=0.00, draft_extend=0.00}, tokenizer_e2e=50.05
+[2026-11-02 19:19:37] INFO:     Started server process [84671]
+[2026-11-02 19:19:37] INFO:     Waiting for application startup.
+[2026-11-02 19:19:37] Using default chat sampling params from model generation config: {'temperature': 1.0, 'top_k': 20, 'top_p': 0.95}
+[2026-11-02 19:19:37] INFO:     Application startup complete.
+[2026-11-02 19:19:37] INFO:     Uvicorn running on http://127.0.0.1:30000 (Press CTRL+C to quit)
+[2026-11-02 19:19:38] INFO:     127.0.0.1:59800 - "GET /model_info HTTP/1.1" 200 OK
+[2026-11-02 19:19:39] Prefill batch, #new-seq: 1, #new-token: 122, #cached-token: 0, full token usage: 0.00, mamba usage: 0.14, #running-req: 0, #queue-req: 0, #pending-token: 0, cuda graph: True, input throughput (token/s): 49.90
+[2026-11-02 19:19:39] INFO:     127.0.0.1:59814 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:39] Freezing GC in Scheduler process. gen0: 72->0, gen1: 156->0, gen2: 1065986->0
+[2026-11-02 19:19:39] Freezing GC in Tokenizer Manager process. gen0: 538->0, gen1: 0->0, gen2: 990904->0
+[2026-11-02 19:19:39] INFO:     127.0.0.1:43372 - "POST /freeze_gc HTTP/1.1" 200 OK
+[2026-11-02 19:19:39] The server is fired up and ready to roll!
+[2026-11-02 19:19:39] Freezing GC in Detokenizer Manager process. gen0: 558->0, gen1: 0->0, gen2: 824590->0
+[2026-11-02 19:19:40] Prefill batch, #new-seq: 1, #new-token: 1, #cached-token: 0, full token usage: 0.00, mamba usage: 0.00, #running-req: 0, #queue-req: 0, #pending-token: 0, cuda graph: False, input throughput (token/s): 0.58
+[2026-11-02 19:19:41] INFO:     127.0.0.1:43384 - "GET /health HTTP/1.1" 200 OK
+/root/venvs/sglang/lib/python3.12/site-packages/sglang/srt/entrypoints/http_server.py:451: FastAPIDeprecationWarning: ORJSONResponse is deprecated, FastAPI now serializes data directly to JSON bytes via Pydantic when a return type or response model is set, which is faster and doesn't need a custom response class. Read more in the FastAPI docs: https://fastapi.tiangolo.com/advanced/custom-response/#orjson-or-response-model and https://fastapi.tiangolo.com/tutorial/response-model/
+  return await original_handler(ORJSONRequest(request.scope, request.receive))
+[2026-11-02 19:19:41] INFO:     127.0.0.1:43396 - "GET /v1/models HTTP/1.1" 200 OK
+[2026-11-02 19:19:41] Prefill batch, #new-seq: 1, #new-token: 54, #cached-token: 0, full token usage: 0.00, mamba usage: 0.11, #running-req: 0, #queue-req: 0, #pending-token: 0, cuda graph: True, input throughput (token/s): 51.89
+[2026-11-02 19:19:41] INFO:     127.0.0.1:43400 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:42] Prefill batch, #new-seq: 5, #new-token: 2535, #cached-token: 0, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 0, cuda graph: True, input throughput (token/s): 5965.44
+[2026-11-02 19:19:42] INFO:     127.0.0.1:43412 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:42] INFO:     127.0.0.1:43418 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:42] INFO:     127.0.0.1:43430 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:42] INFO:     127.0.0.1:43444 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:42] INFO:     127.0.0.1:43452 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:42] Decode batch, #running-req: 5, #full token: 863, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 21.64, #queue-req: 27
+[2026-11-02 19:19:43] Decode batch, #running-req: 5, #full token: 1063, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 238.75, #queue-req: 27
+[2026-11-02 19:19:44] Decode batch, #running-req: 5, #full token: 1263, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 210.85, #queue-req: 27
+[2026-11-02 19:19:45] Decode batch, #running-req: 5, #full token: 1463, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 166.87, #queue-req: 27
+[2026-11-02 19:19:46] Decode batch, #running-req: 5, #full token: 1663, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 174.64, #queue-req: 27
+[2026-11-02 19:19:47] Decode batch, #running-req: 5, #full token: 1863, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 177.54, #queue-req: 27
+[2026-11-02 19:19:48] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 43.54
+[2026-11-02 19:19:48] INFO:     127.0.0.1:43460 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:48] INFO:     127.0.0.1:43466 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:48] INFO:     127.0.0.1:43478 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:48] INFO:     127.0.0.1:43480 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:48] INFO:     127.0.0.1:43488 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:49] Decode batch, #running-req: 5, #full token: 783, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 163.77, #queue-req: 27
+[2026-11-02 19:19:50] Decode batch, #running-req: 5, #full token: 983, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 193.97, #queue-req: 27
+[2026-11-02 19:19:51] Decode batch, #running-req: 5, #full token: 1183, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 164.85, #queue-req: 27
+[2026-11-02 19:19:52] Decode batch, #running-req: 5, #full token: 1383, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 164.58, #queue-req: 27
+[2026-11-02 19:19:53] Decode batch, #running-req: 5, #full token: 1583, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 173.61, #queue-req: 27
+[2026-11-02 19:19:54] Decode batch, #running-req: 5, #full token: 1783, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 172.89, #queue-req: 27
+[2026-11-02 19:19:56] Decode batch, #running-req: 5, #full token: 1983, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 167.50, #queue-req: 27
+[2026-11-02 19:19:56] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 39.12
+[2026-11-02 19:19:56] INFO:     127.0.0.1:43496 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:56] INFO:     127.0.0.1:43506 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:56] INFO:     127.0.0.1:43510 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:56] INFO:     127.0.0.1:43516 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:56] INFO:     127.0.0.1:43528 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:19:57] Decode batch, #running-req: 5, #full token: 903, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.65, #queue-req: 27
+[2026-11-02 19:19:58] Decode batch, #running-req: 5, #full token: 1103, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 170.52, #queue-req: 27
+[2026-11-02 19:19:59] Decode batch, #running-req: 5, #full token: 1303, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 170.85, #queue-req: 27
+[2026-11-02 19:20:00] Decode batch, #running-req: 5, #full token: 1503, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 160.42, #queue-req: 27
+[2026-11-02 19:20:02] Decode batch, #running-req: 5, #full token: 1703, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 157.56, #queue-req: 27
+[2026-11-02 19:20:03] Decode batch, #running-req: 5, #full token: 1903, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 161.42, #queue-req: 27
+[2026-11-02 19:20:04] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 37.33
+[2026-11-02 19:20:04] INFO:     127.0.0.1:43538 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:04] INFO:     127.0.0.1:43540 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:04] INFO:     127.0.0.1:43542 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:04] INFO:     127.0.0.1:43546 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:04] INFO:     127.0.0.1:43562 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:04] Decode batch, #running-req: 5, #full token: 823, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.20, #queue-req: 27
+[2026-11-02 19:20:06] Decode batch, #running-req: 5, #full token: 1023, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 159.89, #queue-req: 27
+[2026-11-02 19:20:07] Decode batch, #running-req: 5, #full token: 1223, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 174.03, #queue-req: 27
+[2026-11-02 19:20:08] Decode batch, #running-req: 5, #full token: 1423, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 172.74, #queue-req: 27
+[2026-11-02 19:20:09] Decode batch, #running-req: 5, #full token: 1623, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 163.93, #queue-req: 27
+[2026-11-02 19:20:10] Decode batch, #running-req: 5, #full token: 1823, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 159.68, #queue-req: 27
+[2026-11-02 19:20:12] Decode batch, #running-req: 5, #full token: 0, full token usage: 0.00, mamba num: 0, mamba usage: 0.00, cuda graph: True, gen throughput (token/s): 159.97, #queue-req: 27
+[2026-11-02 19:20:12] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 37.43
+[2026-11-02 19:20:12] INFO:     127.0.0.1:43572 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:12] INFO:     127.0.0.1:43588 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:12] INFO:     127.0.0.1:43592 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:12] INFO:     127.0.0.1:43606 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:12] INFO:     127.0.0.1:43608 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:13] Decode batch, #running-req: 5, #full token: 943, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.87, #queue-req: 27
+[2026-11-02 19:20:14] Decode batch, #running-req: 5, #full token: 1143, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 172.80, #queue-req: 27
+[2026-11-02 19:20:15] Decode batch, #running-req: 5, #full token: 1343, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 157.48, #queue-req: 27
+[2026-11-02 19:20:17] Decode batch, #running-req: 5, #full token: 1543, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 152.71, #queue-req: 27
+[2026-11-02 19:20:18] Decode batch, #running-req: 5, #full token: 1743, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 161.80, #queue-req: 27
+[2026-11-02 19:20:19] Decode batch, #running-req: 5, #full token: 1943, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.21, #queue-req: 27
+[2026-11-02 19:20:20] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 36.69
+[2026-11-02 19:20:20] INFO:     127.0.0.1:43616 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:20] INFO:     127.0.0.1:43632 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:20] INFO:     127.0.0.1:43640 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:20] INFO:     127.0.0.1:43646 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:20] INFO:     127.0.0.1:43652 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:21] Decode batch, #running-req: 5, #full token: 863, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.83, #queue-req: 27
+[2026-11-02 19:20:22] Decode batch, #running-req: 5, #full token: 1063, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 160.02, #queue-req: 27
+[2026-11-02 19:20:23] Decode batch, #running-req: 5, #full token: 1263, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 158.82, #queue-req: 27
+[2026-11-02 19:20:24] Decode batch, #running-req: 5, #full token: 1463, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 161.58, #queue-req: 27
+[2026-11-02 19:20:26] Decode batch, #running-req: 5, #full token: 1663, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.67, #queue-req: 27
+[2026-11-02 19:20:27] Decode batch, #running-req: 5, #full token: 1863, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 159.15, #queue-req: 27
+[2026-11-02 19:20:28] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 35.62
+[2026-11-02 19:20:28] INFO:     127.0.0.1:43660 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:28] INFO:     127.0.0.1:43664 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:28] INFO:     127.0.0.1:42814 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:28] INFO:     127.0.0.1:42810 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:28] INFO:     127.0.0.1:42824 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:28] Decode batch, #running-req: 5, #full token: 783, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 139.41, #queue-req: 27
+[2026-11-02 19:20:29] Decode batch, #running-req: 5, #full token: 983, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 179.53, #queue-req: 27
+[2026-11-02 19:20:31] Decode batch, #running-req: 5, #full token: 1183, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 143.34, #queue-req: 27
+[2026-11-02 19:20:32] Decode batch, #running-req: 5, #full token: 1383, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.19, #queue-req: 27
+[2026-11-02 19:20:33] Decode batch, #running-req: 5, #full token: 1583, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.38, #queue-req: 27
+[2026-11-02 19:20:35] Decode batch, #running-req: 5, #full token: 1783, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.02, #queue-req: 27
+[2026-11-02 19:20:36] Decode batch, #running-req: 5, #full token: 1983, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 158.45, #queue-req: 27
+[2026-11-02 19:20:36] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 24, #pending-token: 12168, cuda graph: True, input throughput (token/s): 35.60
+[2026-11-02 19:20:36] INFO:     127.0.0.1:42840 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:36] INFO:     127.0.0.1:42850 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:36] INFO:     127.0.0.1:42854 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:36] INFO:     127.0.0.1:42866 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:36] INFO:     127.0.0.1:42868 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:37] Decode batch, #running-req: 5, #full token: 903, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.31, #queue-req: 24
+[2026-11-02 19:20:39] Decode batch, #running-req: 5, #full token: 1103, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 159.93, #queue-req: 24
+[2026-11-02 19:20:40] Decode batch, #running-req: 5, #full token: 1303, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.25, #queue-req: 24
+[2026-11-02 19:20:41] Decode batch, #running-req: 5, #full token: 1503, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.93, #queue-req: 24
+[2026-11-02 19:20:43] Decode batch, #running-req: 5, #full token: 1703, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.45, #queue-req: 24
+[2026-11-02 19:20:44] Decode batch, #running-req: 5, #full token: 1903, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 159.45, #queue-req: 24
+[2026-11-02 19:20:45] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 19, #pending-token: 9633, cuda graph: True, input throughput (token/s): 35.37
+[2026-11-02 19:20:45] INFO:     127.0.0.1:42874 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:45] INFO:     127.0.0.1:42886 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:45] INFO:     127.0.0.1:40550 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:45] INFO:     127.0.0.1:40566 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:45] INFO:     127.0.0.1:40568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:45] Decode batch, #running-req: 5, #full token: 823, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 143.32, #queue-req: 19
+[2026-11-02 19:20:46] Decode batch, #running-req: 5, #full token: 1023, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 158.00, #queue-req: 19
+[2026-11-02 19:20:48] Decode batch, #running-req: 5, #full token: 1223, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.44, #queue-req: 19
+[2026-11-02 19:20:49] Decode batch, #running-req: 5, #full token: 1423, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.30, #queue-req: 19
+[2026-11-02 19:20:50] Decode batch, #running-req: 5, #full token: 1623, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 158.52, #queue-req: 19
+[2026-11-02 19:20:52] Decode batch, #running-req: 5, #full token: 1823, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.44, #queue-req: 19
+[2026-11-02 19:20:53] Decode batch, #running-req: 5, #full token: 0, full token usage: 0.00, mamba num: 0, mamba usage: 0.00, cuda graph: True, gen throughput (token/s): 149.61, #queue-req: 19
+[2026-11-02 19:20:53] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 14, #pending-token: 7098, cuda graph: True, input throughput (token/s): 34.90
+[2026-11-02 19:20:53] INFO:     127.0.0.1:40576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:53] INFO:     127.0.0.1:40580 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:53] INFO:     127.0.0.1:56330 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:53] INFO:     127.0.0.1:56332 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:53] INFO:     127.0.0.1:56344 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:20:54] Decode batch, #running-req: 5, #full token: 943, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 146.92, #queue-req: 14
+[2026-11-02 19:20:56] Decode batch, #running-req: 5, #full token: 1143, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.08, #queue-req: 14
+[2026-11-02 19:20:57] Decode batch, #running-req: 5, #full token: 1343, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.44, #queue-req: 14
+[2026-11-02 19:20:58] Decode batch, #running-req: 5, #full token: 1543, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 151.68, #queue-req: 14
+[2026-11-02 19:21:00] Decode batch, #running-req: 5, #full token: 1743, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.96, #queue-req: 14
+[2026-11-02 19:21:01] Decode batch, #running-req: 5, #full token: 1943, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.24, #queue-req: 14
+[2026-11-02 19:21:02] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 9, #pending-token: 4563, cuda graph: True, input throughput (token/s): 34.88
+[2026-11-02 19:21:02] INFO:     127.0.0.1:56346 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:02] INFO:     127.0.0.1:56350 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:02] INFO:     127.0.0.1:55620 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:02] INFO:     127.0.0.1:55626 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:02] INFO:     127.0.0.1:55634 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:02] Decode batch, #running-req: 5, #full token: 863, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.89, #queue-req: 9
+[2026-11-02 19:21:04] Decode batch, #running-req: 5, #full token: 1063, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.85, #queue-req: 9
+[2026-11-02 19:21:05] Decode batch, #running-req: 5, #full token: 1263, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.06, #queue-req: 9
+[2026-11-02 19:21:06] Decode batch, #running-req: 5, #full token: 1463, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.96, #queue-req: 9
+[2026-11-02 19:21:08] Decode batch, #running-req: 5, #full token: 1663, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 151.91, #queue-req: 9
+[2026-11-02 19:21:09] Decode batch, #running-req: 5, #full token: 1863, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 156.03, #queue-req: 9
+[2026-11-02 19:21:10] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 4, #pending-token: 2028, cuda graph: True, input throughput (token/s): 34.64
+[2026-11-02 19:21:10] INFO:     127.0.0.1:55648 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:10] INFO:     127.0.0.1:55654 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:10] INFO:     127.0.0.1:55670 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:10] INFO:     127.0.0.1:55672 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:10] INFO:     127.0.0.1:55682 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:10] Decode batch, #running-req: 5, #full token: 783, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 139.01, #queue-req: 4
+[2026-11-02 19:21:12] Decode batch, #running-req: 5, #full token: 983, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 160.40, #queue-req: 4
+[2026-11-02 19:21:13] Decode batch, #running-req: 5, #full token: 1183, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.54, #queue-req: 4
+[2026-11-02 19:21:14] Decode batch, #running-req: 5, #full token: 1383, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.62, #queue-req: 4
+[2026-11-02 19:21:16] Decode batch, #running-req: 5, #full token: 1583, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.66, #queue-req: 4
+[2026-11-02 19:21:17] Decode batch, #running-req: 5, #full token: 1783, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 152.12, #queue-req: 4
+[2026-11-02 19:21:18] Decode batch, #running-req: 5, #full token: 1983, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.24, #queue-req: 4
+[2026-11-02 19:21:19] Prefill batch, #new-seq: 4, #new-token: 236, #cached-token: 1792, full token usage: 0.01, mamba usage: 0.46, #running-req: 0, #queue-req: 0, #pending-token: 0, cuda graph: True, input throughput (token/s): 28.13
+[2026-11-02 19:21:19] INFO:     127.0.0.1:55698 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:19] INFO:     127.0.0.1:55702 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:19] INFO:     127.0.0.1:46646 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:19] INFO:     127.0.0.1:46658 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:20] Decode batch, #running-req: 4, #full token: 812, full token usage: 0.01, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 125.44, #queue-req: 0
+[2026-11-02 19:21:21] Decode batch, #running-req: 4, #full token: 972, full token usage: 0.01, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 117.55, #queue-req: 0
+[2026-11-02 19:21:22] Decode batch, #running-req: 4, #full token: 1132, full token usage: 0.01, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 119.80, #queue-req: 0
+[2026-11-02 19:21:24] Decode batch, #running-req: 4, #full token: 1292, full token usage: 0.02, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 119.65, #queue-req: 0
+[2026-11-02 19:21:25] Decode batch, #running-req: 4, #full token: 1452, full token usage: 0.02, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 125.65, #queue-req: 0
+[2026-11-02 19:21:26] Decode batch, #running-req: 4, #full token: 1612, full token usage: 0.02, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 124.37, #queue-req: 0
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38352 - "GET /v1/models HTTP/1.1" 200 OK
+[2026-11-02 19:21:27] Prefill batch, #new-seq: 1, #new-token: 54, #cached-token: 0, full token usage: 0.00, mamba usage: 0.11, #running-req: 0, #queue-req: 0, #pending-token: 0, cuda graph: True, input throughput (token/s): 6.40
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38356 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:27] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 22, #pending-token: 2535, cuda graph: True, input throughput (token/s): 716.26
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38366 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38376 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38380 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:27] INFO:     127.0.0.1:38398 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:28] Decode batch, #running-req: 5, #full token: 783, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 97.34, #queue-req: 27
+[2026-11-02 19:21:29] Decode batch, #running-req: 5, #full token: 983, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 187.17, #queue-req: 27
+[2026-11-02 19:21:30] Decode batch, #running-req: 5, #full token: 1183, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 146.42, #queue-req: 27
+[2026-11-02 19:21:31] Decode batch, #running-req: 5, #full token: 1383, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 152.83, #queue-req: 27
+[2026-11-02 19:21:33] Decode batch, #running-req: 5, #full token: 1583, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.05, #queue-req: 27
+[2026-11-02 19:21:34] Decode batch, #running-req: 5, #full token: 1783, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 152.36, #queue-req: 27
+[2026-11-02 19:21:35] Decode batch, #running-req: 5, #full token: 1983, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.16, #queue-req: 27
+[2026-11-02 19:21:36] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 35.38
+[2026-11-02 19:21:36] INFO:     127.0.0.1:38400 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:36] INFO:     127.0.0.1:38410 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:36] INFO:     127.0.0.1:38426 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:36] INFO:     127.0.0.1:38436 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:36] INFO:     127.0.0.1:38440 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:37] Decode batch, #running-req: 5, #full token: 903, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 139.86, #queue-req: 27
+[2026-11-02 19:21:38] Decode batch, #running-req: 5, #full token: 1103, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.45, #queue-req: 27
+[2026-11-02 19:21:39] Decode batch, #running-req: 5, #full token: 1303, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 152.04, #queue-req: 27
+[2026-11-02 19:21:41] Decode batch, #running-req: 5, #full token: 1503, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 146.21, #queue-req: 27
+[2026-11-02 19:21:42] Decode batch, #running-req: 5, #full token: 1703, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.40, #queue-req: 27
+[2026-11-02 19:21:43] Decode batch, #running-req: 5, #full token: 1903, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.05, #queue-req: 27
+[2026-11-02 19:21:44] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 34.09
+[2026-11-02 19:21:44] INFO:     127.0.0.1:38450 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:44] INFO:     127.0.0.1:38462 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:44] INFO:     127.0.0.1:38478 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:44] INFO:     127.0.0.1:38492 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:44] INFO:     127.0.0.1:38502 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:45] Decode batch, #running-req: 5, #full token: 823, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 131.97, #queue-req: 27
+[2026-11-02 19:21:46] Decode batch, #running-req: 5, #full token: 1023, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 156.16, #queue-req: 27
+[2026-11-02 19:21:47] Decode batch, #running-req: 5, #full token: 1223, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.81, #queue-req: 27
+[2026-11-02 19:21:49] Decode batch, #running-req: 5, #full token: 1423, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.11, #queue-req: 27
+[2026-11-02 19:21:50] Decode batch, #running-req: 5, #full token: 1623, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 155.81, #queue-req: 27
+[2026-11-02 19:21:51] Decode batch, #running-req: 5, #full token: 1823, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.38, #queue-req: 27
+[2026-11-02 19:21:53] Decode batch, #running-req: 5, #full token: 0, full token usage: 0.00, mamba num: 0, mamba usage: 0.00, cuda graph: True, gen throughput (token/s): 152.82, #queue-req: 27
+[2026-11-02 19:21:53] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 34.57
+[2026-11-02 19:21:53] INFO:     127.0.0.1:38516 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:53] INFO:     127.0.0.1:38530 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:53] INFO:     127.0.0.1:38544 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:53] INFO:     127.0.0.1:38554 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:53] INFO:     127.0.0.1:38560 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:21:54] Decode batch, #running-req: 5, #full token: 943, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 140.12, #queue-req: 27
+[2026-11-02 19:21:56] Decode batch, #running-req: 5, #full token: 1143, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.93, #queue-req: 27
+[2026-11-02 19:21:57] Decode batch, #running-req: 5, #full token: 1343, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 144.48, #queue-req: 27
+[2026-11-02 19:21:58] Decode batch, #running-req: 5, #full token: 1543, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.94, #queue-req: 27
+[2026-11-02 19:22:00] Decode batch, #running-req: 5, #full token: 1743, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.01, #queue-req: 27
+[2026-11-02 19:22:01] Decode batch, #running-req: 5, #full token: 1943, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 151.21, #queue-req: 27
+[2026-11-02 19:22:02] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 34.06
+[2026-11-02 19:22:02] INFO:     127.0.0.1:38574 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:02] INFO:     127.0.0.1:38578 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:02] INFO:     127.0.0.1:38582 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:02] INFO:     127.0.0.1:38586 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:02] INFO:     127.0.0.1:38602 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:02] Decode batch, #running-req: 5, #full token: 863, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.13, #queue-req: 27
+[2026-11-02 19:22:04] Decode batch, #running-req: 5, #full token: 1063, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 159.85, #queue-req: 27
+[2026-11-02 19:22:05] Decode batch, #running-req: 5, #full token: 1263, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 141.32, #queue-req: 27
+[2026-11-02 19:22:06] Decode batch, #running-req: 5, #full token: 1463, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.11, #queue-req: 27
+[2026-11-02 19:22:08] Decode batch, #running-req: 5, #full token: 1663, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.80, #queue-req: 27
+[2026-11-02 19:22:09] Decode batch, #running-req: 5, #full token: 1863, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 156.02, #queue-req: 27
+[2026-11-02 19:22:10] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 34.52
+[2026-11-02 19:22:10] INFO:     127.0.0.1:38610 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:10] INFO:     127.0.0.1:38616 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:10] INFO:     127.0.0.1:38620 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:10] INFO:     127.0.0.1:38628 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:10] INFO:     127.0.0.1:38634 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:10] Decode batch, #running-req: 5, #full token: 783, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 134.39, #queue-req: 27
+[2026-11-02 19:22:12] Decode batch, #running-req: 5, #full token: 983, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.21, #queue-req: 27
+[2026-11-02 19:22:13] Decode batch, #running-req: 5, #full token: 1183, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.79, #queue-req: 27
+[2026-11-02 19:22:14] Decode batch, #running-req: 5, #full token: 1383, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.38, #queue-req: 27
+[2026-11-02 19:22:16] Decode batch, #running-req: 5, #full token: 1583, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.48, #queue-req: 27
+[2026-11-02 19:22:17] Decode batch, #running-req: 5, #full token: 1783, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.52, #queue-req: 27
+[2026-11-02 19:22:18] Decode batch, #running-req: 5, #full token: 1983, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 156.39, #queue-req: 27
+[2026-11-02 19:22:19] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 27, #pending-token: 13689, cuda graph: True, input throughput (token/s): 34.18
+[2026-11-02 19:22:19] INFO:     127.0.0.1:38648 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:19] INFO:     127.0.0.1:38652 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:19] INFO:     127.0.0.1:39548 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:19] INFO:     127.0.0.1:39562 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:19] INFO:     127.0.0.1:39574 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:20] Decode batch, #running-req: 5, #full token: 903, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 141.04, #queue-req: 27
+[2026-11-02 19:22:21] Decode batch, #running-req: 5, #full token: 1103, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.72, #queue-req: 27
+[2026-11-02 19:22:22] Decode batch, #running-req: 5, #full token: 1303, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.89, #queue-req: 27
+[2026-11-02 19:22:24] Decode batch, #running-req: 5, #full token: 1503, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.58, #queue-req: 27
+[2026-11-02 19:22:25] Decode batch, #running-req: 5, #full token: 1703, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.00, #queue-req: 27
+[2026-11-02 19:22:26] Decode batch, #running-req: 5, #full token: 1903, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.89, #queue-req: 27
+[2026-11-02 19:22:28] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 24, #pending-token: 12168, cuda graph: True, input throughput (token/s): 33.65
+[2026-11-02 19:22:28] INFO:     127.0.0.1:39588 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:28] INFO:     127.0.0.1:39600 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:28] INFO:     127.0.0.1:57836 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:28] INFO:     127.0.0.1:57828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:28] INFO:     127.0.0.1:57848 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:28] Decode batch, #running-req: 5, #full token: 823, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 131.63, #queue-req: 24
+[2026-11-02 19:22:29] Decode batch, #running-req: 5, #full token: 1023, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 145.65, #queue-req: 24
+[2026-11-02 19:22:31] Decode batch, #running-req: 5, #full token: 1223, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.95, #queue-req: 24
+[2026-11-02 19:22:32] Decode batch, #running-req: 5, #full token: 1423, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.13, #queue-req: 24
+[2026-11-02 19:22:33] Decode batch, #running-req: 5, #full token: 1623, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 152.15, #queue-req: 24
+[2026-11-02 19:22:35] Decode batch, #running-req: 5, #full token: 1823, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.93, #queue-req: 24
+[2026-11-02 19:22:36] Decode batch, #running-req: 5, #full token: 0, full token usage: 0.00, mamba num: 0, mamba usage: 0.00, cuda graph: True, gen throughput (token/s): 149.30, #queue-req: 24
+[2026-11-02 19:22:36] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 19, #pending-token: 9633, cuda graph: True, input throughput (token/s): 34.08
+[2026-11-02 19:22:36] INFO:     127.0.0.1:57858 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:36] INFO:     127.0.0.1:57868 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:36] INFO:     127.0.0.1:58194 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:36] INFO:     127.0.0.1:58204 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:36] INFO:     127.0.0.1:58206 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:37] Decode batch, #running-req: 5, #full token: 943, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 143.23, #queue-req: 19
+[2026-11-02 19:22:39] Decode batch, #running-req: 5, #full token: 1143, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.72, #queue-req: 19
+[2026-11-02 19:22:40] Decode batch, #running-req: 5, #full token: 1343, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.04, #queue-req: 19
+[2026-11-02 19:22:41] Decode batch, #running-req: 5, #full token: 1543, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.18, #queue-req: 19
+[2026-11-02 19:22:43] Decode batch, #running-req: 5, #full token: 1743, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 154.39, #queue-req: 19
+[2026-11-02 19:22:44] Decode batch, #running-req: 5, #full token: 1943, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 146.44, #queue-req: 19
+[2026-11-02 19:22:45] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 14, #pending-token: 7098, cuda graph: True, input throughput (token/s): 34.21
+[2026-11-02 19:22:45] INFO:     127.0.0.1:58222 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:45] INFO:     127.0.0.1:58230 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:45] INFO:     127.0.0.1:36068 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:45] INFO:     127.0.0.1:36072 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:45] INFO:     127.0.0.1:36084 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:46] Decode batch, #running-req: 5, #full token: 863, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 138.22, #queue-req: 14
+[2026-11-02 19:22:47] Decode batch, #running-req: 5, #full token: 1063, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.40, #queue-req: 14
+[2026-11-02 19:22:48] Decode batch, #running-req: 5, #full token: 1263, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 150.90, #queue-req: 14
+[2026-11-02 19:22:49] Decode batch, #running-req: 5, #full token: 1463, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.03, #queue-req: 14
+[2026-11-02 19:22:51] Decode batch, #running-req: 5, #full token: 1663, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 153.14, #queue-req: 14
+[2026-11-02 19:22:52] Decode batch, #running-req: 5, #full token: 1863, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 144.74, #queue-req: 14
+[2026-11-02 19:22:53] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 9, #pending-token: 4563, cuda graph: True, input throughput (token/s): 34.35
+[2026-11-02 19:22:53] INFO:     127.0.0.1:36100 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:53] INFO:     127.0.0.1:36112 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:53] INFO:     127.0.0.1:51682 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:53] INFO:     127.0.0.1:51694 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:53] INFO:     127.0.0.1:51698 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:22:54] Decode batch, #running-req: 5, #full token: 783, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 137.39, #queue-req: 9
+[2026-11-02 19:22:55] Decode batch, #running-req: 5, #full token: 983, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 146.44, #queue-req: 9
+[2026-11-02 19:22:56] Decode batch, #running-req: 5, #full token: 1183, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 141.87, #queue-req: 9
+[2026-11-02 19:22:58] Decode batch, #running-req: 5, #full token: 1383, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 156.79, #queue-req: 9
+[2026-11-02 19:22:59] Decode batch, #running-req: 5, #full token: 1583, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 147.52, #queue-req: 9
+[2026-11-02 19:23:00] Decode batch, #running-req: 5, #full token: 1783, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 151.32, #queue-req: 9
+[2026-11-02 19:23:02] Decode batch, #running-req: 5, #full token: 1983, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.43, #queue-req: 9
+[2026-11-02 19:23:02] Prefill batch, #new-seq: 5, #new-token: 295, #cached-token: 2240, full token usage: 0.01, mamba usage: 0.57, #running-req: 0, #queue-req: 4, #pending-token: 2028, cuda graph: True, input throughput (token/s): 33.77
+[2026-11-02 19:23:02] INFO:     127.0.0.1:51710 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:02] INFO:     127.0.0.1:51720 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:02] INFO:     127.0.0.1:59506 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:02] INFO:     127.0.0.1:59514 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:02] INFO:     127.0.0.1:59530 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:03] Decode batch, #running-req: 5, #full token: 903, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 141.30, #queue-req: 4
+[2026-11-02 19:23:04] Decode batch, #running-req: 5, #full token: 1103, full token usage: 0.01, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 151.49, #queue-req: 4
+[2026-11-02 19:23:06] Decode batch, #running-req: 5, #full token: 1303, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.41, #queue-req: 4
+[2026-11-02 19:23:07] Decode batch, #running-req: 5, #full token: 1503, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 149.16, #queue-req: 4
+[2026-11-02 19:23:08] Decode batch, #running-req: 5, #full token: 1703, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 148.41, #queue-req: 4
+[2026-11-02 19:23:10] Decode batch, #running-req: 5, #full token: 1903, full token usage: 0.02, mamba num: 16, mamba usage: 0.57, cuda graph: True, gen throughput (token/s): 146.17, #queue-req: 4
+[2026-11-02 19:23:11] Prefill batch, #new-seq: 4, #new-token: 236, #cached-token: 1792, full token usage: 0.01, mamba usage: 0.46, #running-req: 0, #queue-req: 0, #pending-token: 0, cuda graph: True, input throughput (token/s): 27.24
+[2026-11-02 19:23:11] INFO:     127.0.0.1:59536 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:11] INFO:     127.0.0.1:59538 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:11] INFO:     127.0.0.1:59554 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:11] INFO:     127.0.0.1:59556 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[2026-11-02 19:23:11] Decode batch, #running-req: 4, #full token: 748, full token usage: 0.01, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 128.84, #queue-req: 0
+[2026-11-02 19:23:12] Decode batch, #running-req: 4, #full token: 908, full token usage: 0.01, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 131.25, #queue-req: 0
+[2026-11-02 19:23:14] Decode batch, #running-req: 4, #full token: 1068, full token usage: 0.01, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 120.01, #queue-req: 0
+[2026-11-02 19:23:15] Decode batch, #running-req: 4, #full token: 1228, full token usage: 0.02, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 112.71, #queue-req: 0
+[2026-11-02 19:23:17] Decode batch, #running-req: 4, #full token: 1388, full token usage: 0.02, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 122.98, #queue-req: 0
+[2026-11-02 19:23:18] Decode batch, #running-req: 4, #full token: 1548, full token usage: 0.02, mamba num: 13, mamba usage: 0.46, cuda graph: True, gen throughput (token/s): 123.73, #queue-req: 0
+[2026-11-02 19:23:19] Decode batch, #running-req: 4, #full token: 0, full token usage: 0.00, mamba num: 0, mamba usage: 0.00, cuda graph: True, gen throughput (token/s): 122.34, #queue-req: 0
+[2026-11-02 19:23:19] SIGTERM received. signum=None frame=None. Draining requests and shutting down...
+[2026-11-02 19:23:23] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[].
+[rank0]:[W1102 19:23:23.934039018 ProcessGroupNCCL.cpp:1624] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2026-11-02 19:23:23] kill_process_tree called: parent_pid=84671, include_parent=True, pid=84671

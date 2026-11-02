@@ -1,0 +1,471 @@
+== phase B start 2026-11-02T18:17:56+00:00 ==
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  DID NOT START. last lines:
+(APIServer pid=73213)            ^^^^
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 149, in __init__
+(APIServer pid=73213)     self.engine_core = EngineCoreClient.make_async_mp_client(
+(APIServer pid=73213)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=73213)     return func(*args, **kwargs)
+(APIServer pid=73213)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 139, in make_async_mp_client
+(APIServer pid=73213)     return AsyncMPClient(*client_args)
+(APIServer pid=73213)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=73213)     return func(*args, **kwargs)
+(APIServer pid=73213)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 987, in __init__
+(APIServer pid=73213)     super().__init__(
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+(APIServer pid=73213)     with launch_core_engines(
+(APIServer pid=73213)          ^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=73213)   File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=73213)     next(self.gen)
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1194, in launch_core_engines
+(APIServer pid=73213)     wait_for_engine_startup(
+(APIServer pid=73213)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1253, in wait_for_engine_startup
+(APIServer pid=73213)     raise RuntimeError(
+(APIServer pid=73213) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+
+[1m== vllm / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+== phase B start 2026-11-02T18:24:55+00:00 ==
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+  DID NOT START. last lines:
+(APIServer pid=74794)            ^^^^
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 149, in __init__
+(APIServer pid=74794)     self.engine_core = EngineCoreClient.make_async_mp_client(
+(APIServer pid=74794)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=74794)     return func(*args, **kwargs)
+(APIServer pid=74794)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 139, in make_async_mp_client
+(APIServer pid=74794)     return AsyncMPClient(*client_args)
+(APIServer pid=74794)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=74794)     return func(*args, **kwargs)
+(APIServer pid=74794)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 987, in __init__
+(APIServer pid=74794)     super().__init__(
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+(APIServer pid=74794)     with launch_core_engines(
+(APIServer pid=74794)          ^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=74794)   File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=74794)     next(self.gen)
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1194, in launch_core_engines
+(APIServer pid=74794)     wait_for_engine_startup(
+(APIServer pid=74794)   File "/root/venvs/vllm/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1253, in wait_for_engine_startup
+(APIServer pid=74794)     raise RuntimeError(
+(APIServer pid=74794) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+
+[1m== sglang / original / Qwen/Qwen3.8-27B[0m
+== phase B start 2026-11-02T18:25:38+00:00 ==
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  DID NOT START. last lines:
+tail: cannot open '/root/unfuse/notebooks/qwen3.8-27b/bench/sweeps/baseline-512/sglang-original.log' for reading: No such file or directory
+tools/bench_pair.sh: line 104: 76600 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== sglang / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+tools/run_phase_b_minimal.sh: line 28: 77229 Killed                  OUT="$SW/baseline-512" IN_LEN=512 OUT_LEN=256 CONC="1 16" CTX=32768 MAX_SEQS="$VLLM_MAX_SEQS" MAX_RUNNING= tools/bench_pair.sh "$ORIG" "$DERV" vllm sglang
+== phase B start 2026-11-02T18:26:16+00:00 ==
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  ready in 100s
+  not found in log: engine_version, concurrency_limit
+{
+  "label": "vllm-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 51.1,
+  "kv_cache_gib": 18.27,
+  "kv_cache_tokens": 277435,
+  "max_model_len": 32768,
+  "max_concurrency": 8.47,
+  "mm_encoder_budget_tokens": 16384,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== vllm / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 55s
+  not found in log: engine_version, concurrency_limit, mm_encoder_budget_tokens
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 50.13,
+  "kv_cache_gib": 19.84,
+  "kv_cache_tokens": 301465,
+  "max_model_len": 32768,
+  "max_concurrency": 9.2,
+  "missing": [
+    "engine_version",
+    "concurrency_limit",
+    "mm_encoder_budget_tokens"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== sglang / original / Qwen/Qwen3.8-27B[0m
+  ready in 95s
+{
+  "label": "sglang-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 51.05,
+  "kv_cache_tokens": 79998,
+  "max_model_len": 32768,
+  "concurrency_limit": 5,
+  "kv_cache_gib": 4.88,
+  "max_concurrency": 2.44,
+  "max_concurrency_derived": true,
+  "missing": []
+}
+  cold pass
+  warm pass
+tools/bench_pair.sh: line 104: 79903 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== sglang / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 75s
+{
+  "label": "sglang-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 50.16,
+  "kv_cache_tokens": 129884,
+  "max_model_len": 32768,
+  "concurrency_limit": 16,
+  "kv_cache_gib": 7.92,
+  "max_concurrency": 3.96,
+  "max_concurrency_derived": true,
+  "missing": []
+}
+  cold pass
+  warm pass
+tools/bench_pair.sh: line 104: 80449 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== concurrency limits the engines chose[0m
+  sglang   {'derived': 16, 'original': 5}  NOT COMPARABLE -- pin them equal and rerun
+  vllm     {'derived': None, 'original': None}  comparable
+
+[1m== results[0m
+| engine | model | c | out tok/s | per stream | TTFT p50 | TTFT p99 | TPOT |
+|---|---|---|---|---|---|---|---|
+| sglang | derived | 1 | 28.6 | 28.6 | 218.6 ms | 226.2 ms | 34.25 ms |
+| sglang | derived | 16 | 332.0 | 20.8 | 2470.7 ms | 2576.7 ms | 38.08 ms |
+| sglang | original | 1 | 28.2 | 28.2 | 89.3 ms | 89.8 ms | 35.21 ms |
+| sglang | original | 16 | 135.4 | 8.5 | 17633.3 ms | 26482.5 ms | 35.81 ms |
+| vllm | derived | 1 | 30.6 | 30.6 | 185.1 ms | 195.7 ms | 32.08 ms |
+| vllm | derived | 16 | 360.6 | 22.5 | 2328.9 ms | 2457.6 ms | 35.64 ms |
+| vllm | original | 1 | 31.0 | 31.0 | 184.4 ms | 190.5 ms | 31.7 ms |
+| vllm | original | 16 | 360.5 | 22.5 | 2354.8 ms | 2362.5 ms | 35.75 ms |
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  ready in 140s
+  not found in log: engine_version, concurrency_limit
+{
+  "label": "vllm-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 51.1,
+  "kv_cache_gib": 18.29,
+  "kv_cache_tokens": 223524,
+  "max_model_len": 8192,
+  "max_concurrency": 27.29,
+  "mm_encoder_budget_tokens": 16384,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== vllm / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 85s
+  not found in log: engine_version, concurrency_limit, mm_encoder_budget_tokens
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 50.13,
+  "kv_cache_gib": 18.59,
+  "kv_cache_tokens": 227035,
+  "max_model_len": 8192,
+  "max_concurrency": 27.71,
+  "missing": [
+    "engine_version",
+    "concurrency_limit",
+    "mm_encoder_budget_tokens"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== sglang / original / Qwen/Qwen3.8-27B[0m
+  ready in 60s
+{
+  "label": "sglang-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 51.05,
+  "kv_cache_tokens": 80318,
+  "max_model_len": 8192,
+  "concurrency_limit": 5,
+  "kv_cache_gib": 4.9,
+  "max_concurrency": 9.8,
+  "max_concurrency_derived": true,
+  "missing": []
+}
+  cold pass
+  warm pass
+tools/bench_pair.sh: line 104: 82324 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== sglang / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 75s
+{
+  "label": "sglang-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 50.16,
+  "kv_cache_tokens": 129884,
+  "max_model_len": 8192,
+  "concurrency_limit": 16,
+  "kv_cache_gib": 7.92,
+  "max_concurrency": 15.85,
+  "max_concurrency_derived": true,
+  "missing": []
+}
+  cold pass
+  warm pass
+tools/bench_pair.sh: line 104: 82812 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== concurrency limits the engines chose[0m
+  sglang   {'derived': 16, 'original': 5}  NOT COMPARABLE -- pin them equal and rerun
+  vllm     {'derived': None, 'original': None}  comparable
+
+[1m== results[0m
+| engine | model | c | out tok/s | per stream | TTFT p50 | TTFT p99 | TPOT |
+|---|---|---|---|---|---|---|---|
+| sglang | derived | 1 | 29.2 | 29.2 | 218.8 ms | 223.4 ms | 33.44 ms |
+| sglang | derived | 16 | 337.3 | 21.1 | 2370.3 ms | 2731.9 ms | 38.86 ms |
+| sglang | original | 1 | 29.5 | 29.5 | 81.7 ms | 89.9 ms | 33.64 ms |
+| sglang | original | 16 | 129.5 | 8.1 | 17467.0 ms | 26462.8 ms | 34.93 ms |
+| vllm | derived | 1 | 28.2 | 28.2 | 978.4 ms | 981.5 ms | 31.73 ms |
+| vllm | derived | 16 | 157.7 | 9.9 | 6752.7 ms | 16876.4 ms | 68.16 ms |
+| vllm | original | 1 | 28.2 | 28.2 | 960.3 ms | 993.3 ms | 31.83 ms |
+| vllm | original | 16 | 155.5 | 9.7 | 6855.3 ms | 17048.8 ms | 68.95 ms |
+GPU                    1x NVIDIA H100 80GB HBM3 (81559 MiB)
+Compute cap            sm_90
+Driver                 580.173.02
+CUDA (driver)          13.0
+CUDA (nvcc)            13.1
+Power limit            700.00 W
+Max SM clock           1980 MHz
+ECC                    Disabled
+Persistence            Enabled
+torch                  2.15.0+cu132 (cuda 13.2)
+Python                 3.12.16
+OS                     Ubuntu 22.04.5 LTS
+Kernel                 5.15.0-185-generic
+CPU                    Intel(R) Xeon(R) Platinum 8468 (20 cores)
+RAM                    235 GB
+
+[1m== vllm / original / Qwen/Qwen3.8-27B[0m
+  ready in 125s
+  not found in log: engine_version, concurrency_limit
+{
+  "label": "vllm-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 51.1,
+  "kv_cache_gib": 19.06,
+  "kv_cache_tokens": 289814,
+  "max_model_len": 32768,
+  "max_concurrency": 8.84,
+  "mm_encoder_budget_tokens": 16384,
+  "missing": [
+    "engine_version",
+    "concurrency_limit"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== vllm / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 85s
+  not found in log: engine_version, concurrency_limit, mm_encoder_budget_tokens
+{
+  "label": "vllm-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "vllm",
+  "memory_unit": "GiB",
+  "engine_version": "0.27.1",
+  "weights_gib": 50.13,
+  "kv_cache_gib": 19.12,
+  "kv_cache_tokens": 290542,
+  "max_model_len": 32768,
+  "max_concurrency": 8.87,
+  "missing": [
+    "engine_version",
+    "concurrency_limit",
+    "mm_encoder_budget_tokens"
+  ]
+}
+  cold pass
+  warm pass
+
+[1m== sglang / original / Qwen/Qwen3.8-27B[0m
+  ready in 60s
+{
+  "label": "sglang-original",
+  "model": "Qwen/Qwen3.8-27B",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 51.05,
+  "kv_cache_tokens": 79998,
+  "max_model_len": 32768,
+  "concurrency_limit": 32,
+  "kv_cache_gib": 4.88,
+  "max_concurrency": 2.44,
+  "max_concurrency_derived": true,
+  "missing": []
+}
+  cold pass
+  warm pass
+tools/bench_pair.sh: line 104: 84671 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== sglang / derived / sartajbhuvaji/unfuse-Qwen3.8-27B-text[0m
+  ready in 75s
+{
+  "label": "sglang-derived",
+  "model": "sartajbhuvaji/unfuse-Qwen3.8-27B-text",
+  "engine": "sglang",
+  "memory_unit": "GiB (log says GB; SGLang divides by 2^30)",
+  "engine_version": "0.5.18",
+  "weights_gib": 50.16,
+  "kv_cache_tokens": 129884,
+  "max_model_len": 32768,
+  "concurrency_limit": 32,
+  "kv_cache_gib": 7.92,
+  "max_concurrency": 3.96,
+  "max_concurrency_derived": true,
+  "missing": []
+}
+  cold pass
+  warm pass
+tools/bench_pair.sh: line 104: 85103 Killed                  nohup "$VENVS/sglang/bin/python" -m sglang.launch_server --model-path "$model" "${args[@]}" > "$log" 2>&1
+
+[1m== concurrency limits the engines chose[0m
+  sglang   {'derived': 32, 'original': 32}  comparable
+  vllm     {'derived': None, 'original': None}  comparable
+
+[1m== results[0m
+| engine | model | c | out tok/s | per stream | TTFT p50 | TTFT p99 | TPOT |
+|---|---|---|---|---|---|---|---|
+| sglang | derived | 32 | 344.6 | 10.8 | 13818.6 ms | 13975.6 ms | 36.27 ms |
+| sglang | original | 32 | 135.6 | 4.2 | 43190.6 ms | 52188.1 ms | 35.74 ms |
+| vllm | derived | 32 | 642.8 | 20.1 | 3038.0 ms | 4043.7 ms | 37.01 ms |
+| vllm | original | 32 | 645.7 | 20.2 | 3051.9 ms | 4037.7 ms | 36.87 ms |
+== phase B end 2026-11-02T19:26:32+00:00 ==
