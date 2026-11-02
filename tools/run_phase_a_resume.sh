@@ -25,15 +25,27 @@ exec > >(tee -a "$LOG") 2>&1
 
 echo "== phase A resume $(date -Is) =="
 
-LOGS="$GGUF_DIR/smoke-logs"
-mkdir -p "$LOGS"
-GGUF="$QUANT" LOGS="$LOGS" ./tools/smoke_inference.sh \
-  sartajbhuvaji/unfuse-Qwen3.8-27B-text llamacpp \
-  | tee "$LOGS/smoke-$Q.txt"
+if [ "${SKIP_SMOKE:-0}" != "1" ]; then
+  LOGS="$GGUF_DIR/smoke-logs"
+  mkdir -p "$LOGS"
+  GGUF="$QUANT" LOGS="$LOGS" ./tools/smoke_inference.sh \
+    sartajbhuvaji/unfuse-Qwen3.8-27B-text llamacpp \
+    | tee "$LOGS/smoke-$Q.txt"
+else
+  echo "== smoke skipped (SKIP_SMOKE=1) =="
+fi
 
 if [ ! -s /tmp/wikitext2-test.txt ]; then
   curl -fsSL -o /tmp/wt2.zip https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-raw-v1.zip
-  unzip -p /tmp/wt2.zip wikitext-2-raw/test.txt > /tmp/wikitext2-test.txt
+  python3 - <<'PY'
+import zipfile
+from pathlib import Path
+
+with zipfile.ZipFile("/tmp/wt2.zip") as z:
+    data = z.read("wikitext-2-raw/test.txt")
+Path("/tmp/wikitext2-test.txt").write_bytes(data)
+print("bytes", len(data))
+PY
 fi
 {
   echo "| quant | perplexity |"

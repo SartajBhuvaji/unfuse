@@ -72,7 +72,15 @@ GGUF="$QUANT" LOGS="$LOGS" ./tools/smoke_inference.sh \
 echo "== perplexity (BF16 + $Q, wikitext-2 test, ctx 512) =="
 if [ ! -s /tmp/wikitext2-test.txt ]; then
   curl -fsSL -o /tmp/wt2.zip https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-raw-v1.zip
-  unzip -p /tmp/wt2.zip wikitext-2-raw/test.txt > /tmp/wikitext2-test.txt
+  python3 - <<'PY'
+import zipfile
+from pathlib import Path
+
+with zipfile.ZipFile("/tmp/wt2.zip") as z:
+    data = z.read("wikitext-2-raw/test.txt")
+Path("/tmp/wikitext2-test.txt").write_bytes(data)
+print("bytes", len(data))
+PY
 fi
 wc -c /tmp/wikitext2-test.txt
 {
