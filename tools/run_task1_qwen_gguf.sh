@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# DEPRECATED — use tools/run_phase_a_minimal.sh (docs/RUNBOOK-qwen-gguf-minimal.md).
 # Task 1 from docs/RUNBOOK-qwen-gguf-and-sweeps.md — run ON the GPU box.
 # Requires HF_TOKEN in the environment. Logs under notebooks/qwen3.8-27b/gguf/.
 

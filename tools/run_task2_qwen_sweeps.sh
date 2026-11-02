@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# DEPRECATED — use tools/run_phase_b_minimal.sh.
 # Task 2 benchmark sweeps from docs/RUNBOOK-qwen-gguf-and-sweeps.md
 
 set -euo pipefail
