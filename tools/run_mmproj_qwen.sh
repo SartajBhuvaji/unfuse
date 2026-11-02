@@ -28,8 +28,10 @@ python "$LLAMA/convert_hf_to_gguf.py" "$MODELS/Qwen3.8-27B" --mmproj \
   --outtype f16 --outfile "$MMP" 2>&1 | tee "$GGUF_DIR/mmproj_f16.log"
 IMG="$GGUF_DIR/sample.jpg"
 curl -fsSL -o "$IMG" \
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/320px-Cat03.jpg"
+  "https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg" \
+  || curl -fsSL -o "$IMG" \
+  "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/cats.png"
 "$BIN/llama-mtmd-cli" -m "$QUANT" --mmproj "$MMP" --image "$IMG" \
-  -p "What animal is in this image? One word." -n 32 -ngl 99 -st \
+  -p "What animal is in this image? One word." -n 32 -ngl 99 --temp 0 \
   < /dev/null 2>&1 | tee "$GGUF_DIR/mmproj_mtmd_test.txt"
 echo "== mmproj end $(date -Is) =="
