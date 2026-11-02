@@ -31,13 +31,10 @@ GGUF="$QUANT" LOGS="$LOGS" ./tools/smoke_inference.sh \
   sartajbhuvaji/unfuse-Qwen3.8-27B-text llamacpp \
   | tee "$LOGS/smoke-$Q.txt"
 
-python - <<'PY'
-from datasets import load_dataset
-
-ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test")
-text = "\n\n".join(t for t in ds["text"] if t.strip())
-open("/tmp/wikitext2-test.txt", "w").write(text)
-PY
+if [ ! -s /tmp/wikitext2-test.txt ]; then
+  curl -fsSL -o /tmp/wt2.zip https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-raw-v1.zip
+  unzip -p /tmp/wt2.zip wikitext-2-raw/test.txt > /tmp/wikitext2-test.txt
+fi
 {
   echo "| quant | perplexity |"
   echo "|-------|------------|"

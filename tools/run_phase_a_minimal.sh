@@ -70,14 +70,11 @@ GGUF="$QUANT" LOGS="$LOGS" ./tools/smoke_inference.sh \
   | tee "$LOGS/smoke-$Q.txt"
 
 echo "== perplexity (BF16 + $Q, wikitext-2 test, ctx 512) =="
-python - <<'PY'
-from datasets import load_dataset
-
-ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="test")
-text = "\n\n".join(t for t in ds["text"] if t.strip())
-open("/tmp/wikitext2-test.txt", "w").write(text)
-print("chars", len(text))
-PY
+if [ ! -s /tmp/wikitext2-test.txt ]; then
+  curl -fsSL -o /tmp/wt2.zip https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-raw-v1.zip
+  unzip -p /tmp/wt2.zip wikitext-2-raw/test.txt > /tmp/wikitext2-test.txt
+fi
+wc -c /tmp/wikitext2-test.txt
 {
   echo "| quant | perplexity |"
   echo "|-------|------------|"
