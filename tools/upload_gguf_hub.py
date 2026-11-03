@@ -59,7 +59,9 @@ def main() -> None:
     files = api.list_repo_files(args.repo_id)
     root_gguf = [f for f in files if f.endswith(".gguf") and "/" not in f]
     print(f"\nroot gguf files: {root_gguf}")
-    print("quant widget ok:", bool(root_gguf) and not any(f.endswith(".safetensors") for f in files))
+    print(
+        "quant widget ok:", bool(root_gguf) and not any(f.endswith(".safetensors") for f in files)
+    )
 
 
 if __name__ == "__main__":
