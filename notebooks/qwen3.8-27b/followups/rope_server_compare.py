@@ -8,7 +8,6 @@ import gc
 import json
 import math
 import sys
-import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -45,12 +44,7 @@ def completion_probs(prompt: str, n_probs: int = 20) -> list[dict]:
     if not cps:
         raise RuntimeError(f"no completion_probabilities in response keys={list(data.keys())}")
     entry = cps[0]
-    probs = (
-        entry.get("top_logprobs")
-        or entry.get("top_probs")
-        or entry.get("probs")
-        or []
-    )
+    probs = entry.get("top_logprobs") or entry.get("top_probs") or entry.get("probs") or []
     if not probs:
         raise RuntimeError(
             f"empty prob list on completion_probabilities[0]; keys={list(entry.keys())}"
@@ -69,14 +63,10 @@ def hf_top_logprobs(model, enc: dict, k: int = 20) -> list[tuple[int, float]]:
 
 def chat_prompt(tok, user_text: str) -> tuple[dict, str, int]:
     messages = [{"role": "user", "content": user_text}]
-    enc = tok.apply_chat_template(
-        messages, add_generation_prompt=True, return_tensors="pt"
-    )
+    enc = tok.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt")
     if isinstance(enc, torch.Tensor):
         enc = {"input_ids": enc}
-    chat_text = tok.apply_chat_template(
-        messages, add_generation_prompt=True, tokenize=False
-    )
+    chat_text = tok.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
     n_tok = int(enc["input_ids"].shape[-1])
     return enc, chat_text, n_tok
 
@@ -89,11 +79,7 @@ def merge_row(tok, hf_top, gg_probs, user_text: str, chat_tokens: int) -> dict:
             return math.log(float(p["prob"])) if float(p["prob"]) > 0 else float("-inf")
         return None
 
-    gg_map = {
-        int(p["id"]): lp
-        for p in gg_probs
-        if "id" in p and (lp := gg_logp(p)) is not None
-    }
+    gg_map = {int(p["id"]): lp for p in gg_probs if "id" in p and (lp := gg_logp(p)) is not None}
     hf_map = dict(hf_top)
     hf_top1 = hf_top[0][0]
     gg_top1 = max(gg_map.items(), key=lambda kv: kv[1])[0] if gg_map else None
@@ -144,8 +130,12 @@ def wikitext_perplexity_llama_chunks(
 def write_md(path: Path, payload: dict) -> None:
     rows = payload["prompt_rows"]
     lines = ["# RoPE check (bf16 GGUF vs safetensors)", "", "## Numbers", ""]
-    lines.append("| # | prompt (head) | chat tokens | top-1 match | max |logp| diff (shared top-20) |")
-    lines.append("|---|---------------|-------------|-------------|----------------------------------|")
+    lines.append(
+        "| # | prompt (head) | chat tokens | top-1 match | max |logp| diff (shared top-20) |"
+    )
+    lines.append(
+        "|---|---------------|-------------|-------------|----------------------------------|"
+    )
     for i, r in enumerate(rows, 1):
         diff = r["max_logprob_diff_top20"]
         diff_s = f"{diff:.6f}" if diff is not None else "n/a"
@@ -164,7 +154,7 @@ def write_md(path: Path, payload: dict) -> None:
             "",
             "- **GGUF:** `llama-server` on bf16 GGUF; `POST /completion` with `n_predict=1`, `temperature=0`, `n_probs=20`; read `completion_probabilities[0].top_logprobs` (`id`, `logprob`).",
             "- **HF:** same user prompts via `apply_chat_template(..., add_generation_prompt=True)`; forward with full tokenizer batch (`input_ids`, `attention_mask`); compare next-token top-20 ids/logprobs.",
-            "- **Logprob deltas:** top-1 ids agree on all prompts; |logp| gaps on shared top-20 are from llama-server’s reported logprobs vs HF `log_softmax` (not a parse bug).",
+            "- **Logprob deltas:** top-1 ids agree on all prompts; |logp| gaps on shared top-20 are from llama-server's reported logprobs vs HF `log_softmax` (not a parse bug).",
             "- **VRAM:** GGUF server stopped before loading HF (single 80GB GPU).",
             "- **No llama-cli stdout parsing.**",
             "- **PPL:** same `wikitext2-test.txt` as task 2; HF uses llama-perplexity non-stride chunking (512 ctx, score last 256 tokens per chunk). Residual gap vs GGUF may include tokenizer path (llama `common_tokenize` vs HF `tokenizer`).",
@@ -176,7 +166,7 @@ def write_md(path: Path, payload: dict) -> None:
 def phase_collect_gguf(hf_dir: str, cache_path: Path, n_probs: int) -> None:
     from transformers import AutoTokenizer
 
-    prompts = list(DEFAULT_PROMPTS) + [long_prompt(120)]
+    prompts = [*DEFAULT_PROMPTS, long_prompt(120)]
     tok = AutoTokenizer.from_pretrained(hf_dir, trust_remote_code=True)
     entries = []
     for p in prompts:
@@ -243,7 +233,9 @@ def main() -> None:
     else:
         if not args.gguf_cache or not args.out_json:
             sys.exit("--gguf-cache and --out-json required for run-hf")
-        phase_run_hf(args.hf_dir, Path(args.gguf_cache), Path(args.out_json), args.out_md, args.n_probs)
+        phase_run_hf(
+            args.hf_dir, Path(args.gguf_cache), Path(args.out_json), args.out_md, args.n_probs
+        )
 
 
 if __name__ == "__main__":
